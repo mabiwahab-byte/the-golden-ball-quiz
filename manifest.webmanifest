@@ -1,11 +1,12 @@
 {
-  "name": "The Golden Ball Quiz",
-  "short_name": "Golden Ball",
-  "description": "The 80-question Ballon d’Or winners challenge.",
+  "id": "/",
+  "name": "The Golden Ball Quiz — Ballon d’Or Winners Challenge",
+  "short_name": "Golden Ball Quiz",
+  "description": "An independent 80-question football quiz about Ballon d’Or winners.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "orientation": "portrait",
+  "orientation": "any",
   "background_color": "#0b1220",
   "theme_color": "#101827",
   "icons": [
@@ -13,7 +14,7 @@
       "src": "/icon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "purpose": "any"
     }
   ]
 }
