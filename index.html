@@ -24,7 +24,8 @@ const payload="H4sICMaG/moCA3RoZS1nb2xkZW4tYmFsbC1xdWl6Lmh0bWwAtFxbj9tIdn73r6hRw
   const bytes=Uint8Array.from(binary,c=>c.charCodeAt(0));
   if(!('DecompressionStream' in window)) throw new Error('This browser does not support the offline loader.');
   const stream=new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'));
-  const html=await new Response(stream).text();
+  let html=await new Response(stream).text();
+  html=html.replace('\n = 0, score = 0, answered = false, activeQuestions = [];', '\nlet current = 0, score = 0, answered = false, activeQuestions = [];');
   document.open();
   document.write(html);
   document.close();
