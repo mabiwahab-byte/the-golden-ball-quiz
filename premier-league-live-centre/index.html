@@ -100,7 +100,7 @@ footer a{color:var(--lime);font-weight:750;text-decoration:none}
 </div></footer>
 <script>
 const API='https://sportscore.com/api/v1/fixtures/';
-const COMPETITION='premier-league';
+const COMPETITION='jednm9whz0ryox8';
 const app={tab:'live',matches:[],loadedDays:14,loading:false,lastUpdated:null,allDaysLoaded:false,installPrompt:null};
 const $=id=>document.getElementById(id);
 const pad=n=>String(n).padStart(2,'0');
@@ -125,19 +125,23 @@ function normalise(m){
 }
 function uniqueMatches(list){const seen=new Set();return list.filter(m=>{const key=m.id||m.slug||[m._home,m._away,m._kickoff?.toISOString()].join('|');if(seen.has(key))return false;seen.add(key);return true;});}
 async function fetchDate(d){
- const url=new URL(API);url.searchParams.set('sport','football');url.searchParams.set('date',dayKey(d));url.searchParams.set('competition',COMPETITION);url.searchParams.set('limit','200');url.searchParams.set('src','premier-league-live-centre');
- const response=await fetch(url,{cache:'no-store'});if(!response.ok)throw new Error('Match feed returned '+response.status);
- const payload=await response.json();const raw=payload.matches||payload.fixtures||payload.data||[];
- return Array.isArray(raw)?raw.map(normalise):[];
+ const url=new URL(API);url.searchParams.set('sport','football');url.searchParams.set('date',dayKey(d));url.searchParams.set('competition',COMPETITION);url.searchParams.set('limit','200');
+ const controller=new AbortController();const timeout=setTimeout(()=>controller.abort(),6500);
+ try{
+  const response=await fetch(url,{cache:'no-store',signal:controller.signal});if(!response.ok)throw new Error('Match feed returned '+response.status);
+  const payload=await response.json();const raw=payload.matches||payload.fixtures||payload.data||[];
+  return Array.isArray(raw)?raw.map(normalise):[];
+ }finally{clearTimeout(timeout);}
 }
 async function fetchRange(start,count){
- const dates=Array.from({length:count},(_,i)=>datePlus(start+i));const chunks=[];
- for(let i=0;i<dates.length;i+=4){const group=dates.slice(i,i+4);const result=await Promise.allSettled(group.map(fetchDate));result.forEach((r,j)=>{if(r.status==='fulfilled')chunks.push(...r.value);else console.warn('Fixture date unavailable',dayKey(group[j]),r.reason);});}
+ const dates=Array.from({length:count},(_,i)=>datePlus(start+i));
+ const result=await Promise.allSettled(dates.map(fetchDate)),chunks=[];
+ result.forEach((r,j)=>{if(r.status==='fulfilled')chunks.push(...r.value);else console.warn('Fixture date unavailable',dayKey(dates[j]),r.reason);});
  return uniqueMatches(chunks);
 }
 function localDate(d){if(!d||isNaN(d))return 'Kick-off TBC';return new Intl.DateTimeFormat(undefined,{weekday:'short',day:'numeric',month:'short',hour:'numeric',minute:'2-digit'}).format(d);}
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-function logo(url,name){if(!url)return '<span style="width:29px;height:29px;display:grid;place-items:center;border-radius:50%;background:#244733;color:#b5f36b;font-size:12px;font-weight:900">'+esc(name.slice(0,1))+'</span>';return '<img loading="lazy" alt="" src="'+esc(url)+'" onerror="this.style.display=\\'none\\'">';}
+function logo(url,name){if(!url)return '<span style="width:29px;height:29px;display:grid;place-items:center;border-radius:50%;background:#244733;color:#b5f36b;font-size:12px;font-weight:900">'+esc(name.slice(0,1))+'</span>';return '<img loading="lazy" alt="" src="'+esc(url)+'" onerror="this.remove()">';}
 function card(m){
  const live=m._status==='live',finished=m._status==='finished',status=live?'LIVE':finished?'FULL TIME':'UPCOMING';
  const score=(m._hs!==null&&m._as!==null)?esc(m._hs)+' – '+esc(m._as):'VS';
@@ -164,13 +168,21 @@ function render(){
  if(app.lastUpdated){const value=new Intl.DateTimeFormat(undefined,{hour:'numeric',minute:'2-digit',second:'2-digit'}).format(app.lastUpdated);$('updatedLabel').textContent='Updated '+value;$('footerUpdated').textContent='Last refreshed '+value+' · Times are shown in your device local timezone.';}
 }
 async function loadInitial(){
- if(app.loading)return;app.loading=true;$('matchList').innerHTML='<div class="loading" style="grid-column:1/-1">Loading live scores and upcoming Premier League fixtures…</div>';$('notice').innerHTML='';
+ if(app.loading)return;app.loading=true;$('notice').innerHTML='';
+ $('matchList').innerHTML='<div class="loading" style="grid-column:1/-1">Opening the match centre… live scores will appear as soon as the feed responds.</div>';
  try{
-  const [recent,coming]=await Promise.all([fetchRange(-3,4),fetchRange(0,14)]);
-  app.matches=uniqueMatches([...recent,...coming]);app.loadedDays=14;app.lastUpdated=new Date();fillClubs();render();
-  if(!app.matches.length)$('notice').innerHTML='<div class="empty" style="margin-bottom:12px">The data provider returned no Premier League fixtures for this period. Try refreshing shortly.</div>';
- }catch(e){$('matchList').innerHTML='<div class="error" style="grid-column:1/-1"><strong>Could not load match data.</strong><br>'+esc(e.message)+'<br><button class="refresh" style="margin-top:12px" onclick="loadInitial()">Try again</button></div>';$('notice').innerHTML='<div class="note">Please check your connection. Scores are never filled with made-up results.</div>';}
- finally{app.loading=false;}
+  // Load today's fixtures first so the page does not wait for a whole date range.
+  const today=await fetchDate(datePlus(0));
+  app.matches=uniqueMatches(today);app.loadedDays=14;app.lastUpdated=new Date();fillClubs();render();
+  // Then quietly add recent results and the next two weeks.
+  const [recent,future]=await Promise.all([fetchRange(-3,3),fetchRange(1,13)]);
+  app.matches=uniqueMatches([...app.matches,...recent,...future]);app.lastUpdated=new Date();fillClubs();render();
+  if(!app.matches.length)$('notice').innerHTML='<div class="empty" style="margin-bottom:12px">The match feed has no Premier League fixtures for the dates checked. Try refreshing shortly.</div>';
+ }catch(e){
+  app.matches=[];fillClubs();render();
+  $('matchList').innerHTML='<div class="error" style="grid-column:1/-1"><strong>Match data is temporarily unavailable.</strong><br>'+esc(e.name==='AbortError'?'The live-score feed took too long to respond.':'The live-score feed could not be reached.')+'<br><button class="refresh" style="margin-top:12px" onclick="loadInitial()">Try again</button></div>';
+  $('notice').innerHTML='<div class="note">The match-centre page has opened, but live scores could not be retrieved. You can retry without reloading the whole website.</div>';
+ }finally{app.loading=false;}
 }
 async function refreshLive(){
  try{const today=await fetchDate(datePlus(0));const notToday=app.matches.filter(m=>!m._kickoff||dayKey(m._kickoff)!==dayKey(new Date()));app.matches=uniqueMatches([...notToday,...today]);app.lastUpdated=new Date();fillClubs();render();}
