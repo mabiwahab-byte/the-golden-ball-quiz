@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#101b2c">
+<meta name="description" content="Build your footballer, play big matches and become a legend.">
+<title>Football Career Mode</title>
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./icon.svg" type="image/svg+xml">
+<style>
+:root{--bg:#091321;--panel:#111f32;--panel2:#172940;--line:#253951;--text:#f4f7fb;--muted:#9bacc1;--green:#73ed9b;--lime:#b7f36b;--gold:#ffd36e;--blue:#74b8ff;--red:#ff7d88;--radius:22px}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 75% -10%,#1e3d50 0,transparent 42%),var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100vh}
+button,input,select{font:inherit}button{cursor:pointer}.shell{max-width:1120px;margin:0 auto;padding:22px 22px 50px}.topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:25px}.brand{display:flex;align-items:center;gap:12px}.brand-mark{width:44px;height:44px;border-radius:14px;background:linear-gradient(140deg,var(--green),#48c6a1);display:grid;place-items:center;color:#0c1a27;font-size:23px;box-shadow:0 7px 24px #45dca533}.brand h1{font-size:17px;letter-spacing:.02em;margin:0}.brand p{color:var(--muted);font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin:3px 0 0}.top-right{display:flex;align-items:center;gap:10px}.coin-pill,.season-pill{padding:9px 13px;border:1px solid var(--line);background:#102035;border-radius:99px;font-size:13px;font-weight:700}.coin-pill{color:var(--gold)}.season-pill{color:var(--muted)}.nav{display:flex;gap:7px;overflow:auto;padding:5px;background:#0d1b2b;border:1px solid var(--line);border-radius:15px;margin-bottom:22px}.nav button{border:0;background:transparent;color:var(--muted);padding:11px 16px;border-radius:10px;font-size:13px;font-weight:700;white-space:nowrap}.nav button.active{background:var(--green);color:#0b1c27}.page-title{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin:6px 0 18px}.eyebrow{color:var(--green);font-size:11px;letter-spacing:.17em;text-transform:uppercase;font-weight:800}.page-title h2{font-size:clamp(25px,4vw,34px);margin:5px 0 0;letter-spacing:-.04em}.page-title p{color:var(--muted);margin:6px 0 0;font-size:13px}.grid{display:grid;grid-template-columns:1.25fr .75fr;gap:17px}.stack{display:grid;gap:16px}.card{background:linear-gradient(155deg,#15263b,#101d30);border:1px solid var(--line);border-radius:var(--radius);padding:21px;box-shadow:0 16px 50px #00000018}.card-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:15px}.card-head h3{margin:0;font-size:15px}.tag{font-size:10px;color:var(--green);font-weight:800;letter-spacing:.12em;text-transform:uppercase;background:#173d37;padding:7px 9px;border-radius:8px}.hero{position:relative;overflow:hidden;min-height:255px;background:linear-gradient(115deg,#1d483e,#153e4b 52%,#172d45);border:1px solid #28645a;border-radius:var(--radius);padding:25px;display:flex;align-items:center;justify-content:space-between;gap:16px}.hero:after{content:"";position:absolute;width:300px;height:300px;border:1px solid #ffffff14;border-radius:50%;right:-80px;top:-100px;box-shadow:0 0 0 35px #ffffff08,0 0 0 70px #ffffff05}.hero-copy{position:relative;z-index:1;max-width:470px}.hero .eyebrow{color:#b8ffd0}.hero h2{font-size:clamp(28px,5vw,43px);line-height:1.02;margin:9px 0 10px;letter-spacing:-.05em}.hero p{color:#d0eadd;max-width:390px;line-height:1.55;font-size:13px}.hero-ball{font-size:clamp(75px,12vw,122px);filter:drop-shadow(0 15px 14px #001b1644);position:relative;z-index:1}.btn{border:0;border-radius:12px;padding:12px 16px;font-weight:800;font-size:13px;transition:transform .15s,filter .15s}.btn:hover{transform:translateY(-1px);filter:brightness(1.06)}.btn-primary{background:var(--green);color:#0c1d28}.btn-secondary{background:#243a52;color:var(--text);border:1px solid #35506c}.btn-quiet{background:transparent;border:1px solid var(--line);color:var(--muted)}.btn-gold{background:var(--gold);color:#2c2410}.btn:disabled{opacity:.4;cursor:not-allowed;transform:none}.fixture{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:15px;background:#0e1b2b;border:1px solid var(--line);border-radius:15px}.club{text-align:center;flex:1}.club-badge{width:48px;height:48px;border-radius:15px;background:#203a53;display:grid;place-items:center;margin:0 auto 7px;font-size:24px}.club strong{font-size:13px}.vs{font-size:12px;color:var(--muted);font-weight:800}.muted{color:var(--muted)}.small{font-size:12px}.profile{display:flex;align-items:center;gap:13px}.avatar{width:58px;height:58px;border-radius:18px;background:linear-gradient(140deg,#335b71,#20364e);display:grid;place-items:center;font-size:31px}.profile h3{margin:0 0 5px;font-size:16px}.profile p{margin:0;color:var(--muted);font-size:12px}.rating{margin-left:auto;text-align:center;background:#263b42;border:1px solid #3f6559;border-radius:14px;padding:9px 12px}.rating strong{display:block;color:var(--green);font-size:25px;line-height:1}.rating span{font-size:9px;color:#b2c7c1;font-weight:800;letter-spacing:.12em}.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.stat-box{background:#0e1b2a;border:1px solid var(--line);border-radius:14px;padding:14px}.stat-box strong{font-size:23px;display:block}.stat-box span{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;font-weight:800}.progress-wrap{margin-top:14px}.progress-label{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:7px}.progress{height:8px;background:#26384c;border-radius:99px;overflow:hidden}.progress i{height:100%;display:block;background:linear-gradient(90deg,var(--green),var(--lime));border-radius:99px}.quick-actions{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.action-tile{border:1px solid var(--line);background:#0e1b2b;border-radius:15px;padding:14px;text-align:left;color:var(--text)}.action-tile b{display:block;margin:7px 0 3px;font-size:13px}.action-tile span{color:var(--muted);font-size:11px}.action-icon{font-size:22px}.club-list{display:grid;gap:9px}.club-option{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--line);border-radius:13px;background:#0e1b2b}.club-option .club-badge{margin:0;width:43px;height:43px;flex:none}.club-option div:nth-child(2){flex:1}.club-option strong{font-size:13px}.club-option p{margin:3px 0 0;color:var(--muted);font-size:11px}.locked{font-size:10px;color:var(--gold);font-weight:800}.drill-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}.drill{background:#0e1b2b;border:1px solid var(--line);border-radius:15px;padding:15px}.drill .action-icon{font-size:27px}.drill h3{font-size:13px;margin:8px 0 5px}.drill p{font-size:11px;line-height:1.45;color:var(--muted);min-height:32px}.drill small{display:block;color:var(--green);font-weight:800;margin-bottom:12px}.table{width:100%;border-collapse:collapse}.table th,.table td{text-align:left;padding:12px 8px;border-bottom:1px solid var(--line);font-size:12px}.table th{color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.1em}.table tr:last-child td{border-bottom:0}.empty{text-align:center;padding:34px 15px;color:var(--muted)}.empty strong{display:block;color:var(--text);font-size:16px;margin-bottom:6px}.notice{border:1px solid #526044;background:#263626;color:#d9f3cd;padding:12px 14px;border-radius:13px;font-size:12px;line-height:1.5;margin-top:12px}.setup{max-width:650px;margin:40px auto;background:linear-gradient(145deg,#182d43,#101c2d);border:1px solid var(--line);padding:28px;border-radius:25px}.setup h2{font-size:30px;letter-spacing:-.04em;margin:8px 0}.setup>p{color:var(--muted);font-size:13px;line-height:1.5}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin:19px 0}.field{display:grid;gap:7px}.field.full{grid-column:1/-1}.field label{font-size:11px;color:#bac8d8;font-weight:800;letter-spacing:.07em;text-transform:uppercase}.field input,.field select{background:#091727;border:1px solid #31485f;border-radius:11px;padding:13px;color:var(--text);outline:none;min-width:0}.field input:focus,.field select:focus{border-color:var(--green)}.modal-backdrop{position:fixed;inset:0;background:#020812d9;display:grid;place-items:center;padding:18px;z-index:10}.modal{width:min(600px,100%);max-height:90vh;overflow:auto;background:#14253a;border:1px solid #36516e;border-radius:22px;padding:23px;box-shadow:0 25px 90px #0009}.modal h2{font-size:25px;letter-spacing:-.04em;margin:6px 0}.modal p{color:#becbdd;line-height:1.55;font-size:13px}.choice-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:18px}.choice{background:#0b1b2c;color:var(--text);border:1px solid #39506b;border-radius:13px;padding:15px 10px;font-weight:800}.choice span{display:block;font-size:23px;margin-bottom:7px}.choice:hover{border-color:var(--green);background:#183a36}.match-feedback{padding:17px;border-radius:15px;background:#0b1b2b;border:1px solid var(--line);margin:15px 0}.match-feedback strong{display:block;color:var(--green);margin-bottom:5px}.result-score{display:flex;align-items:center;justify-content:center;gap:20px;margin:17px 0;padding:18px;border-radius:16px;background:#0b1b2a}.result-score strong{font-size:34px}.result-score span{font-size:12px;color:var(--muted);text-align:center}.footer{text-align:center;color:#61758c;font-size:10px;margin-top:28px}.hidden{display:none!important}
+@media(max-width:780px){.grid{grid-template-columns:1fr}.hero{min-height:220px}.drill-grid{grid-template-columns:1fr}.drill p{min-height:0}.page-title{align-items:flex-start;flex-direction:column}}
+@media(max-width:480px){.shell{padding:15px 13px 35px}.topbar{margin-bottom:17px}.brand h1{font-size:15px}.brand-mark{width:39px;height:39px}.season-pill{display:none}.card{padding:16px;border-radius:18px}.hero{padding:20px}.hero-ball{font-size:70px}.stat-box{padding:11px}.stat-box strong{font-size:20px}.form-grid{grid-template-columns:1fr}.field.full{grid-column:auto}.setup{padding:21px;margin:20px auto}.choice-grid{grid-template-columns:1fr}.nav button{padding:10px 13px}}
+</style>
+</head>
+<body>
+<div class="shell">
+<header class="topbar">
+  <div class="brand"><div class="brand-mark">⚽</div><div><h1>FOOTBALL CAREER MODE</h1><p>Your story. Your legacy.</p></div></div>
+  <div class="top-right"><div class="season-pill" id="season-pill">SEASON 1</div><div class="coin-pill" id="coin-pill">🪙 0</div></div>
+</header>
+<main id="app"></main>
+<div class="footer">A fictional football career simulator • Your progress saves on this device</div>
+</div>
+<div id="modal-root"></div>
+<script>
+(function(){
+"use strict";
+var KEY="football-career-mode-save-v1";
+var clubs=[
+{name:"Liverpool",emoji:"🔴",short:"LIV",level:1},{name:"Real Madrid",emoji:"⚪",short:"RMA",level:1},
+{name:"Barcelona",emoji:"🔵",short:"BAR",level:1},{name:"Manchester City",emoji:"🩵",short:"MCI",level:1},
+{name:"Arsenal",emoji:"🔴",short:"ARS",level:1},{name:"Bayern Munich",emoji:"🔴",short:"BAY",level:1},
+{name:"Paris Saint-Germain",emoji:"🔵",short:"PSG",level:1},{name:"Inter",emoji:"⚫",short:"INT",level:1},
+{name:"Borussia Dortmund",emoji:"🟡",short:"BVB",level:1},{name:"Atlético Madrid",emoji:"🔴",short:"ATM",level:1}
+];
+var opponents=["Tottenham","Chelsea","Newcastle","Manchester United","AC Milan","Juventus","Napoli","RB Leipzig","Sevilla","Aston Villa"];
+var appState=loadState();
+var activeTab="home";
+var liveMatch=null;
+var matchPrompts=[
+{title:"The counter-attack is on!",copy:"You receive the ball with space ahead. What's your move?",choices:[["pass","🤝","Thread a pass"],["dribble","🪄","Take on a defender"],["shoot","🥅","Shoot from range"]]},
+{title:"A big moment in the box!",copy:"The ball drops near you and defenders are closing in.",choices:[["pass","🎯","Set up a teammate"],["dribble","⚡","Create some space"],["shoot","🚀","Go for goal"]]},
+{title:"One last chance!",copy:"Your team needs a moment of magic. Make your decision.",choices:[["pass","🧠","Play the smart pass"],["dribble","🔥","Beat your marker"],["shoot","💥","Take the shot"]]}
+];
+function loadState(){try{var raw=localStorage.getItem(KEY);return raw?JSON.parse(raw):null}catch(e){return null}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(appState))}catch(e){}}
+function escapeHtml(v){return String(v).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
+function clubInfo(name){return clubs.find(function(c){return c.name===name})||{name:name,emoji:"⚽",short:"FC"}}
+function xpNeed(){return 120}
+function xpPercent(){return Math.min(100,Math.round((appState.xp%xpNeed())/xpNeed()*100))}
+function awardXp(n){appState.xp+=n;while(appState.xp>=xpNeed()){appState.xp-=xpNeed();appState.overall=Math.min(99,appState.overall+1);appState.coins+=100}}
+function statNumber(n){return String(n||0)}
+function pageTitle(kicker,title,desc){return '<div class="page-title"><div><div class="eyebrow">'+kicker+'</div><h2>'+title+'</h2><p>'+desc+'</p></div></div>'}
+function renderSetup(){
+document.getElementById("app").innerHTML=
+'<section class="setup"><div class="eyebrow">CREATE YOUR PLAYER</div><h2>Start at the top. ✨</h2><p>You have signed for a major club. Create your footballer, pick your position and begin your journey to becoming a legend.</p>'+
+'<form id="create-form"><div class="form-grid">'+
+'<div class="field full"><label for="player-name">Player name</label><input id="player-name" maxlength="20" placeholder="Enter your name" required></div>'+
+'<div class="field"><label for="position">Position</label><select id="position"><option value="ST">Striker (ST)</option><option value="LW">Left Wing (LW)</option><option value="RW">Right Wing (RW)</option><option value="CAM">Attacking Midfielder (CAM)</option><option value="CM">Central Midfielder (CM)</option><option value="CB">Centre Back (CB)</option><option value="GK">Goalkeeper (GK)</option></select></div>'+
+'<div class="field"><label for="club">Starting big club</label><select id="club">'+clubs.map(function(c){return '<option value="'+c.name+'" '+(c.name==="Liverpool"?"selected":"")+'>'+c.emoji+' '+c.name+'</option>'}).join("")+'</select></div>'+
+'</div><button class="btn btn-primary" type="submit" style="width:100%">Create my player →</button></form>'+
+'<div class="notice">Your career is saved on this device. This is a fictional match simulator, not a live football scores app.</div></section>';
+document.getElementById("create-form").addEventListener("submit",function(e){e.preventDefault();var name=document.getElementById("player-name").value.trim();if(!name)return;appState={name:name,position:document.getElementById("position").value,club:document.getElementById("club").value,overall:74,xp:0,coins:500,matches:0,goals:0,assists:0,wins:0,draws:0,losses:0,trainingDate:"",trainingCount:0,history:[],trophies:0,season:1};save();render()});
+}
+function render(){
+if(!appState){renderSetup();document.getElementById("coin-pill").textContent="🪙 0";return}
+document.getElementById("coin-pill").textContent="🪙 "+appState.coins;
+document.getElementById("season-pill").textContent="SEASON "+appState.season;
+var tabs=[["home","Home"],["matches","Matchday"],["training","Training"],["transfers","Transfers"],["stats","My Stats"]];
+var nav='<nav class="nav" aria-label="Main navigation">'+tabs.map(function(t){return '<button class="'+(activeTab===t[0]?"active":"")+'" data-tab="'+t[0]+'">'+t[1]+'</button>'}).join("")+'</nav>';
+var view=activeTab==="home"?homePage():activeTab==="matches"?matchesPage():activeTab==="training"?trainingPage():activeTab==="transfers"?transfersPage():statsPage();
+document.getElementById("app").innerHTML=nav+view;
+document.querySelectorAll("[data-tab]").forEach(function(b){b.addEventListener("click",function(){activeTab=b.getAttribute("data-tab");render()})});
+document.querySelectorAll("[data-action]").forEach(function(b){b.addEventListener("click",handleAction)});
+}
+function playerCard(){return '<div class="card"><div class="profile"><div class="avatar">🧑‍🎤</div><div><h3>'+escapeHtml(appState.name)+'</h3><p>'+appState.position+' • '+escapeHtml(appState.club)+'</p></div><div class="rating"><strong>'+appState.overall+'</strong><span>OVR</span></div></div><div class="progress-wrap"><div class="progress-label"><span>Next overall upgrade</span><span>'+xpPercent()+'%</span></div><div class="progress"><i style="width:'+xpPercent()+'%"></i></div></div></div>'}
+function fixtureCard(){
+var opp=opponents[(appState.matches+2)%opponents.length],home=clubInfo(appState.club);
+return '<div class="fixture"><div class="club"><div class="club-badge">'+home.emoji+'</div><strong>'+escapeHtml(home.name)+'</strong></div><div class="vs">VS<br><span class="muted">NEXT MATCH</span></div><div class="club"><div class="club-badge">⚽</div><strong>'+escapeHtml(opp)+'</strong></div></div>';
+}
+function homePage(){
+return pageTitle("YOUR CAREER","Welcome back, "+escapeHtml(appState.name)+"!","Your journey starts at "+escapeHtml(appState.club)+".")+
+'<section class="hero"><div class="hero-copy"><div class="eyebrow">THE BIG STAGE IS WAITING</div><h2>Make your<br>moment.</h2><p>Play matches, earn coins, improve your rating and build a career people will remember.</p><button class="btn btn-primary" data-action="play">Play next match →</button></div><div class="hero-ball">⚽</div></section>'+
+'<div class="grid" style="margin-top:17px"><div class="stack">'+playerCard()+
+'<div class="card"><div class="card-head"><h3>Next fixture</h3><span class="tag">MATCH '+(appState.matches+1)+'</span></div>'+fixtureCard()+'<p class="small muted" style="margin:12px 0 0">Friendly career-mode fixtures • Results are simulated in the app</p></div>'+
+'<div class="card"><div class="card-head"><h3>Quick actions</h3><span class="tag">GET BETTER</span></div><div class="quick-actions"><button class="action-tile" data-tab="training"><span class="action-icon">🏋️</span><b>Training ground</b><span>Improve your player</span></button><button class="action-tile" data-tab="transfers"><span class="action-icon">🔁</span><b>Transfer centre</b><span>Explore new clubs</span></button></div></div></div>'+
+'<div class="stack"><div class="card"><div class="card-head"><h3>Career so far</h3><span class="tag">SEASON '+appState.season+'</span></div><div class="stat-row"><div class="stat-box"><strong>'+appState.goals+'</strong><span>Goals</span></div><div class="stat-box"><strong>'+appState.assists+'</strong><span>Assists</span></div><div class="stat-box"><strong>'+appState.wins+'</strong><span>Wins</span></div></div><div class="progress-wrap"><div class="progress-label"><span>Matches played</span><b>'+appState.matches+'</b></div><div class="progress"><i style="width:'+Math.min(100,appState.matches*10)+'%"></i></div></div></div>'+
+'<div class="card"><div class="card-head"><h3>Career goals</h3><span class="tag">MILESTONES</span></div><p class="small muted">Score goals and collect achievements as your career grows.</p><div class="progress-wrap"><div class="progress-label"><span>First goal</span><span>'+(appState.goals>0?"UNLOCKED":"0 / 1")+'</span></div><div class="progress"><i style="width:'+(appState.goals>0?100:0)+'%"></i></div></div><div class="progress-wrap"><div class="progress-label"><span>10 goal club</span><span>'+Math.min(appState.goals,10)+' / 10</span></div><div class="progress"><i style="width:'+Math.min(100,appState.goals*10)+'%"></i></div></div></div>'+
+'<div class="card"><div class="card-head"><h3>Latest news</h3><span class="tag">CLUB FEED</span></div><p class="small" style="line-height:1.6;color:#c5d3e2;margin:0">'+(appState.history.length?escapeHtml(appState.history[0].headline):"The manager is excited to see what you can do this season. Your first match is coming up!")+'</p></div></div></div>';
+}
+function matchesPage(){
+var rows=appState.history.map(function(m){return '<tr><td>Match '+m.number+'</td><td>'+escapeHtml(m.opponent)+'</td><td><b>'+m.score+'</b></td><td>'+m.outcome+'</td><td>⭐ '+m.rating+'</td></tr>'}).join("");
+return pageTitle("MATCHDAY","Time to perform.","Every match is a chance to make your name.")+
+'<div class="grid"><div class="stack"><div class="card"><div class="card-head"><h3>Next match</h3><span class="tag">UP NEXT</span></div>'+fixtureCard()+'<p class="small muted">Take on three big moments during the match. Your choices can create goals and assists.</p><button class="btn btn-primary" data-action="play" style="width:100%;margin-top:8px">Kick off match ⚽</button></div>'+
+'<div class="card"><div class="card-head"><h3>Recent results</h3><span class="tag">'+appState.history.length+' PLAYED</span></div>'+(rows?'<div style="overflow:auto"><table class="table"><thead><tr><th>Game</th><th>Opponent</th><th>Score</th><th>Result</th><th>Rating</th></tr></thead><tbody>'+rows+'</tbody></table></div>':'<div class="empty"><strong>No matches yet</strong>Your first result will appear here after kick-off.</div>')+'</div></div>'+
+'<div class="stack">'+playerCard()+'<div class="card"><h3 style="margin-top:0">Match tips 💡</h3><p class="small muted" style="line-height:1.7;margin-bottom:0">Passing is reliable and can set up teammates. Dribbling is risky but exciting. Shooting is your best chance to score directly.</p></div></div></div>';
+}
+function trainingPage(){
+var today=new Date().toISOString().slice(0,10);
+var used=appState.trainingDate===today?appState.trainingCount:0;
+var drills=[["passing","🤝","Passing accuracy","+20 XP","Build play and help your team keep the ball."],["shooting","🥅","Finishing practice","+25 XP","Work on your shooting and goal-scoring."],["fitness","🏃","Speed & fitness","+20 XP","Improve your movement around the pitch."]];
+return pageTitle("TRAINING GROUND","Put in the work.","Complete up to three drills each day to earn experience.")+
+'<div class="card"><div class="card-head"><h3>Daily training sessions</h3><span class="tag">'+used+' / 3 USED</span></div><div class="progress"><i style="width:'+(used/3*100)+'%"></i></div><p class="small muted">Sessions refresh each day on this device. Your progress is saved automatically.</p></div>'+
+'<div class="drill-grid" style="margin-top:15px">'+drills.map(function(d){return '<div class="drill"><div class="action-icon">'+d[1]+'</div><h3>'+d[2]+'</h3><p>'+d[4]+'</p><small>'+d[3]+'</small><button class="btn btn-secondary" data-action="train" data-drill="'+d[0]+'" '+(used>=3?"disabled":"")+'>'+(used>=3?"Come back tomorrow":"Start drill")+'</button></div>'}).join("")+'</div>'+
+'<div style="margin-top:16px">'+playerCard()+'</div>';
+}
+function transfersPage(){
+var eligible=clubs.filter(function(c){return c.name!==appState.club});
+var cards=eligible.map(function(c,i){var need=i<3?82:78;var ok=appState.overall>=need;return '<div class="club-option"><div class="club-badge">'+c.emoji+'</div><div><strong>'+c.name+'</strong><p>Major club • '+(ok?"Ready to approach":"Requires "+need+" OVR")+'</p></div>'+(ok?'<button class="btn btn-primary" data-action="transfer" data-club="'+escapeHtml(c.name)+'">Join</button>':'<span class="locked">🔒 '+need+' OVR</span>')+'</div>'}).join("");
+return pageTitle("TRANSFER CENTRE","Dream bigger.","Improve your rating to unlock new opportunities.")+
+'<div class="grid"><div class="card"><div class="card-head"><h3>Available clubs</h3><span class="tag">BIG MOVES</span></div><div class="club-list">'+cards+'</div></div>'+
+'<div class="stack">'+playerCard()+'<div class="card"><h3 style="margin-top:0">Transfer advice 📝</h3><p class="small muted" style="line-height:1.7">Play matches and complete training to raise your overall rating. Clubs will become available as you improve. Your coins stay with you when you move.</p><div class="notice">You're already at a big club. Make an impact before your next move!</div></div></div></div>';
+}
+function statsPage(){
+var recent=appState.history.slice(0,5).map(function(m){return '<tr><td>'+m.number+'</td><td>'+escapeHtml(m.opponent)+'</td><td>'+m.score+'</td><td>'+m.goals+' ⚽</td><td>'+m.assists+' 🎯</td></tr>'}).join("");
+return pageTitle("PLAYER PROFILE","The numbers.","Your complete career record.")+
+'<div class="grid"><div class="stack">'+playerCard()+'<div class="card"><div class="card-head"><h3>Career statistics</h3><span class="tag">ALL SEASONS</span></div><div class="stat-row"><div class="stat-box"><strong>'+appState.matches+'</strong><span>Appearances</span></div><div class="stat-box"><strong>'+appState.goals+'</strong><span>Goals</span></div><div class="stat-box"><strong>'+appState.assists+'</strong><span>Assists</span></div><div class="stat-box"><strong>'+appState.wins+'</strong><span>Wins</span></div><div class="stat-box"><strong>'+appState.draws+'</strong><span>Draws</span></div><div class="stat-box"><strong>'+appState.losses+'</strong><span>Losses</span></div></div></div>'+
+'<div class="card"><div class="card-head"><h3>Recent performances</h3></div>'+(recent?'<div style="overflow:auto"><table class="table"><thead><tr><th>#</th><th>Opponent</th><th>Score</th><th>G</th><th>A</th></tr></thead><tbody>'+recent+'</tbody></table></div>':'<div class="empty">Play your first match to build your record.</div>')+'</div></div>'+
+'<div class="stack"><div class="card"><div class="card-head"><h3>Player details</h3><span class="tag">PROFILE</span></div><div class="profile"><div class="avatar">🧑‍🎤</div><div><h3>'+escapeHtml(appState.name)+'</h3><p>'+appState.position+' • '+escapeHtml(appState.club)+'</p></div><div class="rating"><strong>'+appState.overall+'</strong><span>OVR</span></div></div><div class="progress-wrap"><div class="progress-label"><span>Experience to next upgrade</span><span>'+appState.xp+' / '+xpNeed()+' XP</span></div><div class="progress"><i style="width:'+xpPercent()+'%"></i></div></div><div class="notice">Coins earned: '+appState.coins+' 🪙</div></div><div class="card"><h3 style="margin-top:0">Career options</h3><button class="btn btn-quiet" data-action="reset" style="width:100%">Start a new career</button><p class="small muted">This resets the saved career on this device.</p></div></div></div>';
+}
+function handleAction(e){
+var b=e.currentTarget,action=b.getAttribute("data-action");
+if(action==="play"){startMatch();return}
+if(action==="train"){doTraining(b.getAttribute("data-drill"));return}
+if(action==="transfer"){doTransfer(b.getAttribute("data-club"));return}
+if(action==="reset"){if(confirm("Start a new career? Your current saved player and stats will be erased.")){appState=null;activeTab="home";try{localStorage.removeItem(KEY)}catch(e){}render()}return}
+}
+function startMatch(){
+var opp=opponents[(appState.matches+2)%opponents.length];
+liveMatch={opponent:opp,index:0,goals:0,assists:0,summary:[],rating:6.2};
+renderMatchModal();
+}
+function renderMatchModal(){
+var root=document.getElementById("modal-root");
+var p=matchPrompts[liveMatch.index];
+if(!p){finishMatch();return}
+root.innerHTML='<div class="modal-backdrop"><section class="modal"><div class="eyebrow">MATCHDAY • MOMENT '+(liveMatch.index+1)+' OF 3</div><h2>'+p.title+'</h2><p>'+p.copy+'</p><div class="match-feedback"><strong>'+escapeHtml(appState.club)+' vs '+escapeHtml(liveMatch.opponent)+'</strong><span class="small muted">Choose what your player does next.</span></div><div class="choice-grid">'+p.choices.map(function(c){return '<button class="choice" data-choice="'+c[0]+'"><span>'+c[1]+'</span>'+c[2]+'</button>'}).join("")+'</div><p class="small muted" style="margin-bottom:0">Your decisions influence your match performance.</p></section></div>';
+root.querySelectorAll("[data-choice]").forEach(function(btn){btn.addEventListener("click",function(){resolveChoice(btn.getAttribute("data-choice"))})});
+}
+function resolveChoice(choice){
+var pos=appState.position,roll=Math.random(),success=false,message="",kind="";
+if(choice==="pass"){
+success=roll<(pos==="CM"||pos==="CAM"?.87:.76);
+if(success&&Math.random()<.3){liveMatch.assists++;message="Brilliant vision! Your pass splits the defence and your teammate scores. Assist!";kind="assist"}
+else if(success){message="A sharp pass keeps the attack moving. Your team stays on the front foot.";kind="good"}
+else{message="The defender reads your pass. The move breaks down, but you keep working.";kind="miss"}
+}else if(choice==="dribble"){
+success=roll<(pos==="LW"||pos==="RW"?.82:.62);
+if(success&&Math.random()<.27){liveMatch.goals++;message="What a run! You glide past the defender and finish the move. GOAL!";kind="goal"}
+else if(success){message="Lovely footwork! You beat your marker and create space for the team.";kind="good"}
+else{message="The defender gets a foot in. Tough challenge — reset and get ready for the next moment.";kind="miss"}
+}else{
+success=roll<(pos==="ST"?.72:pos==="LW"||pos==="RW"?.58:pos==="GK"?.12:.44);
+if(success&&Math.random()<.72){liveMatch.goals++;message="YOU SCORED! A fantastic finish. The crowd goes wild!";kind="goal"}
+else if(success){message="A powerful effort forces a great save. So close!";kind="good"}
+else{message="The shot flies wide. Keep your head up — there are more chances coming.";kind="miss"}
+}
+liveMatch.summary.push({choice:choice,message:message,kind:kind});
+if(kind==="goal")liveMatch.rating+=.7;else if(kind==="assist")liveMatch.rating+=.55;else if(kind==="good")liveMatch.rating+=.25;else liveMatch.rating-=.1;
+liveMatch.index++;
+var root=document.getElementById("modal-root");
+if(liveMatch.index>=3){renderLastMoment(message,kind)}else{renderMatchFeedback(message,kind)}
+}
+function renderMatchFeedback(message,kind){
+var p=matchPrompts[liveMatch.index];
+var root=document.getElementById("modal-root");
+root.innerHTML='<div class="modal-backdrop"><section class="modal"><div class="eyebrow">MATCHDAY • MOMENT '+liveMatch.index+' OF 3</div><div class="match-feedback"><strong>'+((kind==="goal")?"⚽ GOAL!":(kind==="assist")?"🎯 ASSIST!":(kind==="miss")?"KEEP GOING":"NICE PLAY!")+'</strong><p style="margin:0">'+message+'</p></div><h2>'+p.title+'</h2><p>'+p.copy+'</p><div class="choice-grid">'+p.choices.map(function(c){return '<button class="choice" data-choice="'+c[0]+'"><span>'+c[1]+'</span>'+c[2]+'</button>'}).join("")+'</div></section></div>';
+root.querySelectorAll("[data-choice]").forEach(function(btn){btn.addEventListener("click",function(){resolveChoice(btn.getAttribute("data-choice"))})});
+}
+function renderLastMoment(message,kind){
+var root=document.getElementById("modal-root");
+root.innerHTML='<div class="modal-backdrop"><section class="modal"><div class="eyebrow">FULL TIME IS NEAR</div><h2>One final moment...</h2><div class="match-feedback"><strong>'+((kind==="goal")?"⚽ GOAL!":(kind==="assist")?"🎯 ASSIST!":"MATCH MOMENT")+'</strong><p style="margin:0">'+message+'</p></div><p>Your match is ready for the final whistle.</p><button class="btn btn-primary" data-finish style="width:100%">Full-time whistle →</button></section></div>';
+root.querySelector("[data-finish]").addEventListener("click",finishMatch);
+}
+function finishMatch(){
+var oppGoals=Math.floor(Math.random()*3),teamGoals=liveMatch.goals+Math.floor(Math.random()*3);
+var score=teamGoals+" - "+oppGoals;
+var outcome=teamGoals>oppGoals?"W":teamGoals===oppGoals?"D":"L";
+var rating=Math.max(5,Math.min(10,Number((liveMatch.rating+Math.random()*.6).toFixed(1))));
+var reward=100+(outcome==="W"?80:outcome==="D"?40:0)+liveMatch.goals*55+liveMatch.assists*30;
+var xp=30+liveMatch.goals*35+liveMatch.assists*20+(outcome==="W"?25:10);
+appState.matches++;appState.goals+=liveMatch.goals;appState.assists+=liveMatch.assists;
+if(outcome==="W")appState.wins++;else if(outcome==="D")appState.draws++;else appState.losses++;
+appState.coins+=reward;awardXp(xp);
+var headline=outcome==="W"?"Big win! "+appState.name+" helped "+appState.club+" beat "+liveMatch.opponent+".":outcome==="D"?"A hard-fought draw for "+appState.club+".":"A tough result against "+liveMatch.opponent+". Time to bounce back.";
+appState.history.unshift({number:appState.matches,opponent:liveMatch.opponent,score:score,outcome:outcome,goals:liveMatch.goals,assists:liveMatch.assists,rating:rating,headline:headline});
+appState.history=appState.history.slice(0,20);
+save();
+document.getElementById("modal-root").innerHTML='<div class="modal-backdrop"><section class="modal"><div class="eyebrow">FULL TIME</div><h2>'+(outcome==="W"?"What a performance!":outcome==="D"?"A point earned.":"A tough day. Keep going.")+'</h2><div class="result-score"><span>'+escapeHtml(appState.club)+'</span><strong>'+score+'</strong><span>'+escapeHtml(liveMatch.opponent)+'</span></div><div class="stat-row"><div class="stat-box"><strong>'+liveMatch.goals+'</strong><span>Your goals</span></div><div class="stat-box"><strong>'+liveMatch.assists+'</strong><span>Assists</span></div><div class="stat-box"><strong>'+rating+'</strong><span>Rating</span></div></div><div class="notice">You earned 🪙 '+reward+' coins and '+xp+' XP'+(appState.overall>74?" • Your overall may have improved!":"")+'.</div><button class="btn btn-primary" data-close-result style="width:100%;margin-top:16px">Back to career →</button></section></div>';
+document.querySelector("[data-close-result]").addEventListener("click",function(){document.getElementById("modal-root").innerHTML="";activeTab="home";render()});
+liveMatch=null;render();
+}
+function doTraining(drill){
+var today=new Date().toISOString().slice(0,10);
+if(appState.trainingDate!==today){appState.trainingDate=today;appState.trainingCount=0}
+if(appState.trainingCount>=3)return;
+appState.trainingCount++;
+var amount=drill==="shooting"?25:20;
+awardXp(amount);appState.coins+=20;save();render();
+showToast("Training complete! +"+amount+" XP and 20 coins 🪙");
+}
+function doTransfer(name){
+var need=(name==="Real Madrid"||name==="Barcelona"||name==="Manchester City")?82:78;
+if(appState.overall<need)return;
+var old=appState.club;appState.club=name;appState.coins=Math.max(0,appState.coins-100);
+appState.history.unshift({number:appState.matches,opponent:"Transfer News",score:"—",outcome:"MOVE",goals:0,assists:0,rating:"—",headline:appState.name+" has joined "+name+" from "+old+"!"});
+appState.history=appState.history.slice(0,20);save();render();
+showToast("Transfer complete! Welcome to "+name+" 🔥");
+}
+function showToast(message){
+var el=document.createElement("div");el.textContent=message;el.style.cssText="position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#d2ffe0;color:#0c2317;padding:13px 18px;border-radius:12px;font-weight:800;font-size:13px;z-index:20;box-shadow:0 12px 35px #0008;max-width:90%;text-align:center";
+document.body.appendChild(el);setTimeout(function(){el.remove()},2600);
+}
+render();
+if("serviceWorker" in navigator){window.addEventListener("load",function(){navigator.serviceWorker.register("./sw.js").catch(function(){})})}
+})();
+</script>
+</body>
+</html>
