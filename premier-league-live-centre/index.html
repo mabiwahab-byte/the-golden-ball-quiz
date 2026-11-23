@@ -19,7 +19,7 @@ header{border-bottom:1px solid var(--line);background:rgba(7,19,14,.86);backdrop
 .actions{display:flex;gap:9px;align-items:center}
 button,select,input{font:inherit}button{cursor:pointer}
 .refresh,.install{background:#173725;color:var(--white);border:1px solid #356147;border-radius:12px;padding:10px 13px;font-weight:750}
-.install{background:var(--green);color:#082014;border-color:var(--green)}.download{background:#173725;color:var(--lime);border:1px solid #5a8a55;border-radius:12px;padding:10px 13px;font-weight:850}.download:disabled{opacity:.65;cursor:wait}
+.install{background:var(--green);color:#082014;border-color:var(--green)}
 .hero{padding:38px 0 24px;display:flex;align-items:end;justify-content:space-between;gap:24px}
 .eyebrow{color:var(--lime);font-size:11px;font-weight:900;letter-spacing:.17em;text-transform:uppercase}
 h1{font-size:clamp(32px,5vw,54px);letter-spacing:-.045em;line-height:1.02;margin:8px 0 12px}
@@ -68,7 +68,7 @@ footer a{color:var(--lime);font-weight:750;text-decoration:none}
 <body>
 <header><div class="wrap top">
  <div class="brand"><div class="crest">⚽</div><div>PREMIER LEAGUE LIVE CENTRE<small>LIVE SCORES · FIXTURES · RESULTS</small></div></div>
- <div class="actions"><button class="download" id="downloadBtn" type="button" disabled>Preparing download…</button><button class="refresh" id="refreshBtn">↻ Refresh</button><button class="install" id="installBtn">＋ Install</button></div>
+ <div class="actions"><button class="refresh" id="refreshBtn">↻ Refresh</button><button class="install" id="installBtn">＋ Install</button></div>
 </div></header>
 <main class="wrap">
  <section class="hero"><div><div class="eyebrow">The matchday hub</div><h1>Every match.<br><span style="color:var(--green)">Every moment.</span></h1><p class="sub">Follow Premier League live scores, upcoming kick-offs and recent results — all in one place.</p></div><div class="livebox"><span class="dot"></span><span id="liveCountLabel">LIVE MATCHES · CHECKING</span></div></section>
@@ -202,48 +202,6 @@ async function loadMore(){
  catch(e){$('notice').innerHTML='<div class="error">Could not load more fixtures. Please try again.</div>';$('loadMoreBtn').textContent='Try loading next 14 days again';}
  finally{app.loading=false;}
 }
-
-async function buildDownloadZip(files){
- const encoder=new TextEncoder(),localParts=[],centralParts=[];let offset=0;
- const crcTable=new Uint32Array(256);
- for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=(c&1)?(0xedb88320^(c>>>1)):(c>>>1);crcTable[n]=c>>>0;}
- const crc32=bytes=>{let c=0xffffffff;for(const b of bytes)c=crcTable[(c^b)&255]^(c>>>8);return (c^0xffffffff)>>>0;};
- const join=parts=>{const size=parts.reduce((n,p)=>n+p.length,0),out=new Uint8Array(size);let at=0;for(const p of parts){out.set(p,at);at+=p.length;}return out;};
- const now=new Date(),dosTime=(now.getHours()<<11)|(now.getMinutes()<<5)|(Math.floor(now.getSeconds()/2)),dosDate=((Math.max(1980,now.getFullYear())-1980)<<9)|((now.getMonth()+1)<<5)|now.getDate();
- for(const file of files){
-  const name=encoder.encode(file.name),data=file.data instanceof Uint8Array?file.data:encoder.encode(file.data),crc=crc32(data);
-  const local=new Uint8Array(30+name.length),lv=new DataView(local.buffer);
-  lv.setUint32(0,0x04034b50,true);lv.setUint16(4,20,true);lv.setUint16(6,0x0800,true);lv.setUint16(8,0,true);lv.setUint16(10,dosTime,true);lv.setUint16(12,dosDate,true);lv.setUint32(14,crc,true);lv.setUint32(18,data.length,true);lv.setUint32(22,data.length,true);lv.setUint16(26,name.length,true);lv.setUint16(28,0,true);local.set(name,30);
-  localParts.push(local,data);
-  const central=new Uint8Array(46+name.length),cv=new DataView(central.buffer);
-  cv.setUint32(0,0x02014b50,true);cv.setUint16(4,20,true);cv.setUint16(6,20,true);cv.setUint16(8,0x0800,true);cv.setUint16(10,0,true);cv.setUint16(12,dosTime,true);cv.setUint16(14,dosDate,true);cv.setUint32(16,crc,true);cv.setUint32(20,data.length,true);cv.setUint32(24,data.length,true);cv.setUint16(28,name.length,true);cv.setUint16(30,0,true);cv.setUint16(32,0,true);cv.setUint16(34,0,true);cv.setUint16(36,0,true);cv.setUint32(38,0,true);cv.setUint32(42,offset,true);central.set(name,46);
-  centralParts.push(central);offset+=local.length+data.length;
- }
- const centralData=join(centralParts),localData=join(localParts),end=new Uint8Array(22),ev=new DataView(end.buffer);
- ev.setUint32(0,0x06054b50,true);ev.setUint16(4,0,true);ev.setUint16(6,0,true);ev.setUint16(8,files.length,true);ev.setUint16(10,files.length,true);ev.setUint32(12,centralData.length,true);ev.setUint32(16,localData.length,true);ev.setUint16(20,0,true);
- return new Blob([localData,centralData,end],{type:'application/zip'});
-}
-let appZipUrl=null;
-async function prepareAppDownload(){
- const button=$('downloadBtn');
- try{
-  const standaloneHtml='<!doctype html>\\n'+document.documentElement.outerHTML;
-  const manifest=JSON.stringify({name:'Premier League Live Centre',short_name:'PL Live Centre',description:'Live Premier League scores, fixtures and recent results.',start_url:'./',display:'standalone',background_color:'#07130e',theme_color:'#071b12',icons:[{src:'./icon.svg',sizes:'any',type:'image/svg+xml',purpose:'any maskable'}]},null,2);
-  const icon='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#50e18a"/><circle cx="256" cy="256" r="158" fill="#071b12"/><path d="M256 104 307 169 389 190 340 259 340 341 256 315 172 341 172 259 123 190 205 169Z" fill="#b5f36b" stroke="#071b12" stroke-width="14" stroke-linejoin="round"/><circle cx="256" cy="240" r="45" fill="#071b12"/></svg>';
-  const worker="const CACHE='pl-live-centre-v1';const SHELL=['./','./index.html','./manifest.webmanifest','./icon.svg'];self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(SHELL))));self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k))))));self.addEventListener('fetch',e=>{const u=new URL(e.request.url);if(u.origin===location.origin&&e.request.method==='GET')e.respondWith(fetch(e.request).then(r=>{const copy=r.clone();caches.open(CACHE).then(c=>c.put(e.request,copy));return r;}).catch(()=>caches.match(e.request)));});";
-  const readme='PREMIER LEAGUE LIVE CENTRE\\n\\nThis ZIP contains the website files. Extract the folder and upload it to a static website host to publish. The live version is https://premier-league-live-centre.onrender.com\\n\\nLive scores and fixtures need an internet connection. This is a website/PWA package, not a native Android or iPhone installation file.\\n';
-  const enc=new TextEncoder();
-  const files=[{name:'premier-league-live-centre/index.html',data:standaloneHtml},{name:'premier-league-live-centre/manifest.webmanifest',data:manifest},{name:'premier-league-live-centre/icon.svg',data:icon},{name:'premier-league-live-centre/sw.js',data:worker},{name:'premier-league-live-centre/README.txt',data:readme}].map(x=>({name:x.name,data:enc.encode(x.data)}));
-  const blob=await buildDownloadZip(files);
-  if(appZipUrl)URL.revokeObjectURL(appZipUrl);
-  appZipUrl=URL.createObjectURL(blob);button.disabled=false;button.textContent='⬇ Download app files (.ZIP)';button.title='Downloads a ZIP containing the website, app manifest, icon and service worker.';
- }catch(error){button.disabled=false;button.textContent='Download failed — retry';button.title=error.message;}
-}
-$('downloadBtn').addEventListener('click',()=>{
- if(!appZipUrl){prepareAppDownload();return;}
- const a=document.createElement('a');a.href=appZipUrl;a.download='premier-league-live-centre.zip';document.body.appendChild(a);a.click();a.remove();
-});
-prepareAppDownload();
 
 document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===b));app.tab=b.dataset.tab;render();}));
 $('clubFilter').addEventListener('change',render);$('searchInput').addEventListener('input',render);$('refreshBtn').addEventListener('click',()=>{ $('refreshBtn').textContent='↻ Updating…';refreshLive().finally(()=>$('refreshBtn').textContent='↻ Refresh');});$('loadMoreBtn').addEventListener('click',loadMore);
