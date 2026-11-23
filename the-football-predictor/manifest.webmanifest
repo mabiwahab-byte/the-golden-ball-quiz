@@ -1,1 +1,18 @@
-{"name":"The Football Predictor","short_name":"Football Picks","start_url":"./","scope":"./","display":"standalone","background_color":"#071b16","theme_color":"#071b16","description":"Predict tournament groups, knockout matches and champions."}
+{
+  "name": "The Football Predictor",
+  "short_name": "Football Picks",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#071b16",
+  "theme_color": "#071b16",
+  "description": "Predict tournament groups, knockout matches and champions.",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
