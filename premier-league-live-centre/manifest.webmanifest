@@ -1,0 +1,10 @@
+{
+  "name": "Premier League Live Centre",
+  "short_name": "PL Live Centre",
+  "description": "Live Premier League scores, upcoming fixtures and recent results.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#07130e",
+  "theme_color": "#071b12",
+  "icons": [{"src":"./icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
+}
