@@ -100,7 +100,7 @@ footer a{color:var(--lime);font-weight:750;text-decoration:none}
 </div></footer>
 <script>
 const API='https://sportscore.com/api/v1/fixtures/';
-const COMPETITION='jednm9whz0ryox8';
+const COMPETITION='premier-league';
 const app={tab:'live',matches:[],loadedDays:14,loading:false,lastUpdated:null,allDaysLoaded:false,installPrompt:null};
 const $=id=>document.getElementById(id);
 const pad=n=>String(n).padStart(2,'0');
@@ -129,8 +129,10 @@ async function fetchDate(d){
  const controller=new AbortController();const timeout=setTimeout(()=>controller.abort(),6500);
  try{
   const response=await fetch(url,{cache:'no-store',signal:controller.signal});if(!response.ok)throw new Error('Match feed returned '+response.status);
-  const payload=await response.json();const raw=payload.matches||payload.fixtures||payload.data||[];
-  return Array.isArray(raw)?raw.map(normalise):[];
+  const payload=await response.json();
+  const queue=[payload];let raw=[];
+  while(queue.length){const item=queue.shift();if(!item)continue;if(Array.isArray(item)){if(item.length&&item.some(x=>x&&typeof x==='object'&&(x.home||x.home_team||x.homeTeam||x.teams||x.participants))) {raw=item;break;}continue;}if(typeof item==='object'){for(const key of ['matches','fixtures','events','results','items'])if(Array.isArray(item[key])&&item[key].length){raw=item[key];break;}if(raw.length)break;for(const key of ['data','response','result'])if(item[key]&&typeof item[key]==='object')queue.push(item[key]);}}
+  return raw.map(normalise);
  }finally{clearTimeout(timeout);}
 }
 async function fetchRange(start,count){
@@ -217,21 +219,19 @@ async function buildDownloadZip(files){
 }
 let appZipUrl=null;
 async function prepareAppDownload(){
- const button=$('downloadBtn');button.disabled=true;button.textContent='Preparing download…';
+ const button=$('downloadBtn');
  try{
-  const fileNames=['index.html','manifest.webmanifest','icon.svg','sw.js'];
-  const packageFiles=[];
-  for(const name of fileNames){
-   const response=await fetch('./'+name,{cache:'no-store'});
-   if(!response.ok)throw new Error('Could not fetch '+name);
-   packageFiles.push({name:'premier-league-live-centre/'+name,data:new Uint8Array(await response.arrayBuffer())});
-  }
-  const readme='PREMIER LEAGUE LIVE CENTRE\\n\\nThis ZIP contains the website files.\\n\\nTo use the live match centre, visit: https://premier-league-live-centre.onrender.com\\n\\nTo install the website as an app, open the live HTTPS website in a supported browser and use Install app / Add to Home Screen.\\n\\nLive scores and fixtures require an internet connection and depend on the data provider. This package is website source files, not a native Android or iPhone app.\\n';
-  packageFiles.push({name:'premier-league-live-centre/README.txt',data:readme});
-  const blob=await buildDownloadZip(packageFiles);
+  const standaloneHtml='<!doctype html>\\n'+document.documentElement.outerHTML;
+  const manifest=JSON.stringify({name:'Premier League Live Centre',short_name:'PL Live Centre',description:'Live Premier League scores, fixtures and recent results.',start_url:'./',display:'standalone',background_color:'#07130e',theme_color:'#071b12',icons:[{src:'./icon.svg',sizes:'any',type:'image/svg+xml',purpose:'any maskable'}]},null,2);
+  const icon='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#50e18a"/><circle cx="256" cy="256" r="158" fill="#071b12"/><path d="M256 104 307 169 389 190 340 259 340 341 256 315 172 341 172 259 123 190 205 169Z" fill="#b5f36b" stroke="#071b12" stroke-width="14" stroke-linejoin="round"/><circle cx="256" cy="240" r="45" fill="#071b12"/></svg>';
+  const worker="const CACHE='pl-live-centre-v1';const SHELL=['./','./index.html','./manifest.webmanifest','./icon.svg'];self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(SHELL))));self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k))))));self.addEventListener('fetch',e=>{const u=new URL(e.request.url);if(u.origin===location.origin&&e.request.method==='GET')e.respondWith(fetch(e.request).then(r=>{const copy=r.clone();caches.open(CACHE).then(c=>c.put(e.request,copy));return r;}).catch(()=>caches.match(e.request)));});";
+  const readme='PREMIER LEAGUE LIVE CENTRE\\n\\nThis ZIP contains the website files. Extract the folder and upload it to a static website host to publish. The live version is https://premier-league-live-centre.onrender.com\\n\\nLive scores and fixtures need an internet connection. This is a website/PWA package, not a native Android or iPhone installation file.\\n';
+  const enc=new TextEncoder();
+  const files=[{name:'premier-league-live-centre/index.html',data:standaloneHtml},{name:'premier-league-live-centre/manifest.webmanifest',data:manifest},{name:'premier-league-live-centre/icon.svg',data:icon},{name:'premier-league-live-centre/sw.js',data:worker},{name:'premier-league-live-centre/README.txt',data:readme}].map(x=>({name:x.name,data:enc.encode(x.data)}));
+  const blob=await buildDownloadZip(files);
   if(appZipUrl)URL.revokeObjectURL(appZipUrl);
-  appZipUrl=URL.createObjectURL(blob);button.disabled=false;button.textContent='⬇ Download app files (.ZIP)';
- }catch(error){button.disabled=false;button.textContent='↻ Retry download setup';button.title=error.message;}
+  appZipUrl=URL.createObjectURL(blob);button.disabled=false;button.textContent='⬇ Download app files (.ZIP)';button.title='Downloads a ZIP containing the website, app manifest, icon and service worker.';
+ }catch(error){button.disabled=false;button.textContent='Download failed — retry';button.title=error.message;}
 }
 $('downloadBtn').addEventListener('click',()=>{
  if(!appZipUrl){prepareAppDownload();return;}
