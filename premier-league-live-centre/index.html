@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#071b12">
 <meta name="description" content="Premier League Live Centre — live scores, upcoming fixtures and recent results.">
 <link rel="manifest" href="./manifest.webmanifest">
-<link rel="icon" href="./icon.svg" type="image/svg+xml">
+<link rel="icon" href="./icon.svg" type="image/svg+xml">\n<link rel="apple-touch-icon" href="./icon-192.png">
 <title>Premier League Live Centre</title>
 <style>
 :root{color-scheme:dark;--bg:#07130e;--panel:#10251a;--panel2:#142e20;--line:#274332;--muted:#a9b9ae;--green:#50e18a;--lime:#b5f36b;--white:#f3f8f4;--red:#ff626b}
@@ -247,8 +247,26 @@ prepareAppDownload();
 
 document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===b));app.tab=b.dataset.tab;render();}));
 $('clubFilter').addEventListener('change',render);$('searchInput').addEventListener('input',render);$('refreshBtn').addEventListener('click',()=>{ $('refreshBtn').textContent='↻ Updating…';refreshLive().finally(()=>$('refreshBtn').textContent='↻ Refresh');});$('loadMoreBtn').addEventListener('click',loadMore);
-$('installBtn').addEventListener('click',async()=>{if(app.installPrompt){app.installPrompt.prompt();await app.installPrompt.userChoice;app.installPrompt=null;}else alert('To install: open your browser menu and choose “Install app” or “Add to Home Screen”. On iPhone, use Safari → Share → Add to Home Screen.');});
-window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();app.installPrompt=e;$('installBtn').textContent='＋ Install app';});
+$('installBtn').addEventListener('click',async()=>{
+ if(app.installPrompt){
+  app.installPrompt.prompt();
+  const choice=await app.installPrompt.userChoice;
+  app.installPrompt=null;
+  if(choice&&choice.outcome==='accepted'){$('installBtn').textContent='✓ Installed';}
+  return;
+ }
+ const isMac=/Macintosh|Mac OS X/.test(navigator.userAgent);
+ const isChrome=/Chrome/.test(navigator.userAgent)&&!/Edg|OPR/.test(navigator.userAgent);
+ if(isMac&&isChrome){
+  alert('To install Premier League Live Centre on your Mac:\\n1. Click the three dots (⋮) in Chrome at the top-right.\\n2. Choose “Cast, save, and share”.\\n3. Choose “Install page as app…”.\\n4. Click Install in the confirmation box.\\n\\nAfter that, it will open in its own app window.');
+ }else{
+  alert('Open your browser menu and choose “Install app” or “Add to Home Screen”. On iPhone or iPad, open this page in Safari, tap Share, then “Add to Home Screen”.');
+ }
+});
+window.addEventListener('beforeinstallprompt',e=>{
+ e.preventDefault();app.installPrompt=e;$('installBtn').textContent='＋ Install app';
+});
+window.addEventListener('appinstalled',()=>{$('installBtn').textContent='✓ Installed';$('installBtn').disabled=true;});
 if('serviceWorker'in navigator&&location.protocol==='https:')window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
 loadInitial();setInterval(refreshLive,60000);
 </script>
