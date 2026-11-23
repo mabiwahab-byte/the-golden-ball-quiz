@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#071b12">
+<meta name="description" content="Premier League Live Centre — live scores, upcoming fixtures and recent results.">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./icon.svg" type="image/svg+xml">
+<title>Premier League Live Centre</title>
+<style>
+:root{color-scheme:dark;--bg:#07130e;--panel:#10251a;--panel2:#142e20;--line:#274332;--muted:#a9b9ae;--green:#50e18a;--lime:#b5f36b;--white:#f3f8f4;--red:#ff626b}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -20%,#193a28 0,#07130e 58%);color:var(--white);font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;min-height:100vh}
+header{border-bottom:1px solid var(--line);background:rgba(7,19,14,.86);backdrop-filter:blur(14px);position:sticky;top:0;z-index:5}
+.wrap{max-width:1100px;margin:auto;padding:0 20px}
+.top{height:76px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:center;gap:12px;font-weight:850;letter-spacing:.02em}.crest{width:42px;height:42px;border-radius:13px;background:linear-gradient(145deg,#b5f36b,#50e18a);color:#092013;display:grid;place-items:center;font-size:22px;box-shadow:0 5px 24px #50e18a33}
+.brand small{display:block;color:var(--muted);font-size:10px;letter-spacing:.16em;font-weight:700}
+.actions{display:flex;gap:9px;align-items:center}
+button,select,input{font:inherit}button{cursor:pointer}
+.refresh,.install{background:#173725;color:var(--white);border:1px solid #356147;border-radius:12px;padding:10px 13px;font-weight:750}
+.install{background:var(--green);color:#082014;border-color:var(--green)}
+.hero{padding:38px 0 24px;display:flex;align-items:end;justify-content:space-between;gap:24px}
+.eyebrow{color:var(--lime);font-size:11px;font-weight:900;letter-spacing:.17em;text-transform:uppercase}
+h1{font-size:clamp(32px,5vw,54px);letter-spacing:-.045em;line-height:1.02;margin:8px 0 12px}
+.sub{color:var(--muted);margin:0;max-width:600px}
+.livebox{display:flex;align-items:center;gap:9px;background:#351b20;border:1px solid #6f3039;border-radius:13px;padding:11px 15px;font-weight:800;white-space:nowrap}
+.dot{width:9px;height:9px;border-radius:99px;background:var(--red);box-shadow:0 0 0 5px #ff626b20;animation:pulse 1.4s infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 9px #ff626b08}}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:10px 0 22px}
+.stat{padding:15px 17px;border:1px solid var(--line);background:#0d2016;border-radius:16px}
+.stat strong{display:block;font-size:27px;line-height:1.15}.stat span{color:var(--muted);font-size:12px;font-weight:650}
+.toolbar{border:1px solid var(--line);background:#0c1e14;border-radius:17px;padding:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:17px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tab{border:1px solid transparent;border-radius:10px;background:transparent;color:var(--muted);padding:9px 13px;font-weight:800}
+.tab.active{color:#072014;background:var(--green)}
+select,input{background:#12291b;border:1px solid #33533c;color:var(--white);border-radius:10px;padding:10px 12px;min-height:42px}
+input{flex:1;min-width:170px}
+.updated{margin-left:auto;color:var(--muted);font-size:12px}
+.section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:22px 0 12px}
+.section-head h2{font-size:18px;margin:0;letter-spacing:-.02em}
+.section-head span{color:var(--muted);font-size:12px}
+.matches{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+.match{background:linear-gradient(145deg,#12291b,#0d1f15);border:1px solid var(--line);border-radius:17px;padding:15px;min-width:0}
+.match-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:13px;gap:8px}
+.status{font-size:10px;font-weight:900;letter-spacing:.09em;color:var(--muted);text-transform:uppercase}
+.status.live{color:#ff7b83}.status.ft{color:#b7c2ba}
+.competition{font-size:10px;color:var(--muted);text-align:right}
+.teams{display:grid;grid-template-columns:minmax(0,1fr) 54px minmax(0,1fr);align-items:center;gap:8px}
+.team{display:flex;align-items:center;gap:9px;min-width:0;font-weight:760}
+.team.away{flex-direction:row-reverse;text-align:right}
+.team img{width:29px;height:29px;object-fit:contain;flex:none}.team-name{overflow-wrap:anywhere;font-size:13px}
+.score{text-align:center;font-size:23px;font-weight:900;letter-spacing:.05em;white-space:nowrap}
+.score.pending{font-size:15px;color:var(--muted);letter-spacing:0}
+.match-foot{display:flex;justify-content:space-between;gap:10px;margin-top:13px;padding-top:11px;border-top:1px solid #274332;font-size:11px;color:var(--muted)}
+.empty,.loading,.error{border:1px dashed #365341;background:#0d2016;border-radius:17px;padding:32px 18px;text-align:center;color:var(--muted)}
+.empty strong{display:block;color:var(--white);font-size:17px;margin-bottom:4px}
+.error{border-color:#87414a;color:#ffc1c5}
+.more{display:flex;justify-content:center;margin:18px 0 8px}
+.more button{background:#173725;border:1px solid #356147;color:var(--white);padding:11px 18px;border-radius:12px;font-weight:800}
+footer{border-top:1px solid var(--line);margin-top:44px;padding:22px 0 34px;color:var(--muted);font-size:12px}
+footer a{color:var(--lime);font-weight:750;text-decoration:none}
+.note{max-width:760px;margin-top:7px}
+@media(max-width:680px){.wrap{padding:0 13px}.top{height:66px}.brand{font-size:12px}.brand small{font-size:9px}.crest{width:37px;height:37px}.refresh{font-size:12px;padding:9px}.install{font-size:12px;padding:9px}.hero{padding:26px 0 18px;display:block}.livebox{display:inline-flex;margin-top:18px}.stats{gap:8px}.stat{padding:12px}.stat strong{font-size:23px}.stat span{font-size:10px}.matches{grid-template-columns:1fr}.updated{width:100%;margin-left:0}.toolbar{gap:8px}.tab{padding:8px 10px;font-size:12px}select{flex:1}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<header><div class="wrap top">
+ <div class="brand"><div class="crest">⚽</div><div>PREMIER LEAGUE LIVE CENTRE<small>LIVE SCORES · FIXTURES · RESULTS</small></div></div>
+ <div class="actions"><button class="refresh" id="refreshBtn">↻ Refresh</button><button class="install" id="installBtn">＋ Install</button></div>
+</div></header>
+<main class="wrap">
+ <section class="hero"><div><div class="eyebrow">The matchday hub</div><h1>Every match.<br><span style="color:var(--green)">Every moment.</span></h1><p class="sub">Follow Premier League live scores, upcoming kick-offs and recent results — all in one place.</p></div><div class="livebox"><span class="dot"></span><span id="liveCountLabel">LIVE MATCHES · CHECKING</span></div></section>
+ <section class="stats">
+  <div class="stat"><strong id="liveCount">—</strong><span>LIVE NOW</span></div>
+  <div class="stat"><strong id="upcomingCount">—</strong><span>UPCOMING · LOADED</span></div>
+  <div class="stat"><strong id="resultCount">—</strong><span>RECENT RESULTS</span></div>
+ </section>
+ <section class="toolbar" aria-label="Match filters">
+  <nav class="tabs" aria-label="Match status">
+   <button class="tab active" data-tab="live">🔴 Live</button>
+   <button class="tab" data-tab="upcoming">Upcoming</button>
+   <button class="tab" data-tab="results">Results</button>
+   <button class="tab" data-tab="all">All loaded</button>
+  </nav>
+  <select id="clubFilter" aria-label="Filter by club"><option value="">All clubs</option></select>
+  <input id="searchInput" type="search" placeholder="Search a club…" aria-label="Search clubs">
+  <span class="updated" id="updatedLabel">Connecting to match data…</span>
+ </section>
+ <div id="notice" aria-live="polite"></div>
+ <div class="section-head"><h2 id="sectionTitle">Live Premier League matches</h2><span id="sectionHint">Scores refresh automatically</span></div>
+ <section class="matches" id="matchList" aria-live="polite"><div class="loading">Loading Premier League match data…</div></section>
+ <div class="more" id="moreWrap" hidden><button id="loadMoreBtn">Load next 14 days of fixtures ↓</button></div>
+</main>
+<footer><div class="wrap">
+ <div>Independent fan project · Not affiliated with or endorsed by the Premier League.</div>
+ <div class="note">Fixtures and scores are supplied by <a href="https://sportscore.com/" rel="dofollow" target="_blank">Powered by SportScore</a>. Match data availability and update timing depend on the data provider.</div>
+ <div class="note" id="footerUpdated">Times are shown in your device's local timezone.</div>
+</div></footer>
+<script>
+const API='https://sportscore.com/api/v1/fixtures/';
+const COMPETITION='premier-league';
+const app={tab:'live',matches:[],loadedDays:14,loading:false,lastUpdated:null,allDaysLoaded:false,installPrompt:null};
+const $=id=>document.getElementById(id);
+const pad=n=>String(n).padStart(2,'0');
+const dayKey=d=>d.getUTCFullYear()+'-'+pad(d.getUTCMonth()+1)+'-'+pad(d.getUTCDate());
+const datePlus=(n)=>{const d=new Date();d.setUTCHours(0,0,0,0);d.setUTCDate(d.getUTCDate()+n);return d};
+const normalStatus=s=>String(s||'').toLowerCase();
+function pick(o,paths){for(const path of paths){let v=o;for(const k of path.split('.'))v=v?.[k];if(v!==undefined&&v!==null&&v!=='')return v;}return null;}
+function normalise(m){
+ const home=pick(m,['home','home_team.name','homeTeam.name','teams.home.name','participants.0.name'])||'Home';
+ const away=pick(m,['away','away_team.name','awayTeam.name','teams.away.name','participants.1.name'])||'Away';
+ const rawStatus=normalStatus(pick(m,['status','state','match_status','fixture.status'])||'upcoming');
+ const statusText=pick(m,['status_text','statusText','minute','elapsed','time_status'])||'';
+ const isLive=/live|in.progress|1h|2h|half.time|extra.time|penalt|playing/.test(rawStatus+' '+String(statusText).toLowerCase());
+ const isFinished=/finished|complete|full.time|ft|after.penalt|ended/.test(rawStatus+' '+String(statusText).toLowerCase());
+ const kickoff=pick(m,['time','utc_date','utcDate','kickoff','kickoff_time','start_time','date','fixture.date']);
+ const homeScore=pick(m,['home_score','homeScore','scores.home','score.home','goals.home','home_goals']);
+ const awayScore=pick(m,['away_score','awayScore','scores.away','score.away','goals.away','away_goals']);
+ const homeLogo=pick(m,['home_logo','homeLogo','home_team.logo','homeTeam.logo','teams.home.logo','participants.0.logo']);
+ const awayLogo=pick(m,['away_logo','awayLogo','away_team.logo','awayTeam.logo','teams.away.logo','participants.1.logo']);
+ const league=pick(m,['competition.name','competition','league.name','league','tournament.name'])||'Premier League';
+ return {...m,_home:String(home),_away:String(away),_status:isLive?'live':isFinished?'finished':'upcoming',_statusText:String(statusText),_kickoff:kickoff?new Date(kickoff):null,_hs:homeScore,_as:awayScore,_homeLogo:homeLogo,_awayLogo:awayLogo,_league:typeof league==='string'?league:(league.name||'Premier League')};
+}
+function uniqueMatches(list){const seen=new Set();return list.filter(m=>{const key=m.id||m.slug||[m._home,m._away,m._kickoff?.toISOString()].join('|');if(seen.has(key))return false;seen.add(key);return true;});}
+async function fetchDate(d){
+ const url=new URL(API);url.searchParams.set('sport','football');url.searchParams.set('date',dayKey(d));url.searchParams.set('competition',COMPETITION);url.searchParams.set('limit','200');url.searchParams.set('src','premier-league-live-centre');
+ const response=await fetch(url,{cache:'no-store'});if(!response.ok)throw new Error('Match feed returned '+response.status);
+ const payload=await response.json();const raw=payload.matches||payload.fixtures||payload.data||[];
+ return Array.isArray(raw)?raw.map(normalise):[];
+}
+async function fetchRange(start,count){
+ const dates=Array.from({length:count},(_,i)=>datePlus(start+i));const chunks=[];
+ for(let i=0;i<dates.length;i+=4){const group=dates.slice(i,i+4);const result=await Promise.allSettled(group.map(fetchDate));result.forEach((r,j)=>{if(r.status==='fulfilled')chunks.push(...r.value);else console.warn('Fixture date unavailable',dayKey(group[j]),r.reason);});}
+ return uniqueMatches(chunks);
+}
+function localDate(d){if(!d||isNaN(d))return 'Kick-off TBC';return new Intl.DateTimeFormat(undefined,{weekday:'short',day:'numeric',month:'short',hour:'numeric',minute:'2-digit'}).format(d);}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function logo(url,name){if(!url)return '<span style="width:29px;height:29px;display:grid;place-items:center;border-radius:50%;background:#244733;color:#b5f36b;font-size:12px;font-weight:900">'+esc(name.slice(0,1))+'</span>';return '<img loading="lazy" alt="" src="'+esc(url)+'" onerror="this.style.display=\\'none\\'">';}
+function card(m){
+ const live=m._status==='live',finished=m._status==='finished',status=live?'LIVE':finished?'FULL TIME':'UPCOMING';
+ const score=(m._hs!==null&&m._as!==null)?esc(m._hs)+' – '+esc(m._as):'VS';
+ let time=localDate(m._kickoff);
+ if(live&&m._statusText)time=esc(m._statusText);
+ return '<article class="match"><div class="match-top"><span class="status '+(live?'live':finished?'ft':'')+'">'+(live?'<span class="dot" style="display:inline-block;width:6px;height:6px;margin-right:5px"></span>':'')+status+'</span><span class="competition">'+esc(m._league)+'</span></div><div class="teams"><div class="team">'+logo(m._homeLogo,m._home)+'<span class="team-name">'+esc(m._home)+'</span></div><div class="score '+(!live&&!finished?'pending':'')+'">'+score+'</div><div class="team away">'+logo(m._awayLogo,m._away)+'<span class="team-name">'+esc(m._away)+'</span></div></div><div class="match-foot"><span>'+esc(time)+'</span><span>'+(live?'In progress':finished?'Result':'Local time')+'</span></div></article>';
+}
+function fillClubs(){
+ const select=$('clubFilter'),current=select.value;const clubs=[...new Set(app.matches.flatMap(m=>[m._home,m._away]))].sort((a,b)=>a.localeCompare(b));select.innerHTML='<option value="">All clubs</option>'+clubs.map(c=>'<option value="'+esc(c)+'">'+esc(c)+'</option>').join('');select.value=clubs.includes(current)?current:'';
+}
+function render(){
+ const live=app.matches.filter(m=>m._status==='live');
+ const upcoming=app.matches.filter(m=>m._status==='upcoming').sort((a,b)=>(a._kickoff||0)-(b._kickoff||0));
+ const results=app.matches.filter(m=>m._status==='finished').sort((a,b)=>(b._kickoff||0)-(a._kickoff||0));
+ $('liveCount').textContent=live.length;$('upcomingCount').textContent=upcoming.length;$('resultCount').textContent=results.length;
+ $('liveCountLabel').textContent=live.length?'LIVE MATCHES · '+live.length:'NO MATCHES LIVE';
+ const all=app.tab==='live'?live:app.tab==='upcoming'?upcoming:app.tab==='results'?results:app.matches.slice().sort((a,b)=>(b._kickoff||0)-(a._kickoff||0));
+ const club=$('clubFilter').value.toLowerCase(),term=$('searchInput').value.trim().toLowerCase();
+ const filtered=all.filter(m=>(!club||m._home.toLowerCase()===club||m._away.toLowerCase()===club)&&(!term||(m._home+' '+m._away).toLowerCase().includes(term)));
+ const titles={live:'Live Premier League matches',upcoming:'Upcoming fixtures',results:'Recent results',all:'All loaded matches'};
+ $('sectionTitle').textContent=titles[app.tab];$('sectionHint').textContent=app.tab==='live'?'Auto-refreshes every 60 seconds':app.tab==='upcoming'?'Kick-off times shown in your local timezone':'Latest loaded match data';
+ $('matchList').innerHTML=filtered.length?filtered.map(card).join(''):'<div class="empty" style="grid-column:1/-1"><strong>'+(app.tab==='live'?'No Premier League matches live right now':app.tab==='upcoming'?'No upcoming fixtures in the loaded date range':app.tab==='results'?'No recent results in the loaded date range':'No matches match these filters')+'</strong>'+(app.tab==='live'?'Check upcoming fixtures or come back at kick-off.':'Try changing your filters or load more fixture dates.')+'</div>';
+ $('moreWrap').hidden=app.tab!=='upcoming'&&app.tab!=='all';
+ if(app.lastUpdated){const value=new Intl.DateTimeFormat(undefined,{hour:'numeric',minute:'2-digit',second:'2-digit'}).format(app.lastUpdated);$('updatedLabel').textContent='Updated '+value;$('footerUpdated').textContent='Last refreshed '+value+' · Times are shown in your device local timezone.';}
+}
+async function loadInitial(){
+ if(app.loading)return;app.loading=true;$('matchList').innerHTML='<div class="loading" style="grid-column:1/-1">Loading live scores and upcoming Premier League fixtures…</div>';$('notice').innerHTML='';
+ try{
+  const [recent,coming]=await Promise.all([fetchRange(-3,4),fetchRange(0,14)]);
+  app.matches=uniqueMatches([...recent,...coming]);app.loadedDays=14;app.lastUpdated=new Date();fillClubs();render();
+  if(!app.matches.length)$('notice').innerHTML='<div class="empty" style="margin-bottom:12px">The data provider returned no Premier League fixtures for this period. Try refreshing shortly.</div>';
+ }catch(e){$('matchList').innerHTML='<div class="error" style="grid-column:1/-1"><strong>Could not load match data.</strong><br>'+esc(e.message)+'<br><button class="refresh" style="margin-top:12px" onclick="loadInitial()">Try again</button></div>';$('notice').innerHTML='<div class="note">Please check your connection. Scores are never filled with made-up results.</div>';}
+ finally{app.loading=false;}
+}
+async function refreshLive(){
+ try{const today=await fetchDate(datePlus(0));const notToday=app.matches.filter(m=>!m._kickoff||dayKey(m._kickoff)!==dayKey(new Date()));app.matches=uniqueMatches([...notToday,...today]);app.lastUpdated=new Date();fillClubs();render();}
+ catch(e){$('updatedLabel').textContent='Refresh unavailable';}
+}
+async function loadMore(){
+ if(app.loading)return;app.loading=true;$('loadMoreBtn').textContent='Loading fixtures…';
+ try{const start=app.loadedDays+1;const next=await fetchRange(start,14);app.matches=uniqueMatches([...app.matches,...next]);app.loadedDays+=14;app.lastUpdated=new Date();fillClubs();render();$('loadMoreBtn').textContent='Load next 14 days of fixtures ↓';if(!next.length)$('notice').innerHTML='<div class="note">No Premier League fixtures were returned in this next 14-day window.</div>';}
+ catch(e){$('notice').innerHTML='<div class="error">Could not load more fixtures. Please try again.</div>';$('loadMoreBtn').textContent='Try loading next 14 days again';}
+ finally{app.loading=false;}
+}
+document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===b));app.tab=b.dataset.tab;render();}));
+$('clubFilter').addEventListener('change',render);$('searchInput').addEventListener('input',render);$('refreshBtn').addEventListener('click',()=>{ $('refreshBtn').textContent='↻ Updating…';refreshLive().finally(()=>$('refreshBtn').textContent='↻ Refresh');});$('loadMoreBtn').addEventListener('click',loadMore);
+$('installBtn').addEventListener('click',async()=>{if(app.installPrompt){app.installPrompt.prompt();await app.installPrompt.userChoice;app.installPrompt=null;}else alert('To install: open your browser menu and choose “Install app” or “Add to Home Screen”. On iPhone, use Safari → Share → Add to Home Screen.');});
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();app.installPrompt=e;$('installBtn').textContent='＋ Install app';});
+if('serviceWorker'in navigator&&location.protocol==='https:')window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+loadInitial();setInterval(refreshLive,60000);
+</script>
+</body></html>
