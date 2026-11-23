@@ -19,7 +19,7 @@ header{border-bottom:1px solid var(--line);background:rgba(7,19,14,.86);backdrop
 .actions{display:flex;gap:9px;align-items:center}
 button,select,input{font:inherit}button{cursor:pointer}
 .refresh,.install{background:#173725;color:var(--white);border:1px solid #356147;border-radius:12px;padding:10px 13px;font-weight:750}
-.install{background:var(--green);color:#082014;border-color:var(--green)}
+.install{background:var(--green);color:#082014;border-color:var(--green)}.download{background:#173725;color:var(--lime);border:1px solid #5a8a55;border-radius:12px;padding:10px 13px;font-weight:850}.download:disabled{opacity:.65;cursor:wait}
 .hero{padding:38px 0 24px;display:flex;align-items:end;justify-content:space-between;gap:24px}
 .eyebrow{color:var(--lime);font-size:11px;font-weight:900;letter-spacing:.17em;text-transform:uppercase}
 h1{font-size:clamp(32px,5vw,54px);letter-spacing:-.045em;line-height:1.02;margin:8px 0 12px}
@@ -68,7 +68,7 @@ footer a{color:var(--lime);font-weight:750;text-decoration:none}
 <body>
 <header><div class="wrap top">
  <div class="brand"><div class="crest">⚽</div><div>PREMIER LEAGUE LIVE CENTRE<small>LIVE SCORES · FIXTURES · RESULTS</small></div></div>
- <div class="actions"><button class="refresh" id="refreshBtn">↻ Refresh</button><button class="install" id="installBtn">＋ Install</button></div>
+ <div class="actions"><button class="download" id="downloadBtn" type="button" disabled>Preparing download…</button><button class="refresh" id="refreshBtn">↻ Refresh</button><button class="install" id="installBtn">＋ Install</button></div>
 </div></header>
 <main class="wrap">
  <section class="hero"><div><div class="eyebrow">The matchday hub</div><h1>Every match.<br><span style="color:var(--green)">Every moment.</span></h1><p class="sub">Follow Premier League live scores, upcoming kick-offs and recent results — all in one place.</p></div><div class="livebox"><span class="dot"></span><span id="liveCountLabel">LIVE MATCHES · CHECKING</span></div></section>
@@ -182,6 +182,51 @@ async function loadMore(){
  catch(e){$('notice').innerHTML='<div class="error">Could not load more fixtures. Please try again.</div>';$('loadMoreBtn').textContent='Try loading next 14 days again';}
  finally{app.loading=false;}
 }
+
+async function buildDownloadZip(files){
+ const encoder=new TextEncoder(),localParts=[],centralParts=[];let offset=0;
+ const crcTable=new Uint32Array(256);
+ for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=(c&1)?(0xedb88320^(c>>>1)):(c>>>1);crcTable[n]=c>>>0;}
+ const crc32=bytes=>{let c=0xffffffff;for(const b of bytes)c=crcTable[(c^b)&255]^(c>>>8);return (c^0xffffffff)>>>0;};
+ const join=parts=>{const size=parts.reduce((n,p)=>n+p.length,0),out=new Uint8Array(size);let at=0;for(const p of parts){out.set(p,at);at+=p.length;}return out;};
+ const now=new Date(),dosTime=(now.getHours()<<11)|(now.getMinutes()<<5)|(Math.floor(now.getSeconds()/2)),dosDate=((Math.max(1980,now.getFullYear())-1980)<<9)|((now.getMonth()+1)<<5)|now.getDate();
+ for(const file of files){
+  const name=encoder.encode(file.name),data=file.data instanceof Uint8Array?file.data:encoder.encode(file.data),crc=crc32(data);
+  const local=new Uint8Array(30+name.length),lv=new DataView(local.buffer);
+  lv.setUint32(0,0x04034b50,true);lv.setUint16(4,20,true);lv.setUint16(6,0x0800,true);lv.setUint16(8,0,true);lv.setUint16(10,dosTime,true);lv.setUint16(12,dosDate,true);lv.setUint32(14,crc,true);lv.setUint32(18,data.length,true);lv.setUint32(22,data.length,true);lv.setUint16(26,name.length,true);lv.setUint16(28,0,true);local.set(name,30);
+  localParts.push(local,data);
+  const central=new Uint8Array(46+name.length),cv=new DataView(central.buffer);
+  cv.setUint32(0,0x02014b50,true);cv.setUint16(4,20,true);cv.setUint16(6,20,true);cv.setUint16(8,0x0800,true);cv.setUint16(10,0,true);cv.setUint16(12,dosTime,true);cv.setUint16(14,dosDate,true);cv.setUint32(16,crc,true);cv.setUint32(20,data.length,true);cv.setUint32(24,data.length,true);cv.setUint16(28,name.length,true);cv.setUint16(30,0,true);cv.setUint16(32,0,true);cv.setUint16(34,0,true);cv.setUint16(36,0,true);cv.setUint32(38,0,true);cv.setUint32(42,offset,true);central.set(name,46);
+  centralParts.push(central);offset+=local.length+data.length;
+ }
+ const centralData=join(centralParts),localData=join(localParts),end=new Uint8Array(22),ev=new DataView(end.buffer);
+ ev.setUint32(0,0x06054b50,true);ev.setUint16(4,0,true);ev.setUint16(6,0,true);ev.setUint16(8,files.length,true);ev.setUint16(10,files.length,true);ev.setUint32(12,centralData.length,true);ev.setUint32(16,localData.length,true);ev.setUint16(20,0,true);
+ return new Blob([localData,centralData,end],{type:'application/zip'});
+}
+let appZipUrl=null;
+async function prepareAppDownload(){
+ const button=$('downloadBtn');button.disabled=true;button.textContent='Preparing download…';
+ try{
+  const fileNames=['index.html','manifest.webmanifest','icon.svg','sw.js'];
+  const packageFiles=[];
+  for(const name of fileNames){
+   const response=await fetch('./'+name,{cache:'no-store'});
+   if(!response.ok)throw new Error('Could not fetch '+name);
+   packageFiles.push({name:'premier-league-live-centre/'+name,data:new Uint8Array(await response.arrayBuffer())});
+  }
+  const readme='PREMIER LEAGUE LIVE CENTRE\\n\\nThis ZIP contains the website files.\\n\\nTo use the live match centre, visit: https://premier-league-live-centre.onrender.com\\n\\nTo install the website as an app, open the live HTTPS website in a supported browser and use Install app / Add to Home Screen.\\n\\nLive scores and fixtures require an internet connection and depend on the data provider. This package is website source files, not a native Android or iPhone app.\\n';
+  packageFiles.push({name:'premier-league-live-centre/README.txt',data:readme});
+  const blob=await buildDownloadZip(packageFiles);
+  if(appZipUrl)URL.revokeObjectURL(appZipUrl);
+  appZipUrl=URL.createObjectURL(blob);button.disabled=false;button.textContent='⬇ Download app files (.ZIP)';
+ }catch(error){button.disabled=false;button.textContent='↻ Retry download setup';button.title=error.message;}
+}
+$('downloadBtn').addEventListener('click',()=>{
+ if(!appZipUrl){prepareAppDownload();return;}
+ const a=document.createElement('a');a.href=appZipUrl;a.download='premier-league-live-centre.zip';document.body.appendChild(a);a.click();a.remove();
+});
+prepareAppDownload();
+
 document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===b));app.tab=b.dataset.tab;render();}));
 $('clubFilter').addEventListener('change',render);$('searchInput').addEventListener('input',render);$('refreshBtn').addEventListener('click',()=>{ $('refreshBtn').textContent='↻ Updating…';refreshLive().finally(()=>$('refreshBtn').textContent='↻ Refresh');});$('loadMoreBtn').addEventListener('click',loadMore);
 $('installBtn').addEventListener('click',async()=>{if(app.installPrompt){app.installPrompt.prompt();await app.installPrompt.userChoice;app.installPrompt=null;}else alert('To install: open your browser menu and choose “Install app” or “Add to Home Screen”. On iPhone, use Safari → Share → Add to Home Screen.');});
