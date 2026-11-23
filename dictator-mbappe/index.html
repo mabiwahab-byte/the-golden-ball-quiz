@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#171020"><meta name="description" content="A ridiculous Mbappe football meme game.">
+<link rel="manifest" href="./manifest.webmanifest"><link rel="icon" href="./icon.svg" type="image/svg+xml">
+<title>Dictator Mbappé — The Meme Game</title>
+<style>
+:root{--bg:#100d18;--panel:#211a2d;--ink:#fff8ef;--muted:#c7b9d3;--gold:#ffd45c;--pink:#ff5f8f;--blue:#7bdcff}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 80% 0,#40234b 0,transparent 38%),var(--bg);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,sans-serif;min-height:100vh}
+header{padding:26px 18px 18px;text-align:center} .crown{font-size:48px;filter:drop-shadow(0 4px 10px #0008)}h1{font-size:clamp(2.2rem,8vw,4.5rem);line-height:.95;margin:8px 0;color:var(--gold);letter-spacing:-2px;text-shadow:3px 4px 0 #8d315e}header p{color:var(--muted);margin:14px auto;max-width:560px}
+main{width:min(920px,92vw);margin:0 auto 48px}.topbar{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:12px 0}.pill{background:#30263e;border:1px solid #59466b;border-radius:99px;padding:9px 14px;font-weight:800}
+.panel{background:linear-gradient(145deg,#2a2038,#1c1727);border:1px solid #59466b;border-radius:22px;padding:clamp(18px,4vw,30px);box-shadow:0 18px 50px #0005;margin:18px 0}
+.kicker{color:var(--blue);font-size:.8rem;font-weight:900;letter-spacing:2px;text-transform:uppercase}.scene{font-size:clamp(1.35rem,4vw,2.1rem);font-weight:900;line-height:1.2;margin:12px 0 22px}.choices{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
+button{font:inherit;cursor:pointer;border:0;border-radius:14px;padding:14px 16px;font-weight:850;transition:transform .15s,filter .15s}button:hover{transform:translateY(-2px);filter:brightness(1.08)}button:focus-visible{outline:3px solid var(--blue);outline-offset:3px}.choice{background:#3a2d4b;color:var(--ink);border:1px solid #6a557e;text-align:left;min-height:72px}.choice span{display:block;font-size:1.5rem;margin-bottom:5px}.primary{background:var(--gold);color:#241629}.secondary{background:#463650;color:white;border:1px solid #775d85}
+.result{display:none;text-align:center}.result .big{font-size:4rem}.result h2{font-size:2rem;margin:8px}.meme{background:#fff4db;color:#26172b;border:5px solid white;border-radius:16px;padding:20px;margin:18px auto;max-width:520px;box-shadow:0 10px 30px #0005}.meme .top,.meme .bottom{font-weight:1000;text-transform:uppercase;font-size:clamp(1.2rem,4vw,1.8rem);line-height:1.12}.meme .art{font-size:5rem;margin:12px}.meme small{display:block;color:#68576a;margin-top:10px}.actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:16px}.note{color:var(--muted);font-size:.88rem;text-align:center}.hidden{display:none!important}
+</style>
+</head>
+<body>
+<header><div class="crown">👑⚽</div><h1>DICTATOR<br>MBAPPÉ</h1><p>The completely unserious football meme game. Follow the orders. Make the memes. Protect the vibes.</p></header>
+<main>
+<div class="topbar"><div class="pill">😂 Meme points: <span id="score">0</span></div><div class="pill">🏆 Rank: <span id="rank">Benchwarmer</span></div><div class="pill">📜 Orders completed: <span id="done">0</span></div></div>
+<section class="panel" id="game"><div class="kicker" id="round">ORDER 1</div><div class="scene" id="scene">The boss has arrived at training. What is the first order?</div><div class="choices" id="choices"></div></section>
+<section class="panel result" id="result" aria-live="polite"><div class="big" id="emoji">😎</div><h2 id="resultTitle">Order completed!</h2><p id="resultText"></p><div class="meme" id="meme"><div class="top" id="memeTop">WHEN THE BOSS ARRIVES</div><div class="art" id="memeArt">👑⚽</div><div class="bottom" id="memeBottom">EVERYONE ACTS BUSY</div><small>DICTATOR MBAPPÉ MEME DEPARTMENT</small></div><div class="actions"><button class="primary" id="next">Next order ➜</button><button class="secondary" id="copy">Copy meme text</button></div></section>
+<section class="panel"><div class="kicker">YOUR MISSION</div><h2>Build your meme empire</h2><p>Pick the funniest response to each ridiculous football situation. Earn points, climb the ranks and unlock your legendary status.</p><p class="note">This is a fictional football parody, just for laughs. No real-world politics involved.</p></section>
+</main>
+<script>
+const orders=[
+{q:"The boss walks into training and sees everyone stretching. What is the first order?",a:[["🧊","Make the grass wear sunglasses", "Iconic. The pitch is now too cool."],["🎤","Everyone must announce their warm-up", "The press conference lasts 45 minutes."],["🕺","Replace stretches with a victory dance", "The physio has officially resigned."],["🍟","Declare chips the official recovery food", "Nutritionists everywhere are confused."]]},
+{q:"A teammate scores in training and celebrates. What happens next?",a:[["👑","The goal must be reviewed by the crown", "VAR has been replaced by Vibe Assessment Review."],["📸","Demand a 27-photo photoshoot", "One goal. Twenty-seven angles."],["🎉","Start a parade around the cones", "The cones are loving the attention."],["🧤","Give the goalkeeper a sympathy trophy", "A beautiful act of football diplomacy."]]},
+{q:"The team bus is five minutes late. Choose the official response.",a:[["🚌","Put the bus on the transfer list", "Breaking: bus linked with a move abroad."],["⏰","Make every clock apologise", "Time itself has issued a statement."],["🎶","Start a bus-arrival chant", "The neighbours now know the squad list."],["🛋️","Turn the car park into a team lounge", "Away days just got luxurious."]]},
+{q:"The referee gives a questionable throw-in. What is the meme-worthy reaction?",a:[["🧐","Request a 400-page investigation", "The throw-in is now a documentary."],["🧑‍⚖️","Ask the linesman for a courtroom", "Order in the football court!"],["🧘","Remain unbelievably calm", "The calmest person in the stadium. Suspicious."],["📢","Ask the stadium DJ for dramatic music", "A tiny decision gets a blockbuster soundtrack."]]},
+{q:"The final whistle goes. The team wins 1–0. What is the celebration?",a:[["🏆","Lift an imaginary trophy", "The imagination league champions!"],["🕶️","Walk away in slow motion", "Main-character energy detected."],["🍰","Order a celebration cake", "The cake has better finishing than most strikers."],["🎮","Replay the match on a video game", "Time to win it again, obviously."]]}
+];
+let index=0,score=0,done=0,current=null;
+const $=id=>document.getElementById(id);
+function rank(){return score>=40?"Meme Emperor 👑":score>=25?"Club Legend ⭐":score>=10?"Squad Regular ⚽":"Benchwarmer 🪑"}
+function update(){ $("score").textContent=score;$("done").textContent=done;$("rank").textContent=rank()}
+function showOrder(){if(index>=orders.length){index=0}const o=orders[index];$("round").textContent="ORDER "+(index+1)+" OF "+orders.length;$("scene").textContent=o.q;$("choices").innerHTML="";o.a.forEach((a,i)=>{const b=document.createElement("button");b.className="choice";b.innerHTML="<span>"+a[0]+"</span>"+a[1];b.addEventListener("click",()=>choose(i));$("choices").appendChild(b)});$("game").classList.remove("hidden");$("result").style.display="none"}
+function choose(i){const a=orders[index].a[i];current=a;const points=5+(i===0?2:0);score+=points;done++;update();$("game").classList.add("hidden");$("result").style.display="block";$("emoji").textContent=a[0];$("resultTitle").textContent="+"+points+" MEME POINTS!";$("resultText").textContent=a[2];$("memeTop").textContent="WHEN THE BOSS SAYS:";$("memeArt").textContent=a[0]+"⚽";$("memeBottom").textContent=a[1].toUpperCase()}
+$("next").addEventListener("click",()=>{index++;showOrder()});
+$("copy").addEventListener("click",async()=>{const text="WHEN THE BOSS SAYS: "+current[1].toUpperCase()+"\n"+current[2];try{await navigator.clipboard.writeText(text);$("copy").textContent="Copied! ✓"}catch{$("copy").textContent="Select the meme text to copy"}});
+showOrder();update();
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
+</script>
+</body></html>
