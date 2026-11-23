@@ -95,44 +95,50 @@ footer a{color:var(--lime);font-weight:750;text-decoration:none}
 </main>
 <footer><div class="wrap">
  <div>Independent fan project · Not affiliated with or endorsed by the Premier League.</div>
- <div class="note">Fixtures and scores are supplied by <a href="https://sportscore.com/" rel="dofollow" target="_blank">Powered by SportScore</a>. Match data availability and update timing depend on the data provider.</div>
+ <div class="note">Live scores and fixtures are loaded from ESPN's public scoreboard feed. Match data availability and update timing depend on the data provider.</div>
  <div class="note" id="footerUpdated">Times are shown in your device's local timezone.</div>
 </div></footer>
 <script>
-const API='https://sportscore.com/api/v1/fixtures/';
-const COMPETITION='premier-league';
+const API='https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard';
 const app={tab:'live',matches:[],loadedDays:14,loading:false,lastUpdated:null,allDaysLoaded:false,installPrompt:null};
 const $=id=>document.getElementById(id);
 const pad=n=>String(n).padStart(2,'0');
+const espnDay=d=>d.getUTCFullYear()+pad(d.getUTCMonth()+1)+pad(d.getUTCDate());
 const dayKey=d=>d.getUTCFullYear()+'-'+pad(d.getUTCMonth()+1)+'-'+pad(d.getUTCDate());
 const datePlus=(n)=>{const d=new Date();d.setUTCHours(0,0,0,0);d.setUTCDate(d.getUTCDate()+n);return d};
-const normalStatus=s=>String(s||'').toLowerCase();
-function pick(o,paths){for(const path of paths){let v=o;for(const k of path.split('.'))v=v?.[k];if(v!==undefined&&v!==null&&v!=='')return v;}return null;}
 function normalise(m){
- const home=pick(m,['home','home_team.name','homeTeam.name','teams.home.name','participants.0.name'])||'Home';
- const away=pick(m,['away','away_team.name','awayTeam.name','teams.away.name','participants.1.name'])||'Away';
- const rawStatus=normalStatus(pick(m,['status','state','match_status','fixture.status'])||'upcoming');
- const statusText=pick(m,['status_text','statusText','minute','elapsed','time_status'])||'';
- const isLive=/live|in.progress|1h|2h|half.time|extra.time|penalt|playing/.test(rawStatus+' '+String(statusText).toLowerCase());
- const isFinished=/finished|complete|full.time|ft|after.penalt|ended/.test(rawStatus+' '+String(statusText).toLowerCase());
- const kickoff=pick(m,['time','utc_date','utcDate','kickoff','kickoff_time','start_time','date','fixture.date']);
- const homeScore=pick(m,['home_score','homeScore','scores.home','score.home','goals.home','home_goals']);
- const awayScore=pick(m,['away_score','awayScore','scores.away','score.away','goals.away','away_goals']);
- const homeLogo=pick(m,['home_logo','homeLogo','home_team.logo','homeTeam.logo','teams.home.logo','participants.0.logo']);
- const awayLogo=pick(m,['away_logo','awayLogo','away_team.logo','awayTeam.logo','teams.away.logo','participants.1.logo']);
- const league=pick(m,['competition.name','competition','league.name','league','tournament.name'])||'Premier League';
- return {...m,_home:String(home),_away:String(away),_status:isLive?'live':isFinished?'finished':'upcoming',_statusText:String(statusText),_kickoff:kickoff?new Date(kickoff):null,_hs:homeScore,_as:awayScore,_homeLogo:homeLogo,_awayLogo:awayLogo,_league:typeof league==='string'?league:(league.name||'Premier League')};
+ const competition=m.competitions?.[0]||{};
+ const competitors=competition.competitors||[];
+ const home=competitors.find(c=>c.homeAway==='home')||competitors[0]||{};
+ const away=competitors.find(c=>c.homeAway==='away')||competitors[1]||{};
+ const state=String(m.status?.type?.state||'pre').toLowerCase();
+ const isLive=state==='in'||m.status?.type?.name==='STATUS_IN_PROGRESS';
+ const isFinished=state==='post'||m.status?.type?.completed===true;
+ const statusText=m.status?.displayClock||m.status?.type?.shortDetail||m.status?.type?.detail||'';
+ const logo=c=>c.team?.logo||c.team?.logos?.[0]?.href||null;
+ return {
+  id:m.id,
+  _home:String(home.team?.displayName||home.team?.name||'Home'),
+  _away:String(away.team?.displayName||away.team?.name||'Away'),
+  _status:isLive?'live':isFinished?'finished':'upcoming',
+  _statusText:String(statusText),
+  _kickoff:m.date?new Date(m.date):null,
+  _hs:home.score===undefined||home.score===null||home.score===''?null:home.score,
+  _as:away.score===undefined||away.score===null||away.score===''?null:away.score,
+  _homeLogo:logo(home),
+  _awayLogo:logo(away),
+  _league:'Premier League'
+ };
 }
 function uniqueMatches(list){const seen=new Set();return list.filter(m=>{const key=m.id||m.slug||[m._home,m._away,m._kickoff?.toISOString()].join('|');if(seen.has(key))return false;seen.add(key);return true;});}
 async function fetchDate(d){
- const url=new URL(API);url.searchParams.set('sport','football');url.searchParams.set('date',dayKey(d));url.searchParams.set('competition',COMPETITION);url.searchParams.set('limit','200');
- const controller=new AbortController();const timeout=setTimeout(()=>controller.abort(),6500);
+ const url=new URL(API);url.searchParams.set('dates',espnDay(d));url.searchParams.set('limit','100');
+ const controller=new AbortController();const timeout=setTimeout(()=>controller.abort(),8000);
  try{
-  const response=await fetch(url,{cache:'no-store',signal:controller.signal});if(!response.ok)throw new Error('Match feed returned '+response.status);
+  const response=await fetch(url,{cache:'no-store',signal:controller.signal});
+  if(!response.ok)throw new Error('Scoreboard returned '+response.status);
   const payload=await response.json();
-  const queue=[payload];let raw=[];
-  while(queue.length){const item=queue.shift();if(!item)continue;if(Array.isArray(item)){if(item.length&&item.some(x=>x&&typeof x==='object'&&(x.home||x.home_team||x.homeTeam||x.teams||x.participants))) {raw=item;break;}continue;}if(typeof item==='object'){for(const key of ['matches','fixtures','events','results','items'])if(Array.isArray(item[key])&&item[key].length){raw=item[key];break;}if(raw.length)break;for(const key of ['data','response','result'])if(item[key]&&typeof item[key]==='object')queue.push(item[key]);}}
-  return raw.map(normalise);
+  return Array.isArray(payload.events)?payload.events.map(normalise):[];
  }finally{clearTimeout(timeout);}
 }
 async function fetchRange(start,count){
