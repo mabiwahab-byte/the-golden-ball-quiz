@@ -32,10 +32,35 @@ button{border:0;border-radius:11px;padding:11px 16px;background:var(--green);col
 <div class="footer">Unofficial fan-made prediction app · Not affiliated with FIFA or UEFA</div>
 </main>
 <script>
-const $=s=>document.querySelector(s);const storeKey='footballPredictorV1';
+const storeKey='footballPredictorV2';
 const templates={euro:{groups:6,teams:4,title:'EURO 2028'},world:{groups:12,teams:4,title:'World Cup 2030'},custom:{groups:2,teams:4,title:'Custom tournament'}};
+const teamSets={
+euro:[
+['Spain','France','Italy','Denmark'],
+['England','Netherlands','Croatia','Serbia'],
+['Germany','Portugal','Switzerland','Scotland'],
+['Belgium','Austria','Türkiye','Czechia'],
+['Norway','Sweden','Poland','Ukraine'],
+['Wales','Republic of Ireland','Greece','Finland']
+],
+world:[
+['Spain','Japan','Ghana','New Zealand'],
+['Argentina','Denmark','Egypt','Qatar'],
+['France','Colombia','South Korea','Tunisia'],
+['Brazil','Switzerland','Senegal','Iraq'],
+['England','Uruguay','Australia','Costa Rica'],
+['Portugal','Croatia','Morocco','Canada'],
+['Germany','Ecuador','Nigeria','Saudi Arabia'],
+['Netherlands','Mexico','Norway','South Africa'],
+['Belgium','USA','Algeria','Uzbekistan'],
+['Sweden','Paraguay','Cameroon','Panama'],
+['Austria','Chile','Ivory Coast','Jamaica'],
+['Türkiye','Ukraine','Iran','DR Congo']
+],
+custom:[['Australia','Argentina','Brazil','France'],['England','Spain','Japan','Senegal']]
+};
 let state={type:'euro',groups:[],bracket:[],champion:''};
-function blank(type){const t=templates[type];return {type,groups:Array.from({length:t.groups},(_,g)=>Array.from({length:t.teams},(_,i)=>({name:'Group '+String.fromCharCode(65+g)+' · Team '+(i+1),qualified:false}))),bracket:[],champion:''}}
+function blank(type){const names=teamSets[type]||teamSets.custom;return {type,groups:names.map(group=>group.map(name=>({name,qualified:false}))),bracket:[],champion:''}}
 function load(){try{const x=JSON.parse(localStorage.getItem(storeKey));if(x&&x.groups?.length)state=x;else state=blank('euro')}catch{state=blank('euro')}$('#tournament').value=state.type}
 function save(){try{localStorage.setItem(storeKey,JSON.stringify(state));$('#saveState').textContent='✓ Saved on this device'}catch{$('#saveState').textContent='Could not save on this device'}}
 function qualified(){return state.groups.flat().filter(t=>t.qualified).map(t=>t.name.trim()).filter(Boolean)}
