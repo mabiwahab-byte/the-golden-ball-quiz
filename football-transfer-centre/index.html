@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#07111f"><meta name="description" content="Football Transfer Centre — track football moves, rumours and confirmed deals.">
+<link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon.svg" type="image/svg+xml">
+<title>Football Transfer Centre</title>
+<style>
+:root{color-scheme:dark;--bg:#07111f;--panel:#101e30;--panel2:#15263b;--text:#f4f7fb;--muted:#9aabc0;--green:#7df0b0;--line:#263a52;--gold:#ffd36b}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 80% -10%,#183b4b 0,transparent 42%),var(--bg);color:var(--text);font:16px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}
+header{padding:22px max(18px,calc((100% - 1120px)/2));border-bottom:1px solid var(--line);background:#07111fdc;position:sticky;top:0;z-index:5;backdrop-filter:blur(12px)}
+.brand{display:flex;align-items:center;gap:12px}.logo{width:42px;height:42px;border-radius:13px;background:linear-gradient(135deg,#7df0b0,#21a879);display:grid;place-items:center;color:#07111f;font-weight:1000;font-size:22px}
+h1{font-size:clamp(20px,4vw,27px);margin:0;letter-spacing:-.7px}.sub{font-size:12px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase}
+main{max-width:1120px;margin:auto;padding:26px 18px 60px}.hero{display:flex;justify-content:space-between;align-items:end;gap:20px;margin:10px 0 24px;flex-wrap:wrap}.eyebrow{color:var(--green);font-weight:800;letter-spacing:1.6px;text-transform:uppercase;font-size:12px}.hero h2{font-size:clamp(30px,6vw,48px);line-height:1.05;letter-spacing:-1.8px;margin:7px 0}.hero p{color:var(--muted);margin:8px 0 0}.demo{border:1px solid #68562a;background:#2a2415;color:var(--gold);padding:9px 13px;border-radius:999px;font-size:12px;font-weight:700}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:24px 0}.stat{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px}.stat b{display:block;font-size:25px}.stat span{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:1px}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:20px 0}.search{flex:1;min-width:190px}.search input,select{width:100%;background:var(--panel);color:var(--text);border:1px solid var(--line);padding:12px 14px;border-radius:12px;font:inherit;outline:none}.search input:focus,select:focus{border-color:var(--green)}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}.chip{border:1px solid var(--line);background:var(--panel);color:var(--muted);border-radius:999px;padding:8px 13px;font-weight:700;cursor:pointer}.chip.active{background:var(--green);border-color:var(--green);color:#07111f}
+.section-title{display:flex;align-items:center;justify-content:space-between;margin:25px 0 13px}.section-title h3{margin:0;font-size:20px}.section-title small{color:var(--muted)}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}.deal{background:linear-gradient(145deg,var(--panel),#0c1929);border:1px solid var(--line);border-radius:17px;padding:17px;min-width:0}.deal-top{display:flex;justify-content:space-between;align-items:center;gap:8px}.status{font-size:11px;font-weight:900;letter-spacing:.8px;text-transform:uppercase;padding:5px 9px;border-radius:99px;background:#183d31;color:var(--green)}.status.rumour{background:#3b3019;color:var(--gold)}.league{font-size:11px;color:var(--muted)}.player{font-size:21px;font-weight:850;letter-spacing:-.5px;margin:14px 0 3px}.position{font-size:12px;color:var(--muted)}.move{display:flex;align-items:center;gap:9px;margin:15px 0}.club{flex:1;background:var(--panel2);border-radius:10px;padding:9px 7px;text-align:center;font-size:12px;font-weight:750}.arrow{color:var(--green);font-weight:900}.fee{display:flex;justify-content:space-between;border-top:1px solid var(--line);padding-top:12px;color:var(--muted);font-size:12px}.fee b{color:var(--text);font-size:14px}.empty{grid-column:1/-1;padding:30px;text-align:center;color:var(--muted);background:var(--panel);border:1px dashed var(--line);border-radius:16px}
+.note{margin-top:22px;padding:14px 16px;border:1px solid var(--line);border-radius:13px;color:var(--muted);font-size:12px}footer{text-align:center;color:var(--muted);font-size:12px;padding:24px}
+@media(max-width:650px){.cards{grid-template-columns:1fr}.stats{gap:8px}.stat{padding:12px}.stat b{font-size:21px}.hero{align-items:start}}
+</style></head>
+<body>
+<header><div class="brand"><div class="logo">⚽</div><div><h1>FOOTBALL TRANSFER CENTRE</h1><div class="sub">The home of the transfer window</div></div></div></header>
+<main>
+<section class="hero"><div><div class="eyebrow">Window watch • 2026/27</div><h2>Every move.<br>One place.</h2><p>Track player moves, fees and transfer rumours.</p></div><div class="demo">SAMPLE DATA — NOT LIVE NEWS</div></section>
+<div class="stats"><div class="stat"><b id="total">8</b><span>Deals tracked</span></div><div class="stat"><b id="confirmed">4</b><span>Confirmed</span></div><div class="stat"><b id="rumours">4</b><span>Rumours</span></div></div>
+<div class="section-title"><h3>Transfer tracker</h3><small id="count">8 results</small></div>
+<div class="toolbar"><div class="search"><input id="search" type="search" placeholder="Search player or club…" aria-label="Search player or club"></div><select id="league" aria-label="Filter by league"><option value="all">All leagues</option><option>Premier League</option><option>La Liga</option><option>Serie A</option><option>Bundesliga</option><option>Ligue 1</option></select></div>
+<div class="filters"><button class="chip active" data-status="all">All moves</button><button class="chip" data-status="confirmed">Confirmed</button><button class="chip" data-status="rumour">Rumours</button></div>
+<div class="cards" id="cards" aria-live="polite"></div>
+<div class="note">⚠️ This is a demo tracker with example entries so you can test the app. It does not currently receive live transfer updates. Rumours are not confirmed deals.</div>
+</main><footer>Made for football fans • Football Transfer Centre</footer>
+<script>
+const deals=[
+{player:"Example Striker",role:"Forward",from:"North London FC",to:"Merseyside FC",fee:"£72m",status:"confirmed",league:"Premier League"},
+{player:"Example Midfielder",role:"Midfielder",from:"Madrid Athletic",to:"Paris United",fee:"€65m",status:"confirmed",league:"La Liga"},
+{player:"Example Winger",role:"Winger",from:"Turin City",to:"London Blues",fee:"£48m",status:"confirmed",league:"Serie A"},
+{player:"Example Defender",role:"Defender",from:"Munich 04",to:"Milan Red",fee:"€31m",status:"confirmed",league:"Bundesliga"},
+{player:"Young Prospect",role:"Midfielder",from:"Lisbon SC",to:"Merseyside FC",fee:"£25m",status:"rumour",league:"Premier League"},
+{player:"Star Forward",role:"Forward",from:"Paris United",to:"Madrid Athletic",fee:"€100m",status:"rumour",league:"Ligue 1"},
+{player:"Rising Full-back",role:"Defender",from:"London Blues",to:"Turin City",fee:"£38m",status:"rumour",league:"Premier League"},
+{player:"Creative No. 10",role:"Midfielder",from:"Milan Red",to:"Munich 04",fee:"€54m",status:"rumour",league:"Serie A"}
+];
+let active="all";
+const cards=document.getElementById("cards");
+function render(){const q=document.getElementById("search").value.toLowerCase(),l=document.getElementById("league").value;
+const filtered=deals.filter(d=>(active==="all"||d.status===active)&&(l==="all"||d.league===l)&&(d.player+" "+d.from+" "+d.to).toLowerCase().includes(q));
+document.getElementById("count").textContent=filtered.length+" results";
+cards.innerHTML=filtered.length?filtered.map(d=>'<article class="deal"><div class="deal-top"><span class="status '+(d.status==="rumour"?"rumour":"")+'">'+(d.status==="rumour"?"Rumour":"Confirmed")+'</span><span class="league">'+d.league+'</span></div><div class="player">'+d.player+'</div><div class="position">'+d.role+'</div><div class="move"><div class="club">'+d.from+'</div><div class="arrow">→</div><div class="club">'+d.to+'</div></div><div class="fee"><span>Reported fee</span><b>'+d.fee+'</b></div></article>').join(""):'<div class="empty">No transfers match that search. Try another player or club.</div>'}
+document.getElementById("search").addEventListener("input",render);document.getElementById("league").addEventListener("change",render);
+document.querySelectorAll(".chip").forEach(b=>b.addEventListener("click",()=>{active=b.dataset.status;document.querySelectorAll(".chip").forEach(x=>x.classList.toggle("active",x===b));render()}));
+render();
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
+</script></body></html>
