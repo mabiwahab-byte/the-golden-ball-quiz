@@ -62,7 +62,7 @@ main{max-width:1120px;margin:auto;padding:26px 18px 60px}.hero{display:flex;just
   </form>
 </section>
 \n<div class="section-title"><h3>Transfer tracker</h3><small id="count">8 results</small></div>
-<div class="toolbar"><div class="search"><input id="search" type="search" placeholder="Search player or club…" aria-label="Search player or club"></div><select id="league" aria-label="Filter by league"><option value="all">All leagues</option><option>Premier League</option><option>La Liga</option><option>Serie A</option><option>Bundesliga</option><option>Ligue 1</option></select></div>
+<div class="toolbar"><div class="search"><input id="search" type="search" placeholder="Search player or club…" aria-label="Search player or club"></div><select id="playerFilter" aria-label="Select a player"><option value="all">All players</option></select><select id="league" aria-label="Filter by league"><option value="all">All leagues</option><option>Premier League</option><option>La Liga</option><option>Serie A</option><option>Bundesliga</option><option>Ligue 1</option></select></div>
 <div class="filters"><button class="chip active" data-status="all">All moves</button><button class="chip" data-status="confirmed">Confirmed</button><button class="chip" data-status="rumour">Rumours</button></div>
 <div class="cards" id="cards" aria-live="polite"></div>
 <div class="note">⚠️ This is a demo tracker with example entries so you can test the app. It does not currently receive live transfer updates. Rumours are not confirmed deals.</div>
@@ -84,9 +84,16 @@ let deals=starterDeals.concat(customDeals);
 let active="all";
 const cards=document.getElementById("cards");
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function populatePlayerFilter(){
+ const select=document.getElementById("playerFilter");
+ const previous=select.value;
+ const names=[...new Set(deals.map(d=>d.player).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
+ select.innerHTML='<option value="all">All players</option>'+names.map(name=>'<option value="'+esc(name)+'">'+esc(name)+'</option>').join("");
+ select.value=names.includes(previous)?previous:"all";
+}
 function render(){
- const q=document.getElementById("search").value.toLowerCase(),l=document.getElementById("league").value;
- const filtered=deals.filter(d=>(active==="all"||d.status===active)&&(l==="all"||l==="Other"||d.league===l)&&(d.player+" "+d.from+" "+d.to).toLowerCase().includes(q));
+ const q=document.getElementById("search").value.toLowerCase(),l=document.getElementById("league").value,p=document.getElementById("playerFilter").value;
+ const filtered=deals.filter(d=>(active==="all"||d.status===active)&&(p==="all"||d.player===p)&&(l==="all"||l==="Other"||d.league===l)&&(d.player+" "+d.from+" "+d.to).toLowerCase().includes(q));
  document.getElementById("count").textContent=filtered.length+" results";
  document.getElementById("total").textContent=deals.length;
  document.getElementById("confirmed").textContent=deals.filter(d=>d.status==="confirmed").length;
@@ -95,6 +102,7 @@ function render(){
 }
 document.getElementById("search").addEventListener("input",render);
 document.getElementById("league").addEventListener("change",render);
+document.getElementById("playerFilter").addEventListener("change",render);
 document.querySelectorAll(".chip").forEach(b=>b.addEventListener("click",()=>{active=b.dataset.status;document.querySelectorAll(".chip").forEach(x=>x.classList.toggle("active",x===b));render();}));
 const playerChoice=document.getElementById("playerChoice");
 playerChoice.addEventListener("change",()=>{document.getElementById("customPlayerWrap").hidden=playerChoice.value!=="Other";document.getElementById("customPlayer").required=playerChoice.value==="Other";});
@@ -109,12 +117,13 @@ document.getElementById("transferForm").addEventListener("submit",e=>{
  if(!Number.isFinite(amount)||amount<0){document.getElementById("formMsg").textContent="Enter a valid fee.";return;}
  const fee=document.getElementById("feeCurrency").value+amount.toLocaleString("en-AU",{maximumFractionDigits:1})+"m";
  const deal={player,role:"Transfer created by you",from,to,fee,status:document.getElementById("dealStatus").value,league:document.getElementById("dealLeague").value};
- customDeals.unshift(deal);deals=starterDeals.concat(customDeals);
+ customDeals.unshift(deal);deals=starterDeals.concat(customDeals);populatePlayerFilter();
  try{localStorage.setItem("ftc-custom-transfers",JSON.stringify(customDeals));}catch(err){}
  document.getElementById("formMsg").textContent="Transfer added to the tracker!";
  e.target.reset();document.getElementById("feeAmount").value="50";document.getElementById("customPlayerWrap").hidden=true;document.getElementById("customPlayer").required=false;
  document.getElementById("search").value="";document.getElementById("league").value="all";active="all";document.querySelectorAll(".chip").forEach(x=>x.classList.toggle("active",x.dataset.status==="all"));render();
 });
+populatePlayerFilter();
 render();
 if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
 </script></body></html>
