@@ -18,21 +18,57 @@ main{max-width:1120px;margin:auto;padding:26px 18px 60px}.hero{display:flex;just
 .section-title{display:flex;align-items:center;justify-content:space-between;margin:25px 0 13px}.section-title h3{margin:0;font-size:20px}.section-title small{color:var(--muted)}
 .cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}.deal{background:linear-gradient(145deg,var(--panel),#0c1929);border:1px solid var(--line);border-radius:17px;padding:17px;min-width:0}.deal-top{display:flex;justify-content:space-between;align-items:center;gap:8px}.status{font-size:11px;font-weight:900;letter-spacing:.8px;text-transform:uppercase;padding:5px 9px;border-radius:99px;background:#183d31;color:var(--green)}.status.rumour{background:#3b3019;color:var(--gold)}.league{font-size:11px;color:var(--muted)}.player{font-size:21px;font-weight:850;letter-spacing:-.5px;margin:14px 0 3px}.position{font-size:12px;color:var(--muted)}.move{display:flex;align-items:center;gap:9px;margin:15px 0}.club{flex:1;background:var(--panel2);border-radius:10px;padding:9px 7px;text-align:center;font-size:12px;font-weight:750}.arrow{color:var(--green);font-weight:900}.fee{display:flex;justify-content:space-between;border-top:1px solid var(--line);padding-top:12px;color:var(--muted);font-size:12px}.fee b{color:var(--text);font-size:14px}.empty{grid-column:1/-1;padding:30px;text-align:center;color:var(--muted);background:var(--panel);border:1px dashed var(--line);border-radius:16px}
 .note{margin-top:22px;padding:14px 16px;border:1px solid var(--line);border-radius:13px;color:var(--muted);font-size:12px}footer{text-align:center;color:var(--muted);font-size:12px;padding:24px}
-@media(max-width:650px){.cards{grid-template-columns:1fr}.stats{gap:8px}.stat{padding:12px}.stat b{font-size:21px}.hero{align-items:start}}
+
+.creator{background:linear-gradient(145deg,#13283a,#0d1b2c);border:1px solid #31506a;border-radius:18px;padding:18px;margin:24px 0}
+.creator-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+.creator h3{margin:0;font-size:21px}.creator p{margin:5px 0 16px;color:var(--muted);font-size:13px}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.field label{display:block;font-size:12px;color:var(--muted);font-weight:750;margin:0 0 6px}
+.field select,.field input{width:100%;background:#091727;color:var(--text);border:1px solid var(--line);border-radius:11px;padding:11px 12px;font:inherit;min-width:0}
+.field select:focus,.field input:focus{outline:2px solid #7df0b0;outline-offset:1px}
+.fee-row{display:grid;grid-template-columns:1fr 110px;gap:8px}
+.create-btn{border:0;border-radius:11px;background:var(--green);color:#07111f;font-weight:900;font-size:14px;padding:12px 18px;cursor:pointer;margin-top:14px}
+.create-btn:hover{filter:brightness(1.06)}.form-msg{display:inline-block;margin-left:10px;color:var(--green);font-size:12px}
+@media(max-width:520px){.form-grid{grid-template-columns:1fr}.fee-row{grid-template-columns:1fr 100px}}
+\n@media(max-width:650px){.cards{grid-template-columns:1fr}.stats{gap:8px}.stat{padding:12px}.stat b{font-size:21px}.hero{align-items:start}}
 </style></head>
 <body>
 <header><div class="brand"><div class="logo">⚽</div><div><h1>FOOTBALL TRANSFER CENTRE</h1><div class="sub">The home of the transfer window</div></div></div></header>
 <main>
 <section class="hero"><div><div class="eyebrow">Window watch • 2026/27</div><h2>Every move.<br>One place.</h2><p>Track player moves, fees and transfer rumours.</p></div><div class="demo">SAMPLE DATA — NOT LIVE NEWS</div></section>
 <div class="stats"><div class="stat"><b id="total">8</b><span>Deals tracked</span></div><div class="stat"><b id="confirmed">4</b><span>Confirmed</span></div><div class="stat"><b id="rumours">4</b><span>Rumours</span></div></div>
-<div class="section-title"><h3>Transfer tracker</h3><small id="count">8 results</small></div>
+
+<section class="creator">
+  <div class="creator-head"><h3>📝 Create a transfer</h3><span class="demo">YOUR TRANSFER BUILDER</span></div>
+  <p>Choose a player, pick their new club and set the fee. Your transfers are saved on this device.</p>
+  <form id="transferForm">
+    <div class="form-grid">
+      <div class="field"><label for="playerChoice">Player</label><select id="playerChoice" required>
+        <option value="">Select a player…</option>
+        <option>Kylian Mbappé</option><option>Mohamed Salah</option><option>Lionel Messi</option><option>Erling Haaland</option><option>Jude Bellingham</option><option>Vinícius Júnior</option><option>Sadio Mané</option><option>Harry Kane</option><option>Lamine Yamal</option><option>Son Heung-min</option><option>Other</option>
+      </select></div>
+      <div class="field" id="customPlayerWrap" hidden><label for="customPlayer">Enter player name</label><input id="customPlayer" maxlength="40" placeholder="Player name"></div>
+      <div class="field"><label for="fromClub">Current club</label><select id="fromClub" required><option value="">Select current club…</option>
+        <option>Arsenal</option><option>Aston Villa</option><option>Barcelona</option><option>Bayern Munich</option><option>Borussia Dortmund</option><option>Chelsea</option><option>Inter Milan</option><option>Juventus</option><option>Liverpool</option><option>Manchester City</option><option>Manchester United</option><option>AC Milan</option><option>Napoli</option><option>Newcastle United</option><option>Paris Saint-Germain</option><option>Real Madrid</option><option>Tottenham Hotspur</option><option>Al Hilal</option><option>Al Nassr</option><option>Other</option>
+      </select></div>
+      <div class="field"><label for="toClub">New club</label><select id="toClub" required><option value="">Choose destination…</option>
+        <option>Arsenal</option><option>Aston Villa</option><option>Barcelona</option><option>Bayern Munich</option><option>Borussia Dortmund</option><option>Chelsea</option><option>Inter Milan</option><option>Juventus</option><option>Liverpool</option><option>Manchester City</option><option>Manchester United</option><option>AC Milan</option><option>Napoli</option><option>Newcastle United</option><option>Paris Saint-Germain</option><option>Real Madrid</option><option>Tottenham Hotspur</option><option>Al Hilal</option><option>Al Nassr</option><option>Other</option>
+      </select></div>
+      <div class="field"><label for="feeAmount">Transfer fee (millions)</label><div class="fee-row"><input id="feeAmount" type="number" min="0" max="9999" step="0.5" value="50" required><select id="feeCurrency" aria-label="Currency"><option value="£">GBP (£)</option><option value="€">EUR (€)</option><option value="$">USD ($)</option></select></div></div>
+      <div class="field"><label for="dealLeague">League</label><select id="dealLeague"><option>Premier League</option><option>La Liga</option><option>Serie A</option><option>Bundesliga</option><option>Ligue 1</option><option>Other</option></select></div>
+      <div class="field"><label for="dealStatus">Deal status</label><select id="dealStatus"><option value="confirmed">Confirmed</option><option value="rumour">Rumour</option></select></div>
+    </div>
+    <button class="create-btn" type="submit">＋ Add transfer</button><span class="form-msg" id="formMsg" aria-live="polite"></span>
+  </form>
+</section>
+\n<div class="section-title"><h3>Transfer tracker</h3><small id="count">8 results</small></div>
 <div class="toolbar"><div class="search"><input id="search" type="search" placeholder="Search player or club…" aria-label="Search player or club"></div><select id="league" aria-label="Filter by league"><option value="all">All leagues</option><option>Premier League</option><option>La Liga</option><option>Serie A</option><option>Bundesliga</option><option>Ligue 1</option></select></div>
 <div class="filters"><button class="chip active" data-status="all">All moves</button><button class="chip" data-status="confirmed">Confirmed</button><button class="chip" data-status="rumour">Rumours</button></div>
 <div class="cards" id="cards" aria-live="polite"></div>
 <div class="note">⚠️ This is a demo tracker with example entries so you can test the app. It does not currently receive live transfer updates. Rumours are not confirmed deals.</div>
 </main><footer>Made for football fans • Football Transfer Centre</footer>
 <script>
-const deals=[
+const starterDeals=[
 {player:"Example Striker",role:"Forward",from:"North London FC",to:"Merseyside FC",fee:"£72m",status:"confirmed",league:"Premier League"},
 {player:"Example Midfielder",role:"Midfielder",from:"Madrid Athletic",to:"Paris United",fee:"€65m",status:"confirmed",league:"La Liga"},
 {player:"Example Winger",role:"Winger",from:"Turin City",to:"London Blues",fee:"£48m",status:"confirmed",league:"Serie A"},
@@ -42,14 +78,43 @@ const deals=[
 {player:"Rising Full-back",role:"Defender",from:"London Blues",to:"Turin City",fee:"£38m",status:"rumour",league:"Premier League"},
 {player:"Creative No. 10",role:"Midfielder",from:"Milan Red",to:"Munich 04",fee:"€54m",status:"rumour",league:"Serie A"}
 ];
+let customDeals=[];
+try{customDeals=JSON.parse(localStorage.getItem("ftc-custom-transfers")||"[]");if(!Array.isArray(customDeals))customDeals=[];}catch(e){customDeals=[];}
+let deals=starterDeals.concat(customDeals);
 let active="all";
 const cards=document.getElementById("cards");
-function render(){const q=document.getElementById("search").value.toLowerCase(),l=document.getElementById("league").value;
-const filtered=deals.filter(d=>(active==="all"||d.status===active)&&(l==="all"||d.league===l)&&(d.player+" "+d.from+" "+d.to).toLowerCase().includes(q));
-document.getElementById("count").textContent=filtered.length+" results";
-cards.innerHTML=filtered.length?filtered.map(d=>'<article class="deal"><div class="deal-top"><span class="status '+(d.status==="rumour"?"rumour":"")+'">'+(d.status==="rumour"?"Rumour":"Confirmed")+'</span><span class="league">'+d.league+'</span></div><div class="player">'+d.player+'</div><div class="position">'+d.role+'</div><div class="move"><div class="club">'+d.from+'</div><div class="arrow">→</div><div class="club">'+d.to+'</div></div><div class="fee"><span>Reported fee</span><b>'+d.fee+'</b></div></article>').join(""):'<div class="empty">No transfers match that search. Try another player or club.</div>'}
-document.getElementById("search").addEventListener("input",render);document.getElementById("league").addEventListener("change",render);
-document.querySelectorAll(".chip").forEach(b=>b.addEventListener("click",()=>{active=b.dataset.status;document.querySelectorAll(".chip").forEach(x=>x.classList.toggle("active",x===b));render()}));
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function render(){
+ const q=document.getElementById("search").value.toLowerCase(),l=document.getElementById("league").value;
+ const filtered=deals.filter(d=>(active==="all"||d.status===active)&&(l==="all"||l==="Other"||d.league===l)&&(d.player+" "+d.from+" "+d.to).toLowerCase().includes(q));
+ document.getElementById("count").textContent=filtered.length+" results";
+ document.getElementById("total").textContent=deals.length;
+ document.getElementById("confirmed").textContent=deals.filter(d=>d.status==="confirmed").length;
+ document.getElementById("rumours").textContent=deals.filter(d=>d.status==="rumour").length;
+ cards.innerHTML=filtered.length?filtered.map(d=>'<article class="deal"><div class="deal-top"><span class="status '+(d.status==="rumour"?"rumour":"")+'">'+(d.status==="rumour"?"Rumour":"Confirmed")+'</span><span class="league">'+esc(d.league)+'</span></div><div class="player">'+esc(d.player)+'</div><div class="position">'+esc(d.role||"Player")+'</div><div class="move"><div class="club">'+esc(d.from)+'</div><div class="arrow">→</div><div class="club">'+esc(d.to)+'</div></div><div class="fee"><span>Transfer fee</span><b>'+esc(d.fee)+'</b></div></article>').join(""):'<div class="empty">No transfers match that search. Try another player or club.</div>';
+}
+document.getElementById("search").addEventListener("input",render);
+document.getElementById("league").addEventListener("change",render);
+document.querySelectorAll(".chip").forEach(b=>b.addEventListener("click",()=>{active=b.dataset.status;document.querySelectorAll(".chip").forEach(x=>x.classList.toggle("active",x===b));render();}));
+const playerChoice=document.getElementById("playerChoice");
+playerChoice.addEventListener("change",()=>{document.getElementById("customPlayerWrap").hidden=playerChoice.value!=="Other";document.getElementById("customPlayer").required=playerChoice.value==="Other";});
+document.getElementById("transferForm").addEventListener("submit",e=>{
+ e.preventDefault();
+ const chosen=playerChoice.value;
+ const player=chosen==="Other"?document.getElementById("customPlayer").value.trim():chosen;
+ const from=document.getElementById("fromClub").value,to=document.getElementById("toClub").value;
+ const amount=Number(document.getElementById("feeAmount").value);
+ if(!player||!from||!to){document.getElementById("formMsg").textContent="Please fill in all the selections.";return;}
+ if(from===to){document.getElementById("formMsg").textContent="Choose two different clubs.";return;}
+ if(!Number.isFinite(amount)||amount<0){document.getElementById("formMsg").textContent="Enter a valid fee.";return;}
+ const fee=document.getElementById("feeCurrency").value+amount.toLocaleString("en-AU",{maximumFractionDigits:1})+"m";
+ const deal={player,role:"Transfer created by you",from,to,fee,status:document.getElementById("dealStatus").value,league:document.getElementById("dealLeague").value};
+ customDeals.unshift(deal);deals=starterDeals.concat(customDeals);
+ try{localStorage.setItem("ftc-custom-transfers",JSON.stringify(customDeals));}catch(err){}
+ document.getElementById("formMsg").textContent="Transfer added to the tracker!";
+ e.target.reset();document.getElementById("feeAmount").value="50";document.getElementById("customPlayerWrap").hidden=true;document.getElementById("customPlayer").required=false;
+ document.getElementById("search").value="";document.getElementById("league").value="all";active="all";document.querySelectorAll(".chip").forEach(x=>x.classList.toggle("active",x.dataset.status==="all"));render();
+});
 render();
 if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
 </script></body></html>
