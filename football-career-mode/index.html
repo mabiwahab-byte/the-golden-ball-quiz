@@ -109,11 +109,26 @@ return pageTitle("TRAINING GROUND","Put in the work.","Complete up to three dril
 '<div style="margin-top:16px">'+playerCard()+'</div>';
 }
 function transfersPage(){
-var eligible=clubs.filter(function(c){return c.name!==appState.club});
-var cards=eligible.map(function(c,i){var need=i<3?82:78;var ok=appState.overall>=need;return '<div class="club-option"><div class="club-badge">'+c.emoji+'</div><div><strong>'+c.name+'</strong><p>Major club • '+(ok?"Ready to approach":"Requires "+need+" OVR")+'</p></div>'+(ok?'<button class="btn btn-primary" data-action="transfer" data-club="'+escapeHtml(c.name)+'">Join</button>':'<span class="locked">🔒 '+need+' OVR</span>')+'</div>'}).join("");
-return pageTitle("TRANSFER CENTRE","Dream bigger.","Improve your rating to unlock new opportunities.")+
-'<div class="grid"><div class="card"><div class="card-head"><h3>Available clubs</h3><span class="tag">BIG MOVES</span></div><div class="club-list">'+cards+'</div></div>'+
-'<div class="stack">'+playerCard()+'<div class="card"><h3 style="margin-top:0">Transfer advice 📝</h3><p class="small muted" style="line-height:1.7">Play matches and complete training to raise your overall rating. Clubs will become available as you improve. Your coins stay with you when you move.</p><div class="notice">You are already at a big club. Make an impact before your next move!</div></div></div></div>';
+var offers=[
+{name:"Borussia Dortmund",emoji:"🟡",need:74,fee:100,role:"First-team opportunity",length:"3 seasons",interest:"High"},
+{name:"Atlético Madrid",emoji:"🔴",need:75,fee:120,role:"Important squad player",length:"3 seasons",interest:"High"},
+{name:"Inter",emoji:"⚫",need:76,fee:150,role:"Rotation option",length:"2 seasons",interest:"Interested"},
+{name:"Arsenal",emoji:"🔴",need:78,fee:180,role:"First-team competition",length:"3 seasons",interest:"Interested"},
+{name:"Bayern Munich",emoji:"🔴",need:79,fee:200,role:"Squad player",length:"3 seasons",interest:"Interested"},
+{name:"Paris Saint-Germain",emoji:"🔵",need:80,fee:220,role:"Attacking role",length:"3 seasons",interest:"Interested"},
+{name:"Manchester City",emoji:"🩵",need:82,fee:250,role:"First-team competition",length:"4 seasons",interest:"Top-level"},
+{name:"Barcelona",emoji:"🔵",need:83,fee:275,role:"First-team competition",length:"4 seasons",interest:"Top-level"},
+{name:"Real Madrid",emoji:"⚪",need:85,fee:300,role:"Galáctico signing",length:"4 seasons",interest:"Top-level"}
+];
+var available=offers.filter(function(o){return o.name!==appState.club});
+var cards=available.map(function(o){
+var ready=appState.overall>=o.need;
+return '<div class="club-option"><div class="club-badge">'+o.emoji+'</div><div><strong>'+o.name+'</strong><p>'+o.role+' • '+o.length+'</p><p>'+o.interest+' • Signing cost: 🪙 '+o.fee+'</p></div>'+(ready?'<button class="btn btn-primary" data-action="transfer" data-club="'+escapeHtml(o.name)+'">Accept offer</button>':'<span class="locked">🔒 '+o.need+' OVR</span>')+'</div>';
+}).join("");
+return pageTitle("TRANSFER MARKET","Your next move starts here.","Clubs are watching. Build your rating and choose the right move.")+
+'<div class="grid"><div class="stack"><div class="card"><div class="card-head"><h3>Club offers</h3><span class="tag">SCOUTING NETWORK</span></div><p class="small muted">These fictional clubs have different rating requirements. Accept an offer when your overall is high enough and you have enough coins.</p><div class="club-list">'+cards+'</div></div>'+
+'<div class="card"><div class="card-head"><h3>Transfer news</h3><span class="tag">LATEST</span></div><p class="small" style="line-height:1.6;color:#c5d3e2;margin:0">'+(appState.history.length&&appState.history[0].headline?escapeHtml(appState.history[0].headline):"Scouts are keeping an eye on your performances. Play matches and train to attract bigger clubs.")+'</p></div></div>'+
+'<div class="stack">'+playerCard()+'<div class="card"><h3 style="margin-top:0">Your transfer status</h3><div class="stat-row"><div class="stat-box"><strong>'+appState.overall+'</strong><span>Overall</span></div><div class="stat-box"><strong>'+appState.coins+'</strong><span>Coins</span></div><div class="stat-box"><strong>'+appState.club.split(" ").map(function(w){return w[0]}).join("").slice(0,3)+'</strong><span>Current club</span></div></div><div class="notice">Tip: train every day and play matches to unlock interest from elite clubs. Transfers cost coins in this career simulator.</div></div></div></div>';
 }
 function statsPage(){
 var recent=appState.history.slice(0,5).map(function(m){return '<tr><td>'+m.number+'</td><td>'+escapeHtml(m.opponent)+'</td><td>'+m.score+'</td><td>'+m.goals+' ⚽</td><td>'+m.assists+' 🎯</td></tr>'}).join("");
