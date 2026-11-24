@@ -219,9 +219,12 @@ awardXp(amount);appState.coins+=20;save();render();
 showToast("Training complete! +"+amount+" XP and 20 coins 🪙");
 }
 function doTransfer(name){
-var need=(name==="Real Madrid"||name==="Barcelona"||name==="Manchester City")?82:78;
-if(appState.overall<need)return;
-var old=appState.club;appState.club=name;appState.coins=Math.max(0,appState.coins-100);
+var offers={"Borussia Dortmund":{need:74,fee:100},"Atlético Madrid":{need:75,fee:120},"Inter":{need:76,fee:150},"Arsenal":{need:78,fee:180},"Bayern Munich":{need:79,fee:200},"Paris Saint-Germain":{need:80,fee:220},"Manchester City":{need:82,fee:250},"Barcelona":{need:83,fee:275},"Real Madrid":{need:85,fee:300}};
+var offer=offers[name];
+if(!offer)return;
+if(appState.overall<offer.need){showToast("You need "+offer.need+" OVR to join "+name+".");return}
+if(appState.coins<offer.fee){showToast("You need "+offer.fee+" coins to accept this offer.");return}
+var old=appState.club;appState.club=name;appState.coins-=offer.fee;
 appState.history.unshift({number:appState.matches,opponent:"Transfer News",score:"—",outcome:"MOVE",goals:0,assists:0,rating:"—",headline:appState.name+" has joined "+name+" from "+old+"!"});
 appState.history=appState.history.slice(0,20);save();render();
 showToast("Transfer complete! Welcome to "+name+" 🔥");
