@@ -1,0 +1,9 @@
+{
+ "name":"All-Time Dream XI",
+ "short_name":"Dream XI",
+ "start_url":"./",
+ "display":"standalone",
+ "background_color":"#07131f",
+ "theme_color":"#07131f",
+ "icons":[{"src":"./icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
+}
