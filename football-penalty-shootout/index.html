@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#07111d">
+<meta name="description" content="Football Penalty Shootout — take on the goalkeeper in a penalty shootout.">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./icon.svg" type="image/svg+xml">
+<title>Football Penalty Shootout</title>
+<style>
+:root{color-scheme:dark;--bg:#07111d;--panel:#102235;--panel2:#172d41;--line:#2b4358;--text:#f4f8fb;--muted:#a1b2c3;--green:#7bf0ae;--gold:#ffd777;--red:#ff8585}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% -12%,#28624e 0,transparent 38%),var(--bg);color:var(--text);font:16px/1.5 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+header{background:#07111de8;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5;backdrop-filter:blur(10px)}
+.head{max-width:970px;margin:auto;padding:14px 18px;display:flex;gap:12px;align-items:center}
+.logo{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,#7bf0ae,#27aa78);display:grid;place-items:center;color:#07111d;font-size:25px}
+h1{font-size:clamp(18px,4vw,25px);letter-spacing:-.7px;line-height:1.1;margin:0}
+.tag{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1.4px;margin-top:4px}
+main{max-width:970px;margin:auto;padding:26px 18px 55px}
+.hero{display:flex;justify-content:space-between;align-items:end;gap:16px;flex-wrap:wrap;margin:6px 0 20px}
+.eyebrow{color:var(--green);font-weight:900;font-size:12px;letter-spacing:1.6px;text-transform:uppercase}
+h2{font-size:clamp(34px,7vw,54px);letter-spacing:-2px;line-height:1.02;margin:7px 0}
+.hero p{color:var(--muted);margin:8px 0 0}
+.badge{border:1px solid #66552d;color:var(--gold);background:#2b2518;border-radius:999px;padding:8px 12px;font-size:12px;font-weight:900}
+.scoreboard{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px;background:linear-gradient(145deg,#152e42,#0d1c2c);border:1px solid var(--line);border-radius:18px;padding:15px;margin:20px 0}
+.team{text-align:center}.team .emoji{font-size:27px}.team .name{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-weight:900}
+.team .goals{font-size:34px;font-weight:1000;line-height:1.2}
+.score-separator{color:var(--muted);font-weight:900;font-size:12px;letter-spacing:2px}
+.kick-dots{display:flex;justify-content:center;gap:5px;margin-top:8px;flex-wrap:wrap}
+.dot{width:11px;height:11px;border:1px solid #587087;border-radius:50%;background:#182d3e}
+.dot.goal{background:var(--green);border-color:var(--green)}
+.dot.miss{background:var(--red);border-color:var(--red)}
+.arena{border:1px solid #34516b;border-radius:20px;padding:clamp(14px,3vw,22px);background:linear-gradient(145deg,#132c40,#0c1b2b)}
+.status-row{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}
+.round-label{font-size:12px;color:var(--green);font-weight:950;letter-spacing:1.2px;text-transform:uppercase}
+.phase-label{font-size:11px;color:var(--gold);font-weight:900;text-transform:uppercase;letter-spacing:.9px}
+.pitch{position:relative;margin:15px auto 17px;max-width:600px;height:210px;border-radius:14px;overflow:hidden;background:repeating-linear-gradient(90deg,#12633e 0,#12633e 50px,#0f5a39 50px,#0f5a39 100px);border:2px solid #65ad7e;box-shadow:inset 0 0 28px #00210d99}
+.pitch:before{content:"";position:absolute;left:50%;top:0;bottom:0;border-left:2px solid #ffffff65}
+.pitch:after{content:"";position:absolute;width:110px;height:110px;border:2px solid #ffffff65;border-radius:50%;left:calc(50% - 55px);top:calc(50% - 55px)}
+.goal-frame{position:absolute;z-index:2;top:7px;left:50%;transform:translateX(-50%);width:220px;height:72px;border:7px solid #e9f3f4;border-top-width:8px;border-bottom:0;border-radius:5px 5px 0 0;background:repeating-linear-gradient(90deg,#ffffff18 0 2px,transparent 2px 18px),repeating-linear-gradient(0deg,#ffffff18 0 2px,transparent 2px 14px)}
+.keeper{position:absolute;z-index:3;top:48px;left:50%;transform:translateX(-50%);font-size:33px;filter:drop-shadow(0 3px 2px #0008);transition:left .25s ease}
+.ball{position:absolute;z-index:4;top:115px;left:50%;transform:translateX(-50%);font-size:27px;transition:all .35s ease;filter:drop-shadow(0 3px 3px #0009)}
+.ball.left{left:calc(50% - 75px);top:34px}.ball.center{left:50%;top:20px}.ball.right{left:calc(50% + 75px);top:34px}
+.keeper.left{left:calc(50% - 78px)}.keeper.center{left:50%}.keeper.right{left:calc(50% + 78px)}
+.pitch-caption{position:absolute;z-index:1;bottom:10px;left:0;right:0;text-align:center;color:#e7fff0;font-size:11px;text-transform:uppercase;letter-spacing:1.3px;font-weight:900;text-shadow:0 2px 4px #00210d}
+.instruction{text-align:center;margin:5px 0 12px;font-weight:850;font-size:clamp(17px,3vw,21px)}
+.subinstruction{text-align:center;color:var(--muted);font-size:13px;margin:-6px 0 15px}
+.directions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;max-width:630px;margin:0 auto}
+.direction{border:1px solid var(--line);border-radius:14px;background:var(--panel2);color:var(--text);padding:14px 8px;font:inherit;font-weight:900;cursor:pointer;min-height:72px;transition:transform .12s,border-color .12s,background .12s}
+.direction:hover:not(:disabled){border-color:var(--green);transform:translateY(-2px);background:#1e3b4e}
+.direction:disabled{opacity:.45;cursor:default}
+.direction .arrow{display:block;font-size:22px;line-height:1.1;margin-bottom:4px}
+.result{min-height:50px;margin:15px auto 0;max-width:630px;border-radius:12px;padding:12px 14px;background:#091827;border:1px solid var(--line);text-align:center;color:var(--muted);font-weight:750}
+.result.good{color:#b9f7d0;background:#123829;border-color:#286c4d}
+.result.bad{color:#ffd1d1;background:#3a252a;border-color:#704149}
+.actions{display:flex;justify-content:center;gap:9px;flex-wrap:wrap;margin-top:15px}
+.btn{border:0;border-radius:12px;padding:12px 18px;font:inherit;font-weight:900;cursor:pointer}
+.btn.primary{background:var(--green);color:#07151d}.btn.secondary{background:#1a3045;color:var(--text);border:1px solid var(--line)}
+.log{margin-top:20px;background:#0b1a29;border:1px solid var(--line);border-radius:15px;padding:13px 15px}
+.log h3{margin:0 0 8px;font-size:14px}
+.log-list{display:grid;gap:5px;color:var(--muted);font-size:12px}
+.log-item{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px solid #20364a}
+.log-item:last-child{border-bottom:0}
+.end{display:none;text-align:center;padding:22px 8px 8px}
+.end.show{display:block}
+.end .trophy{font-size:50px}.end h3{font-size:clamp(27px,5vw,40px);margin:5px}.end p{color:var(--muted)}
+.rules{margin:18px 0 0;border:1px solid var(--line);border-radius:14px;padding:12px 15px;background:#0c1b2a;color:var(--muted);font-size:12px}
+.rules summary{cursor:pointer;color:var(--text);font-weight:850}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:24px}
+@media(max-width:560px){.scoreboard{gap:7px;padding:12px}.team .goals{font-size:29px}.pitch{height:190px}.directions{gap:6px}.direction{padding:11px 5px;font-size:14px}.goal-frame{width:190px}.log-item{font-size:11px}}
+</style>
+</head>
+<body>
+<header><div class="head"><div class="logo">⚽</div><div><h1>FOOTBALL PENALTY SHOOTOUT</h1><div class="tag">Can you beat the keeper?</div></div></div></header>
+<main>
+ <section class="hero"><div><div class="eyebrow">Matchday challenge</div><h2>Take the shot.</h2><p>Five rounds. You shoot, then you face the opponent's penalty.</p></div><div class="badge">PENALTY MODE</div></section>
+ <section class="scoreboard" aria-label="Shootout score">
+  <div class="team"><div class="emoji">🟢</div><div class="name">You</div><div class="goals" id="youScore">0</div><div class="kick-dots" id="youDots"></div></div>
+  <div class="score-separator">VS</div>
+  <div class="team"><div class="emoji">🧤</div><div class="name">Goalkeeper FC</div><div class="goals" id="opponentScore">0</div><div class="kick-dots" id="opponentDots"></div></div>
+ </section>
+ <section class="arena">
+  <div id="gameArea">
+   <div class="status-row"><div class="round-label" id="roundLabel">ROUND 1 OF 5</div><div class="phase-label" id="phaseLabel">YOUR PENALTY</div></div>
+   <div class="pitch" aria-label="Football pitch penalty area"><div class="goal-frame"></div><div class="keeper" id="keeper">🧤</div><div class="ball" id="ball">⚽</div><div class="pitch-caption" id="pitchCaption">Pick your corner</div></div>
+   <div class="instruction" id="instruction">Where will you shoot?</div>
+   <div class="subinstruction" id="subinstruction">Choose left, centre or right.</div>
+   <div class="directions" id="directions">
+    <button class="direction" data-direction="left" type="button"><span class="arrow">↖</span>LEFT</button>
+    <button class="direction" data-direction="center" type="button"><span class="arrow">↑</span>CENTRE</button>
+    <button class="direction" data-direction="right" type="button"><span class="arrow">↗</span>RIGHT</button>
+   </div>
+   <div class="result" id="result" aria-live="polite">Your first penalty is ready. Pick a direction!</div>
+   <div class="actions"><button class="btn secondary" id="restart" type="button">↻ Restart shootout</button></div>
+  </div>
+  <div class="end" id="endScreen">
+   <div class="trophy" id="trophy">🏆</div><h3 id="endTitle">You win!</h3><div class="goals" id="finalScore"></div><p id="endMessage"></p>
+   <button class="btn primary" id="playAgain" type="button">Play again</button>
+  </div>
+ </section>
+ <section class="log"><h3>📋 Shootout tracker</h3><div class="log-list" id="logList"><div class="log-item"><span>Ready for kick-off</span><span>⚽</span></div></div></section>
+ <details class="rules"><summary>How to play</summary><p>In each round, choose where to shoot. If the goalkeeper dives the same way, the shot is saved. Then choose where to dive to try to stop the opponent's penalty. If the score is level after five rounds, sudden death begins.</p></details>
+</main>
+<footer>Football Penalty Shootout • Take your chance</footer>
+<script>
+const $=id=>document.getElementById(id);
+const directions=["left","center","right"];
+const labels={left:"LEFT",center:"CENTRE",right:"RIGHT"};
+let round=1,phase="userShot",you=0,opponent=0,youKicks=[],opponentKicks=[],log=[],suddenPair=0,lastUserGoal=false;
+const randomDirection=()=>directions[Math.floor(Math.random()*directions.length)];
+function drawDots(target,arr){
+ $(target).innerHTML=Array.from({length:5},(_,i)=>{
+  const value=arr[i];
+  return '<span class="dot '+(value===undefined?"":value?"goal":"miss")+'" title="'+(value===undefined?"Not taken":value?"Goal":"Saved")+'"></span>';
+ }).join("");
+}
+function updateScore(){
+ $("youScore").textContent=you;$("opponentScore").textContent=opponent;
+ drawDots("youDots",youKicks);drawDots("opponentDots",opponentKicks);
+}
+function addLog(who,dir,goal){
+ log.unshift({who,dir,goal});
+ $("logList").innerHTML=log.slice(0,10).map(item=>'<div class="log-item"><span>'+item.who+' — '+labels[item.dir]+'</span><b style="color:'+(item.goal?'var(--green)':'var(--red)')+'">'+(item.goal?"GOAL":"SAVED")+'</b></div>').join("");
+}
+function setScene(phaseText,instruction,sub,caption,result,type){
+ $("phaseLabel").textContent=phaseText;$("instruction").textContent=instruction;$("subinstruction").textContent=sub;$("pitchCaption").textContent=caption;
+ $("result").textContent=result;$("result").className="result"+(type?" "+type:"");
+}
+function moveBall(dir){$("ball").className="ball "+dir;}
+function moveKeeper(dir){$("keeper").className="keeper "+dir;}
+function setDirections(enabled){
+ $("directions").querySelectorAll("button").forEach(button=>button.disabled=!enabled);
+}
+function updateRoundLabel(){
+ $("roundLabel").textContent=phase.startsWith("sudden")?"SUDDEN DEATH — PAIR "+(suddenPair+1):"ROUND "+round+" OF 5";
+}
+function start(){
+ round=1;phase="userShot";you=0;opponent=0;youKicks=[];opponentKicks=[];log=[];suddenPair=0;lastUserGoal=false;
+ $("gameArea").style.display="block";$("endScreen").classList.remove("show");
+ updateScore();$("logList").innerHTML='<div class="log-item"><span>New shootout started</span><span>⚽</span></div>';
+ moveBall("center");moveKeeper("center");updateRoundLabel();setDirections(true);
+ setScene("YOUR PENALTY","Where will you shoot?","Choose left, centre or right.","Pick your corner","Your first penalty is ready. Pick a direction!");
+}
+function userShoot(dir){
+ const keeperDir=randomDirection();
+ const goal=dir!==keeperDir;
+ lastUserGoal=goal;
+ if(goal)you++;
+ youKicks.push(goal);addLog("You",dir,goal);updateScore();
+ moveBall(dir);moveKeeper(keeperDir);
+ if(goal)setScene("GOAL!","What a finish!","Now it's your turn to be the goalkeeper.","GOAL","You scored! The opponent is stepping up.","good");
+ else setScene("SAVED!","The goalkeeper guessed right!","Now it's your turn to be the goalkeeper.","SAVE","Your shot was saved. Focus on the next one.","bad");
+ if(phase==="userShot")phase="keeperDive";else phase="suddenKeeper";
+ updateRoundLabel();setDirections(true);
+}
+function opponentShoot(diveDir){
+ const shotDir=randomDirection();
+ const goal=shotDir!==diveDir;
+ if(goal)opponent++;
+ opponentKicks.push(goal);addLog("Goalkeeper FC",shotDir,goal);updateScore();
+ moveBall(shotDir);moveKeeper(diveDir);
+ if(goal)setScene("OPPONENT SCORES","They found the corner!","Get ready for your next penalty.","GOAL","Opponent scores. Keep your focus.","bad");
+ else setScene("GREAT SAVE!","You kept it out!","Back to the spot for the next round.","SAVE","You saved their penalty! Nice dive.","good");
+ if(phase==="keeperDive"){
+  if(round<5){round++;phase="userShot";updateRoundLabel();setScene("YOUR PENALTY","Round "+round+": where will you shoot?","Choose your next corner.","Next round","Your next penalty is ready.");}
+  else if(you!==opponent){finish();}
+  else{phase="suddenUser";suddenPair=0;updateRoundLabel();setScene("SUDDEN DEATH","It's all level!","One penalty each until someone wins.","SUDDEN DEATH","Scores level after five rounds. Sudden death!","");}
+ }else{
+  if(lastUserGoal!==goal){finish();}
+  else{suddenPair++;phase="suddenUser";updateRoundLabel();setScene("SUDDEN DEATH","Still level!","Another pair of penalties. Can you take the lead?","SUDDEN DEATH","Both scored or both missed. Next pair!","");}
+ }
+ setDirections(true);
+}
+function finish(){
+ phase="done";setDirections(false);$("gameArea").style.display="none";$("endScreen").classList.add("show");
+ const won=you>opponent;
+ $("trophy").textContent=won?"🏆":you===opponent?"🤝":"🧤";
+ $("endTitle").textContent=won?"YOU WIN THE SHOOTOUT!":you===opponent?"IT'S A DRAW!":"GOALKEEPER FC WINS!";
+ $("finalScore").textContent=you+" — "+opponent;
+ $("endMessage").textContent=won?"Brilliant penalties! You held your nerve.":you===opponent?"A close contest. Have another go!":"Unlucky! Practise your corners and try again.";
+}
+$("directions").addEventListener("click",event=>{
+ const button=event.target.closest("button[data-direction]");
+ if(!button||phase==="done")return;
+ const dir=button.dataset.direction;
+ if(phase==="userShot"||phase==="suddenUser")userShoot(dir);
+ else if(phase==="keeperDive"||phase==="suddenKeeper")opponentShoot(dir);
+});
+$("restart").addEventListener("click",start);
+$("playAgain").addEventListener("click",start);
+start();
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
+</script>
+</body>
+</html>
