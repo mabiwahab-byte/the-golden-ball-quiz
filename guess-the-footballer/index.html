@@ -123,7 +123,6 @@ function makeRound(){round=shuffle(players).slice(0,10);index=0;score=0;streak=0
 function showQuestion(){
  const p=round[index];revealed=1;answered=false;usedHint=false;
  $("answerDetails").hidden=true;$("answerDetails").innerHTML="";
- $("infoClub").textContent=p.club;$("infoShirt").textContent="#"+p.shirt;$("infoNation").textContent=p.nation;
  $("questionCount").textContent="Question "+(index+1)+" of "+round.length;
  $("difficulty").textContent=p.level;
  $("progressFill").style.width=(index/round.length*100)+"%";
