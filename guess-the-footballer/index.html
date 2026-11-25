@@ -69,7 +69,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:22px}
 <body>
 <header><div class="head"><div class="logo">⚽</div><div><h1>GUESS THE FOOTBALLER</h1><div class="tag">How well do you know the beautiful game?</div></div></div></header>
 <main>
-<section class="hero"><div><div class="eyebrow">Football quiz • Match day challenge</div><h2>Who am I?</h2><p>Read the clues, pick the player and build your streak.</p></div><div class="pill">10 QUESTIONS PER ROUND</div></section>
+<section class="hero"><div><div class="eyebrow">Football quiz • Match day challenge</div><h2>Who am I?</h2><p>Read the clues, pick the player and build your streak.</p></div><div class="pill">50 QUESTIONS PER ROUND</div></section>
 <section class="stats" aria-label="Game statistics">
  <div class="stat"><strong id="score">0</strong><span>Points</span></div>
  <div class="stat"><strong id="streak">0 🔥</strong><span>Current streak</span></div>
@@ -116,12 +116,43 @@ const players=[
  {name:"Alexis Mac Allister",club:"Liverpool",shirt:"10",nation:"Argentina",clues:["I am an Argentine midfielder.","I won the World Cup in 2022.","I joined Liverpool from Brighton.","My first name is Alexis."],level:"PREMIER LEAGUE"},
  {name:"Rodri",club:"Barcelona",shirt:"16",nation:"Spain",clues:["I am a Spanish defensive midfielder.","I scored the winning goal in the 2023 Champions League final.","I won the Ballon d'Or in 2024.","I now play for Barcelona."],level:"WORLD FOOTBALL"},
  {name:"Lamine Yamal",club:"Barcelona",shirt:"10",nation:"Spain",clues:["I am a young Spanish winger.","I came through Barcelona's academy.","I helped Spain win Euro 2024.","I wear number 10 for Barcelona."],level:"WORLD FOOTBALL"},
- {name:"Raphinha",club:"Barcelona",shirt:"11",nation:"Brazil",clues:["I am a Brazilian winger.","I played for Leeds United before Barcelona.","I am left-footed and often play on the right wing.","My first name is Raphinha."],level:"WORLD FOOTBALL"}
+ {name:"Raphinha",club:"Barcelona",shirt:"11",nation:"Brazil",clues:["I am a Brazilian winger.","I played for Leeds United before Barcelona.","I am left-footed and often play on the right wing.","My first name is Raphinha."],level:"WORLD FOOTBALL"},
+ {name:"David Raya",club:"Arsenal",shirt:"1",nation:"Spain",clues:["I am a goalkeeper from Spain.","I joined Arsenal after playing for Brentford.","I won the Premier League Golden Glove in 2023–24.","My first name is David."],level:"PREMIER LEAGUE"},
+ {name:"William Saliba",club:"Arsenal",shirt:"2",nation:"France",clues:["I am a centre-back from France.","I play for Arsenal.","I spent time on loan at Marseille before becoming an Arsenal regular.","My surname begins with S."],level:"PREMIER LEAGUE"},
+ {name:"Martin Ødegaard",club:"Arsenal",shirt:"8",nation:"Norway",clues:["I am a midfielder from Norway.","I used to play for Real Madrid.","I captain Arsenal.","My first name is Martin."],level:"PREMIER LEAGUE"},
+ {name:"Declan Rice",club:"Arsenal",shirt:"41",nation:"England",clues:["I am an England midfielder.","I joined Arsenal from West Ham United.","I am known for my work rate and passing.","My first name is Declan."],level:"PREMIER LEAGUE"},
+ {name:"Viktor Gyökeres",club:"Arsenal",shirt:"14",nation:"Sweden",clues:["I am a striker from Sweden.","I became well known while playing for Sporting CP.","I joined Arsenal in 2025.","My first name is Viktor."],level:"PREMIER LEAGUE"},
+ {name:"Matty Cash",club:"Aston Villa",shirt:"2",nation:"Poland",clues:["I am a right-back.","I play for Aston Villa.","I represent Poland internationally.","My first name is Matty."],level:"PREMIER LEAGUE"},
+ {name:"John McGinn",club:"Aston Villa",shirt:"7",nation:"Scotland",clues:["I am a midfielder from Scotland.","I captain Aston Villa.","I previously played for Hibernian.","My first name is John."],level:"PREMIER LEAGUE"},
+ {name:"Caoimhín Kelleher",club:"Brentford",shirt:"1",nation:"Republic of Ireland",clues:["I am a goalkeeper from the Republic of Ireland.","I previously played for Liverpool.","I joined Brentford.","My first name is Caoimhín."],level:"PREMIER LEAGUE"},
+ {name:"Kaoru Mitoma",club:"Brighton & Hove Albion",shirt:"7",nation:"Japan",clues:["I am a winger from Japan.","I play for Brighton.","I am known for my close control and dribbling.","My first name is Kaoru."],level:"PREMIER LEAGUE"},
+ {name:"Pascal Groß",club:"Brighton & Hove Albion",shirt:"13",nation:"Germany",clues:["I am a midfielder from Germany.","I have played for Brighton.","I also played in the Bundesliga.","My first name is Pascal."],level:"PREMIER LEAGUE"},
+ {name:"Ismaïla Sarr",club:"Crystal Palace",shirt:"7",nation:"Senegal",clues:["I am a winger from Senegal.","I have played in the Premier League for more than one club.","I am known for my pace.","My first name is Ismaïla."],level:"PREMIER LEAGUE"},
+ {name:"Adam Wharton",club:"Crystal Palace",shirt:"20",nation:"England",clues:["I am an England midfielder.","I joined Crystal Palace from Blackburn Rovers.","I am known for my passing.","My first name is Adam."],level:"PREMIER LEAGUE"},
+ {name:"Jordan Pickford",club:"Everton",shirt:"1",nation:"England",clues:["I am a goalkeeper from England.","I have been Everton's first-choice goalkeeper.","I have played for England at major international tournaments.","My first name is Jordan."],level:"PREMIER LEAGUE"},
+ {name:"Jack Grealish",club:"Everton",shirt:"10",nation:"England",clues:["I am an England attacking player.","I previously played for Manchester City and Aston Villa.","I am known for my dribbling and ball control.","My first name is Jack."],level:"PREMIER LEAGUE"},
+ {name:"Antonee Robinson",club:"Fulham",shirt:"33",nation:"United States",clues:["I am a left-back from the United States.","I play for Fulham.","I have represented the USA internationally.","My first name is Antonee."],level:"PREMIER LEAGUE"},
+ {name:"Ethan Ampadu",club:"Leeds United",shirt:"4",nation:"Wales",clues:["I am a defender and midfielder from Wales.","I have played for Chelsea.","I became captain at Leeds United.","My first name is Ethan."],level:"PREMIER LEAGUE"},
+ {name:"Daniel James",club:"Leeds United",shirt:"7",nation:"Wales",clues:["I am a winger from Wales.","I have played for Manchester United.","I am known for my pace.","My first name is Daniel."],level:"PREMIER LEAGUE"},
+ {name:"Alexander Isak",club:"Liverpool",shirt:"9",nation:"Sweden",clues:["I am a striker from Sweden.","I previously played for Newcastle United.","I have also played in Spain and Germany.","My first name is Alexander."],level:"PREMIER LEAGUE"},
+ {name:"Florian Wirtz",club:"Liverpool",shirt:"7",nation:"Germany",clues:["I am an attacking midfielder from Germany.","I previously starred for Bayer Leverkusen.","I joined Liverpool.","My first name is Florian."],level:"PREMIER LEAGUE"},
+ {name:"Dominik Szoboszlai",club:"Liverpool",shirt:"8",nation:"Hungary",clues:["I am a midfielder from Hungary.","I previously played for RB Leipzig.","I joined Liverpool in 2023.","My first name is Dominik."],level:"PREMIER LEAGUE"},
+ {name:"Alisson Becker",club:"Liverpool",shirt:"1",nation:"Brazil",clues:["I am a goalkeeper from Brazil.","I joined Liverpool from Roma.","I have won the Premier League and Champions League.","My first name is Alisson."],level:"PREMIER LEAGUE"},
+ {name:"Bruno Fernandes",club:"Manchester United",shirt:"8",nation:"Portugal",clues:["I am a midfielder from Portugal.","I joined Manchester United from Sporting CP.","I wear the captain's armband for my club.","My first name is Bruno."],level:"PREMIER LEAGUE"},
+ {name:"Amad Diallo",club:"Manchester United",shirt:"16",nation:"Côte d’Ivoire",clues:["I am a winger from Côte d’Ivoire.","I play for Manchester United.","I previously had a loan spell at Sunderland.","My first name is Amad."],level:"PREMIER LEAGUE"},
+ {name:"Mason Mount",club:"Manchester United",shirt:"7",nation:"England",clues:["I am an England midfielder.","I came through Chelsea's academy.","I joined Manchester United in 2023.","My first name is Mason."],level:"PREMIER LEAGUE"},
+ {name:"Marcus Rashford",club:"Manchester United",shirt:"9",nation:"England",clues:["I came through Manchester United's academy.","I am an England forward.","I am known for my pace and finishing.","My first name is Marcus."],level:"PREMIER LEAGUE"},
+ {name:"Anthony Elanga",club:"Newcastle United",shirt:"19",nation:"Sweden",clues:["I am a winger from Sweden.","I came through Manchester United's academy.","I have also played for Nottingham Forest.","My first name is Anthony."],level:"PREMIER LEAGUE"},
+ {name:"Harvey Barnes",club:"Newcastle United",shirt:"11",nation:"England",clues:["I am an England winger.","I previously played for Leicester City.","I joined Newcastle United.","My first name is Harvey."],level:"PREMIER LEAGUE"},
+ {name:"Morgan Gibbs-White",club:"Nottingham Forest",shirt:"10",nation:"England",clues:["I am an England attacking midfielder.","I previously played for Wolverhampton Wanderers.","I play for Nottingham Forest.","My surname has three parts."],level:"PREMIER LEAGUE"},
+ {name:"Chris Wood",club:"Nottingham Forest",shirt:"9",nation:"New Zealand",clues:["I am a striker from New Zealand.","I have played for Burnley and Newcastle United.","I play for Nottingham Forest.","My name is Chris Wood."],level:"PREMIER LEAGUE"},
+ {name:"Granit Xhaka",club:"Sunderland",shirt:"34",nation:"Switzerland",clues:["I am a midfielder from Switzerland.","I previously captained Arsenal.","I played for Bayer Leverkusen before returning to England.","My first name is Granit."],level:"PREMIER LEAGUE"},
+ {name:"Xavi Simons",club:"Tottenham Hotspur",shirt:"7",nation:"Netherlands",clues:["I am an attacking midfielder from the Netherlands.","I came through Barcelona's youth system.","I have played for PSV and RB Leipzig.","My first name is Xavi."],level:"PREMIER LEAGUE"}
 ];
-let round=[],index=0,score=0,streak=0,best=0,revealed=1,answered=false,usedHint=false;
+let round=[],index=0,score=0,correctCount=0,streak=0,best=0,revealed=1,answered=false,usedHint=false;
 const $=id=>document.getElementById(id);
 const shuffle=arr=>arr.map(v=>({v,r:Math.random()})).sort((a,b)=>a.r-b.r).map(x=>x.v);
-function makeRound(){round=shuffle(players).slice(0,10);index=0;score=0;streak=0;revealed=1;answered=false;usedHint=false;$("score").textContent=score;$("streak").textContent=streak+" 🔥";$("playArea").style.display="block";$("endScreen").classList.remove("show");showQuestion();}
+function makeRound(){round=shuffle(players).slice(0,50);index=0;score=0;correctCount=0;streak=0;revealed=1;answered=false;usedHint=false;$("score").textContent=score;$("streak").textContent=streak+" 🔥";$("playArea").style.display="block";$("endScreen").classList.remove("show");showQuestion();}
 function showQuestion(){
  const p=round[index];revealed=1;answered=false;usedHint=false;
  $("infoClub").textContent=p.club;$("infoShirt").textContent="#"+p.shirt;$("infoNation").textContent=p.nation;
@@ -140,7 +171,7 @@ $("answers").addEventListener("click",e=>{
  const btn=e.target.closest(".answer");if(!btn||answered)return;
  answered=true;const p=round[index],correct=btn.dataset.answer===p.name;
  $("answers").querySelectorAll(".answer").forEach(b=>{b.disabled=true;if(b.dataset.answer===p.name)b.classList.add("correct");else if(b===btn)b.classList.add("wrong");});
- if(correct){const points=usedHint?5:10;score+=points;streak++;best=Math.max(best,streak);$("feedback").className="feedback good";$("feedback").innerHTML="✅ Correct! It's <b>"+p.name+"</b>. You earned "+points+" points.";}
+ if(correct){correctCount++;const points=usedHint?5:10;score+=points;streak++;best=Math.max(best,streak);$("feedback").className="feedback good";$("feedback").innerHTML="✅ Correct! It's <b>"+p.name+"</b>. You earned "+points+" points.";}
  else{streak=0;$("feedback").className="feedback bad";$("feedback").innerHTML="❌ It was <b>"+p.name+"</b>. Keep going!";}
  $("score").textContent=score;$("streak").textContent=streak+" 🔥";$("best").textContent=best;
  $("nextBtn").disabled=false;$("hintBtn").disabled=true;
@@ -152,7 +183,7 @@ $("hintBtn").addEventListener("click",()=>{
 });
 $("nextBtn").addEventListener("click",()=>{
  if(!answered)return;index++;
- if(index>=round.length){$("playArea").style.display="none";$("endScreen").classList.add("show");$("finalScore").textContent=score+"/100";$("endMessage").textContent="You got "+score/10+" out of 10 questions right before hints. Best streak: "+best+". Play another round and beat your score!";$("progressFill").style.width="100%";}
+ if(index>=round.length){$("playArea").style.display="none";$("endScreen").classList.add("show");$("finalScore").textContent=score+"/500";$("endMessage").textContent="You answered "+correctCount+" out of 50 correctly. Total points: "+score+" out of 500. Best streak: "+best+". Play another round and beat your score!";$("progressFill").style.width="100%";}
  else showQuestion();
 });
 $("againBtn").addEventListener("click",makeRound);
