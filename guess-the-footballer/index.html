@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#07111f">
+<meta name="description" content="Guess the Footballer — a football trivia game.">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./icon.svg" type="image/svg+xml">
+<title>Guess the Footballer</title>
+<style>
+:root{color-scheme:dark;--bg:#07111f;--panel:#102033;--panel2:#172b40;--line:#29415a;--text:#f4f7fb;--muted:#9fb0c4;--green:#78edac;--gold:#ffd36b;--red:#ff8585}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at 15% -10%,#17463f 0,transparent 38%),radial-gradient(ellipse at 100% 10%,#1c3151 0,transparent 34%),var(--bg);color:var(--text);font:16px/1.5 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100vh}
+header{border-bottom:1px solid var(--line);background:#07111fe8;backdrop-filter:blur(12px);position:sticky;top:0;z-index:4}
+.head{max-width:980px;margin:auto;padding:15px 18px;display:flex;align-items:center;gap:12px}
+.logo{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,#78edac,#27a879);display:grid;place-items:center;color:#06131b;font-size:24px;font-weight:1000}
+h1{font-size:clamp(19px,4vw,25px);letter-spacing:-.7px;line-height:1.1;margin:0}
+.tag{font-size:11px;letter-spacing:1.3px;text-transform:uppercase;color:var(--muted);margin-top:4px}
+main{max-width:980px;margin:auto;padding:30px 18px 64px}
+.hero{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin:8px 0 22px}
+.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:1.8px;color:var(--green);font-weight:900}
+h2{font-size:clamp(35px,7vw,58px);line-height:1;letter-spacing:-2.4px;margin:7px 0}
+.hero p{color:var(--muted);margin:10px 0 0}
+.pill{border:1px solid #68572e;background:#2b2518;color:var(--gold);border-radius:999px;padding:8px 12px;font-size:12px;font-weight:800}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:22px 0}
+.stat{border:1px solid var(--line);background:#0d1c2c;border-radius:15px;padding:13px 15px}
+.stat strong{display:block;font-size:25px;line-height:1.2}
+.stat span{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1.1px}
+.game{border:1px solid #34516b;border-radius:22px;padding:clamp(16px,4vw,26px);background:linear-gradient(145deg,#142b3e,#0b1929);box-shadow:0 18px 60px #0003}
+.gamebar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.question-count{font-size:12px;color:var(--green);font-weight:900;text-transform:uppercase;letter-spacing:1.2px}
+.difficulty{font-size:11px;font-weight:800;color:var(--gold);border:1px solid #68572e;border-radius:99px;padding:5px 9px}
+.progress{height:7px;background:#263b50;border-radius:99px;overflow:hidden;margin:14px 0 20px}
+.progress>div{height:100%;width:0;background:linear-gradient(90deg,#42c98c,#a6f6c6);transition:width .25s}
+.cluebox{background:#081625;border:1px solid var(--line);border-radius:17px;padding:20px}
+.clue-icon{font-size:28px}
+.clue-title{font-weight:900;font-size:clamp(21px,4vw,29px);margin:7px 0 3px}
+.clue-sub{color:var(--muted);font-size:13px;margin:0 0 15px}
+.clues{display:grid;gap:9px}
+.clue{display:flex;align-items:flex-start;gap:10px;background:#102238;border:1px solid #243b53;border-radius:12px;padding:11px 12px}
+.clue-num{flex:0 0 25px;height:25px;display:grid;place-items:center;background:#1e493b;color:var(--green);border-radius:8px;font-size:12px;font-weight:900}
+.clue p{margin:1px 0;font-size:14px}
+.answers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:17px 0 12px}
+.answer{border:1px solid var(--line);border-radius:13px;background:var(--panel2);color:var(--text);padding:14px;text-align:left;font:inherit;font-weight:800;cursor:pointer;min-height:56px;transition:.15s}
+.answer:hover:not(:disabled){border-color:var(--green);transform:translateY(-1px);background:#1d3a4e}
+.answer:disabled{cursor:default;opacity:.85}
+.answer.correct{border-color:var(--green);background:#173e31;color:var(--green);opacity:1}
+.answer.wrong{border-color:#995454;background:#42252a;color:#ffc5c5;opacity:1}
+.feedback{min-height:46px;border-radius:12px;padding:11px 13px;color:var(--muted);font-size:14px}
+.feedback.good{background:#163529;color:#b8f8d0}
+.feedback.bad{background:#3d2529;color:#ffd0d0}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:8px}
+.btn{border:0;border-radius:12px;padding:12px 17px;font:inherit;font-weight:900;cursor:pointer}
+.btn.primary{background:var(--green);color:#07151b}
+.btn.secondary{background:#1b3045;border:1px solid var(--line);color:var(--text)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.end{display:none;text-align:center;padding:22px 8px 8px}
+.end.show{display:block}
+.end h3{font-size:clamp(28px,5vw,42px);margin:8px 0}
+.end p{color:var(--muted)}
+.end-score{font-size:56px;font-weight:1000;color:var(--green);line-height:1.2}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:22px}
+@media(max-width:560px){.answers{grid-template-columns:1fr}.stats{gap:7px}.stat{padding:11px}.stat strong{font-size:21px}.hero{align-items:flex-start}}
+</style>
+</head>
+<body>
+<header><div class="head"><div class="logo">⚽</div><div><h1>GUESS THE FOOTBALLER</h1><div class="tag">How well do you know the beautiful game?</div></div></div></header>
+<main>
+<section class="hero"><div><div class="eyebrow">Football quiz • Match day challenge</div><h2>Who am I?</h2><p>Read the clues, pick the player and build your streak.</p></div><div class="pill">10 QUESTIONS PER ROUND</div></section>
+<section class="stats" aria-label="Game statistics">
+ <div class="stat"><strong id="score">0</strong><span>Points</span></div>
+ <div class="stat"><strong id="streak">0 🔥</strong><span>Current streak</span></div>
+ <div class="stat"><strong id="best">0</strong><span>Best streak</span></div>
+</section>
+<section class="game" aria-label="Guess the footballer game">
+ <div id="playArea">
+  <div class="gamebar"><div class="question-count" id="questionCount">Question 1 of 10</div><div class="difficulty" id="difficulty">FOOTBALL MIX</div></div>
+  <div class="progress"><div id="progressFill"></div></div>
+  <div class="cluebox">
+   <div class="clue-icon">🕵️</div><div class="clue-title">Can you work out who I am?</div><p class="clue-sub">Each answer gets you 10 points. Use a hint if you need one.</p>
+   <div class="clues" id="clues"></div>
+  </div>
+  <div class="answers" id="answers"></div>
+  <div class="feedback" id="feedback" aria-live="polite">Choose one of the four footballers.</div>
+  <div class="actions"><button class="btn secondary" id="hintBtn" type="button">💡 Show another hint</button><button class="btn primary" id="nextBtn" type="button" disabled>Next question →</button></div>
+ </div>
+ <div class="end" id="endScreen">
+  <div class="clue-icon">🏆</div><h3>Round complete!</h3><div class="end-score" id="finalScore">0/100</div><p id="endMessage">Nice work!</p><button class="btn primary" id="againBtn" type="button">Play another round</button>
+ </div>
+</section>
+</main>
+<footer>Made for football fans • Guess the Footballer</footer>
+<script>
+const players=[
+ {name:"Lionel Messi",club:"Inter Miami",nation:"Argentina",clues:["I have won the FIFA World Cup with my country.","I spent most of my European career at Barcelona.","I am famous for my left foot and amazing dribbling.","I have won the Ballon d'Or eight times."],level:"LEGEND"},
+ {name:"Cristiano Ronaldo",club:"Al-Nassr",nation:"Portugal",clues:["I have played for Manchester United, Real Madrid and Juventus.","I captained my country to a European Championship title.","I am known for my powerful shots and heading.","My famous celebration often starts with a jump and a shout."],level:"LEGEND"},
+ {name:"Mohamed Salah",club:"Liverpool",nation:"Egypt",clues:["I play for Liverpool.","I am a forward from Egypt.","I have won the Premier League and Champions League with Liverpool.","Fans often call me the Egyptian King."],level:"PREMIER LEAGUE"},
+ {name:"Sadio Mané",club:"Al-Nassr",nation:"Senegal",clues:["I am from Senegal.","I played for Liverpool and Bayern Munich.","I helped my country win the Africa Cup of Nations.","I formed a famous attacking trio at Liverpool with two other forwards."],level:"PREMIER LEAGUE"},
+ {name:"Kylian Mbappé",club:"Real Madrid",nation:"France",clues:["I won the World Cup with France in 2018.","I used to play for Paris Saint-Germain.","I am known for my incredible speed.","I joined Real Madrid in 2024."],level:"WORLD FOOTBALL"},
+ {name:"Erling Haaland",club:"Manchester City",nation:"Norway",clues:["I am a striker from Norway.","I played for Borussia Dortmund before moving to England.","I broke the Premier League single-season scoring record in 2022–23.","I am known for scoring lots of goals with my left foot."],level:"PREMIER LEAGUE"},
+ {name:"Jude Bellingham",club:"Real Madrid",nation:"England",clues:["I am an England midfielder.","I played for Borussia Dortmund before joining Real Madrid.","I began my senior career at Birmingham City.","My initials are J.B."],level:"WORLD FOOTBALL"},
+ {name:"Vinícius Júnior",club:"Real Madrid",nation:"Brazil",clues:["I am a Brazilian winger.","I joined Real Madrid from Flamengo.","I am known for my speed, skills and dribbling.","I scored in the 2022 Champions League final."],level:"WORLD FOOTBALL"},
+ {name:"Son Heung-min",club:"LAFC",nation:"South Korea",clues:["I am from South Korea.","I became a star at Tottenham Hotspur.","I won the Premier League Golden Boot in 2021–22.","I am known for scoring with either foot."],level:"PREMIER LEAGUE"},
+ {name:"Harry Kane",club:"Bayern Munich",nation:"England",clues:["I am England's all-time leading men's goalscorer.","I was Tottenham Hotspur's record goalscorer.","I moved to Bayern Munich in 2023.","I am a centre-forward."],level:"WORLD FOOTBALL"},
+ {name:"Virgil van Dijk",club:"Liverpool",nation:"Netherlands",clues:["I am a centre-back from the Netherlands.","I joined Liverpool from Southampton.","I captained Liverpool to the Premier League title.","I am known for my defending and aerial ability."],level:"PREMIER LEAGUE"},
+ {name:"Kevin De Bruyne",club:"Napoli",nation:"Belgium",clues:["I am a midfielder from Belgium.","I was a key player for Manchester City for many seasons.","I am famous for my passing and crossing.","I joined Napoli in 2025."],level:"WORLD FOOTBALL"},
+ {name:"Robert Lewandowski",club:"Barcelona",nation:"Poland",clues:["I am a striker from Poland.","I scored many goals for Bayern Munich.","I also played for Borussia Dortmund.","I moved to Barcelona in 2022."],level:"WORLD FOOTBALL"},
+ {name:"Luka Modrić",club:"AC Milan",nation:"Croatia",clues:["I am a midfielder from Croatia.","I won the Ballon d'Or in 2018.","I spent many years at Real Madrid.","I joined AC Milan in 2025."],level:"WORLD FOOTBALL"},
+ {name:"Bukayo Saka",club:"Arsenal",nation:"England",clues:["I came through the Arsenal academy.","I play as a winger for Arsenal and England.","My shirt number is 7 at Arsenal.","I am known for my left foot."],level:"PREMIER LEAGUE"},
+ {name:"Cole Palmer",club:"Chelsea",nation:"England",clues:["I am an England attacking midfielder.","I moved from Manchester City to Chelsea in 2023.","My celebration is often called the cold celebration.","I scored a hat-trick in the 2024 Premier League season."],level:"PREMIER LEAGUE"},
+ {name:"Alexis Mac Allister",club:"Liverpool",nation:"Argentina",clues:["I am an Argentine midfielder.","I won the World Cup in 2022.","I joined Liverpool from Brighton.","My first name is Alexis."],level:"PREMIER LEAGUE"},
+ {name:"Rodri",club:"Manchester City",nation:"Spain",clues:["I am a Spanish defensive midfielder.","I scored the winning goal in the 2023 Champions League final.","I won the Ballon d'Or in 2024.","I play for Manchester City."],level:"WORLD FOOTBALL"},
+ {name:"Lamine Yamal",club:"Barcelona",nation:"Spain",clues:["I am a young Spanish winger.","I came through Barcelona's academy.","I helped Spain win Euro 2024.","I wear number 10 for Barcelona."],level:"WORLD FOOTBALL"},
+ {name:"Raphinha",club:"Barcelona",nation:"Brazil",clues:["I am a Brazilian winger.","I played for Leeds United before Barcelona.","I am left-footed and often play on the right wing.","My first name is Raphinha."],level:"WORLD FOOTBALL"}
+];
+let round=[],index=0,score=0,streak=0,best=0,revealed=1,answered=false,usedHint=false;
+const $=id=>document.getElementById(id);
+const shuffle=arr=>arr.map(v=>({v,r:Math.random()})).sort((a,b)=>a.r-b.r).map(x=>x.v);
+function makeRound(){round=shuffle(players).slice(0,10);index=0;score=0;streak=0;revealed=1;answered=false;usedHint=false;$("score").textContent=score;$("streak").textContent=streak+" 🔥";$("playArea").style.display="block";$("endScreen").classList.remove("show");showQuestion();}
+function showQuestion(){
+ const p=round[index];revealed=1;answered=false;usedHint=false;
+ $("questionCount").textContent="Question "+(index+1)+" of "+round.length;
+ $("difficulty").textContent=p.level;
+ $("progressFill").style.width=(index/round.length*100)+"%";
+ $("clues").innerHTML=p.clues.slice(0,revealed).map((clue,i)=>'<div class="clue"><span class="clue-num">'+(i+1)+'</span><p>'+clue+'</p></div>').join("");
+ const wrong=shuffle(players.filter(x=>x.name!==p.name)).slice(0,3).map(x=>x.name);
+ const choices=shuffle([p.name,...wrong]);
+ $("answers").innerHTML=choices.map(name=>'<button type="button" class="answer" data-answer="'+name.replace(/"/g,"&quot;")+'">'+name+'</button>').join("");
+ $("feedback").className="feedback";$("feedback").textContent="Choose one of the four footballers.";
+ $("nextBtn").disabled=true;$("nextBtn").textContent=index===round.length-1?"Finish round →":"Next question →";
+ $("hintBtn").disabled=false;$("hintBtn").textContent="💡 Show another hint";
+}
+$("answers").addEventListener("click",e=>{
+ const btn=e.target.closest(".answer");if(!btn||answered)return;
+ answered=true;const p=round[index],correct=btn.dataset.answer===p.name;
+ $("answers").querySelectorAll(".answer").forEach(b=>{b.disabled=true;if(b.dataset.answer===p.name)b.classList.add("correct");else if(b===btn)b.classList.add("wrong");});
+ if(correct){const points=usedHint?5:10;score+=points;streak++;best=Math.max(best,streak);$("feedback").className="feedback good";$("feedback").innerHTML="✅ Correct! It's <b>"+p.name+"</b>. You earned "+points+" points.";}
+ else{streak=0;$("feedback").className="feedback bad";$("feedback").innerHTML="❌ It was <b>"+p.name+"</b> from "+p.nation+". Keep going!";}
+ $("score").textContent=score;$("streak").textContent=streak+" 🔥";$("best").textContent=best;
+ $("nextBtn").disabled=false;$("hintBtn").disabled=true;
+});
+$("hintBtn").addEventListener("click",()=>{
+ if(answered)return;const p=round[index];if(revealed>=p.clues.length){$("feedback").textContent="No more hints for this player.";return;}
+ revealed++;usedHint=true;$("clues").innerHTML=p.clues.slice(0,revealed).map((clue,i)=>'<div class="clue"><span class="clue-num">'+(i+1)+'</span><p>'+clue+'</p></div>').join("");
+ if(revealed===p.clues.length)$("hintBtn").disabled=true;
+});
+$("nextBtn").addEventListener("click",()=>{
+ if(!answered)return;index++;
+ if(index>=round.length){$("playArea").style.display="none";$("endScreen").classList.add("show");$("finalScore").textContent=score+"/100";$("endMessage").textContent="You got "+score/10+" out of 10 questions right before hints. Best streak: "+best+". Play another round and beat your score!";$("progressFill").style.width="100%";}
+ else showQuestion();
+});
+$("againBtn").addEventListener("click",makeRound);
+try{best=Number(localStorage.getItem("gtf-best")||0);$("best").textContent=best;}catch(e){}
+const originalBest=best;
+const bestObserver=()=>{if(best>originalBest){try{localStorage.setItem("gtf-best",String(best));}catch(e){}}};
+window.addEventListener("beforeunload",bestObserver);
+makeRound();
+if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));}
+</script>
+</body>
+</html>
