@@ -231,7 +231,7 @@ function getAvailable(role,slotId){
 }
 function renderPitch(){
  const slots=getSlots();slotIds=slots.map(s=>s.id);
- $("pitchContent").innerHTML=formations[formation].map(([role,count])=>{
+ $("pitchContent").innerHTML=getFormationRows().map(([role,count])=>{
   const row=slots.filter(s=>s.role===role);
   return '<div class="band">'+row.map(s=>{
    const current=selection[s.id]||"";
@@ -268,7 +268,7 @@ function updateSummary(){
  }else{$("resultCard").classList.remove("show");}
 }
 function save(){try{localStorage.setItem("alltime-dream-xi",JSON.stringify({formation,selection,captain,customCounts}));}catch(e){}}
-function load(){try{const saved=JSON.parse(localStorage.getItem("alltime-dream-xi")||"null");if(saved&&formations[saved.formation]&&saved.selection){formation=saved.formation;selection=saved.selection;captain=saved.captain||"";customCounts=saved.customCounts||customCounts;}}catch(e){}}
+function load(){try{const saved=JSON.parse(localStorage.getItem("alltime-dream-xi")||"null");if(saved&&(saved.formation==="custom"||formations[saved.formation])&&saved.selection){formation=saved.formation;selection=saved.selection;captain=saved.captain||"";customCounts=saved.customCounts||customCounts;}}catch(e){}}
 $("captain").addEventListener("change",()=>{captain=$("captain").value;save();$("actionMessage").textContent=captain?captain+" is your captain.":"Choose a captain for your XI.";});
 $("formation").addEventListener("change",()=>{
  formation=$("formation").value;
@@ -307,7 +307,7 @@ $("shareBtn").addEventListener("click",async()=>{
  const chosen=chosenPlayers();
  if(chosen.length!==11){$("actionMessage").textContent="Choose all 11 players before copying your team.";return;}
  if(!captain){$("actionMessage").textContent="Choose your captain before copying your team.";return;}
- const lines=formations[formation].map(([role])=>roleNames[role]+": "+chosen.filter(p=>p.role===role).map(p=>p.name).join(", ")).join("\n");
+ const lines=getFormationRows().map(([role])=>roleNames[role]+": "+chosen.filter(p=>p.role===role).map(p=>p.name).join(", ")).join("\n");
  const text="MY ALL-TIME DREAM XI ("+formationLabel()+")\n"+lines+"\nCaptain: "+captain+"\nTeam rating: "+$("teamRating").textContent+"/100";
  try{await navigator.clipboard.writeText(text);$("actionMessage").textContent="Copied! Share your Dream XI with friends.";}catch(e){$("actionMessage").textContent=text;}
 });
