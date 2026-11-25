@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#07131f">
+<meta name="description" content="Build your all-time football Dream XI with legends from every era.">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./icon.svg" type="image/svg+xml">
+<title>All-Time Dream XI</title>
+<style>
+:root{color-scheme:dark;--bg:#07131f;--panel:#102235;--panel2:#172d42;--line:#2b4359;--text:#f4f8fb;--muted:#9eafc1;--green:#7cf0af;--gold:#ffd776;--red:#ff8585}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 12% -10%,#1a543f 0,transparent 36%),radial-gradient(ellipse at 100% 10%,#1c3450 0,transparent 32%),var(--bg);color:var(--text);font:16px/1.5 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+header{background:#07131fe9;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5;backdrop-filter:blur(12px)}
+.head{max-width:1120px;margin:auto;padding:14px 18px;display:flex;align-items:center;gap:12px}
+.logo{width:44px;height:44px;display:grid;place-items:center;border-radius:14px;background:linear-gradient(135deg,#7cf0af,#259f72);color:#07131f;font-size:24px}
+h1{margin:0;font-size:clamp(18px,4vw,25px);letter-spacing:-.7px;line-height:1.1}
+.tag{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1.4px;margin-top:4px}
+main{max-width:1120px;margin:auto;padding:27px 18px 60px}
+.hero{display:flex;justify-content:space-between;align-items:end;gap:16px;flex-wrap:wrap;margin:8px 0 22px}
+.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:1.7px;color:var(--green);font-weight:950}
+h2{font-size:clamp(35px,7vw,58px);line-height:1;letter-spacing:-2.4px;margin:7px 0}
+.hero p{margin:9px 0 0;color:var(--muted)}
+.pill{border:1px solid #66572f;background:#2c2719;color:var(--gold);border-radius:99px;padding:8px 13px;font-size:12px;font-weight:900}
+.toolbar{display:flex;align-items:end;gap:10px;flex-wrap:wrap;background:#0e2031;border:1px solid var(--line);border-radius:16px;padding:13px;margin:19px 0}
+.control{min-width:160px;flex:1}
+.control label{display:block;font-size:11px;color:var(--muted);font-weight:900;text-transform:uppercase;letter-spacing:1px;margin:0 0 6px}
+select{width:100%;background:#091827;border:1px solid #304a61;color:var(--text);border-radius:11px;padding:11px 12px;font:inherit;min-width:0}
+select:focus{outline:2px solid var(--green);outline-offset:1px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:17px 0}
+.stat{background:#0e2031;border:1px solid var(--line);border-radius:14px;padding:12px 15px}
+.stat strong{display:block;font-size:25px;line-height:1.15}
+.stat span{color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-size:10px;font-weight:850}
+.layout{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(270px,.7fr);gap:15px;align-items:start}
+.panel{border:1px solid var(--line);border-radius:19px;background:linear-gradient(145deg,#142a3d,#0b1a29);padding:15px}
+.panel-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:13px}
+.panel-head h3{margin:0;font-size:18px}
+.panel-head small{color:var(--muted);font-size:11px}
+.pitch{position:relative;min-height:575px;border:2px solid #69ac7c;border-radius:13px;overflow:hidden;padding:16px 10px;background:repeating-linear-gradient(0deg,#12633f 0,#12633f 58px,#115b3b 58px,#115b3b 116px)}
+.pitch:before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent calc(50% - 1px),#ffffff57 calc(50% - 1px),#ffffff57 calc(50% + 1px),transparent calc(50% + 1px))}
+.pitch:after{content:"";position:absolute;pointer-events:none;left:50%;top:50%;width:110px;height:110px;border:1.5px solid #ffffff55;border-radius:50%;transform:translate(-50%,-50%)}
+.pitch-line-top,.pitch-line-bottom{position:absolute;left:25%;right:25%;height:45px;border:1.5px solid #ffffff60;pointer-events:none}
+.pitch-line-top{top:-2px;border-top:0}.pitch-line-bottom{bottom:-2px;border-bottom:0}
+.pitch-content{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:space-around;min-height:535px;gap:12px}
+.band{display:flex;justify-content:center;align-items:center;gap:8px;flex-wrap:nowrap}
+.slot{display:flex;flex-direction:column;align-items:center;gap:5px;width:min(24%,142px);min-width:0}
+.slot.gk{width:min(34%,165px)}
+.slot select{width:100%;padding:8px 5px;border-radius:9px;background:#071a28ed;border:1px solid #c0dfc9;color:#fff;text-align:center;font-size:12px;font-weight:750}
+.slot select option{background:#102235;color:#fff}
+.slot-number{width:36px;height:36px;display:grid;place-items:center;border-radius:50%;background:linear-gradient(145deg,#f5f8f4,#b9d7c5);border:2px solid #fff;color:#123d29;font-size:13px;font-weight:1000;box-shadow:0 3px 8px #001a0d88}
+.slot-label{font-size:9px;letter-spacing:1px;text-transform:uppercase;font-weight:950;color:#e5ffed;text-shadow:0 2px 4px #00301a;text-align:center}
+.empty-hint{font-size:9px;color:#e1f3e7;text-shadow:0 2px 4px #00301a;text-align:center;min-height:13px}
+.summary{display:grid;gap:12px}
+.summary-card{background:#0c1d2d;border:1px solid var(--line);border-radius:14px;padding:14px}
+.summary-card h4{margin:0 0 9px;font-size:13px}
+.rating{display:flex;align-items:baseline;gap:7px}
+.rating strong{font-size:37px;line-height:1;color:var(--green)}
+.rating span{font-size:12px;color:var(--muted)}
+.meter{height:8px;border-radius:99px;background:#263b50;overflow:hidden;margin:10px 0}
+.meter>div{height:100%;width:0;background:linear-gradient(90deg,#32b67a,#9cf5bf);transition:width .25s}
+.team-list{display:grid;gap:7px}
+.team-row{display:flex;justify-content:space-between;gap:8px;font-size:12px;border-bottom:1px solid #203448;padding-bottom:6px}
+.team-row:last-child{border:0;padding:0}
+.team-row span{color:var(--muted)}
+.missing{color:var(--gold)!important}
+.btns{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.btn{border:0;border-radius:11px;padding:11px 12px;font:inherit;font-weight:900;cursor:pointer}
+.btn.primary{background:var(--green);color:#07151d}
+.btn.secondary{background:#1b3146;color:var(--text);border:1px solid var(--line)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.full{grid-column:1/-1}
+.message{min-height:40px;color:var(--muted);font-size:12px;margin-top:8px}
+.result{display:none;border:1px solid #417258;background:#102f24;border-radius:15px;padding:15px;margin-top:13px}
+.result.show{display:block}
+.result h4{margin:0 0 6px;color:var(--green);font-size:16px}
+.result p{margin:0;color:#d2e5d8;font-size:13px}
+.disclaimer{font-size:11px;color:var(--muted);margin-top:14px}
+footer{text-align:center;font-size:12px;color:var(--muted);padding:20px}
+@media(max-width:850px){.layout{grid-template-columns:1fr}.pitch{min-height:555px}.pitch-content{min-height:515px}.summary{grid-template-columns:repeat(2,minmax(0,1fr))}.summary-card:first-child,.summary-card:last-child{grid-column:1/-1}}
+@media(max-width:560px){main{padding:23px 12px 50px}.stats{gap:7px}.stat{padding:10px}.stat strong{font-size:22px}.pitch{min-height:495px;padding:13px 5px}.pitch-content{min-height:465px;gap:8px}.band{gap:4px}.slot{width:24%}.slot.gk{width:36%}.slot select{font-size:10px;padding:7px 2px}.slot-number{width:31px;height:31px}.summary{grid-template-columns:1fr}.summary-card:first-child,.summary-card:last-child{grid-column:auto}.toolbar{padding:10px}.control{min-width:130px}}
+</style>
+</head>
+<body>
+<header><div class="head"><div class="logo">⚽</div><div><h1>ALL-TIME DREAM XI</h1><div class="tag">Pick your legends. Build your perfect team.</div></div></div></header>
+<main>
+<section class="hero"><div><div class="eyebrow">The ultimate football challenge</div><h2>Build your Dream XI.</h2><p>Choose 11 players from football history. Who makes your all-time team?</p></div><div class="pill">LEGENDS ONLY</div></section>
+<div class="toolbar">
+ <div class="control"><label for="formation">Choose formation</label><select id="formation"><option value="433">4-3-3</option><option value="442">4-4-2</option><option value="352">3-5-2</option><option value="4231">4-2-3-1</option></select></div>
+ <div class="control"><label for="filterEra">Player pool</label><select id="filterEra"><option value="all">All-time legends</option><option value="classic">Classic legends</option><option value="modern">Modern era</option></select></div>
+</div>
+<section class="stats"><div class="stat"><strong id="picked">0/11</strong><span>Players selected</span></div><div class="stat"><strong id="teamRating">—</strong><span>Dream XI rating</span></div><div class="stat"><strong id="countries">0</strong><span>Nationalities</span></div></section>
+<div class="layout">
+ <section class="panel">
+  <div class="panel-head"><h3>🏟️ Your starting XI</h3><small>Choose a player in each position</small></div>
+  <div class="pitch"><div class="pitch-line-top"></div><div class="pitch-line-bottom"></div><div class="pitch-content" id="pitchContent"></div></div>
+ </section>
+ <aside class="summary">
+  <section class="summary-card"><h4>⭐ Team rating</h4><div class="rating"><strong id="ratingBig">—</strong><span id="ratingLabel">Complete your XI</span></div><div class="meter"><div id="ratingMeter"></div></div><div class="message" id="statusMessage">Select your first player to get started.</div></section>
+  <section class="summary-card"><h4>📋 Squad breakdown</h4><div class="team-list" id="teamBreakdown"><div class="team-row"><span>Goalkeepers</span><b>0/1</b></div><div class="team-row"><span>Defenders</span><b>0/4</b></div><div class="team-row"><span>Midfielders</span><b>0/3</b></div><div class="team-row"><span>Forwards</span><b>0/3</b></div></div></section>
+  <section class="summary-card"><h4>🎮 Team actions</h4><div class="btns"><button class="btn primary" id="randomBtn" type="button">🎲 Random XI</button><button class="btn secondary" id="clearBtn" type="button">Clear team</button><button class="btn secondary full" id="shareBtn" type="button">Copy my Dream XI</button></div><div class="message" id="actionMessage" aria-live="polite"></div></section>
+  <section class="summary-card"><h4>🏆 Your team result</h4><div class="result" id="resultCard"><h4 id="resultTitle">Dream XI complete!</h4><p id="resultText"></p></div><div class="message">Choose all 11 players to reveal your final team rating.</div></section>
+ </aside>
+</div>
+<p class="disclaimer">This is a fun fan-made squad builder. Player ratings and position groups are game values, not official rankings. Some players can fill more than one role.</p>
+</main>
+<footer>All-Time Dream XI • Built for football fans</footer>
+<script>
+const players=[
+{name:"Lev Yashin",role:"GK",nation:"Russia",club:"Dynamo Moscow",rating:98,era:"classic"},
+{name:"Gianluigi Buffon",role:"GK",nation:"Italy",club:"Juventus",rating:98,era:"classic"},
+{name:"Iker Casillas",role:"GK",nation:"Spain",club:"Real Madrid",rating:97,era:"classic"},
+{name:"Manuel Neuer",role:"GK",nation:"Germany",club:"Bayern Munich",rating:98,era:"modern"},
+{name:"Peter Schmeichel",role:"GK",nation:"Denmark",club:"Manchester United",rating:96,era:"classic"},
+{name:"Edwin van der Sar",role:"GK",nation:"Netherlands",club:"Manchester United",rating:95,era:"classic"},
+{name:"Petr Čech",role:"GK",nation:"Czechia",club:"Chelsea",rating:95,era:"classic"},
+{name:"Alisson Becker",role:"GK",nation:"Brazil",club:"Liverpool",rating:96,era:"modern"},
+{name:"Thibaut Courtois",role:"GK",nation:"Belgium",club:"Real Madrid",rating:96,era:"modern"},
+{name:"Dino Zoff",role:"GK",nation:"Italy",club:"Juventus",rating:96,era:"classic"},
+{name:"Paolo Maldini",role:"DEF",nation:"Italy",club:"AC Milan",rating:100,era:"classic"},
+{name:"Franz Beckenbauer",role:"DEF",nation:"Germany",club:"Bayern Munich",rating:100,era:"classic"},
+{name:"Roberto Carlos",role:"DEF",nation:"Brazil",club:"Real Madrid",rating:98,era:"classic"},
+{name:"Cafu",role:"DEF",nation:"Brazil",club:"AC Milan",rating:97,era:"classic"},
+{name:"Franco Baresi",role:"DEF",nation:"Italy",club:"AC Milan",rating:98,era:"classic"},
+{name:"Sergio Ramos",role:"DEF",nation:"Spain",club:"Real Madrid",rating:97,era:"modern"},
+{name:"Alessandro Nesta",role:"DEF",nation:"Italy",club:"AC Milan",rating:97,era:"classic"},
+{name:"Carles Puyol",role:"DEF",nation:"Spain",club:"Barcelona",rating:96,era:"classic"},
+{name:"Philipp Lahm",role:"DEF",nation:"Germany",club:"Bayern Munich",rating:97,era:"modern"},
+{name:"Dani Alves",role:"DEF",nation:"Brazil",club:"Barcelona",rating:96,era:"modern"},
+{name:"Fabio Cannavaro",role:"DEF",nation:"Italy",club:"Real Madrid",rating:97,era:"classic"},
+{name:"Virgil van Dijk",role:"DEF",nation:"Netherlands",club:"Liverpool",rating:97,era:"modern"},
+{name:"Ashley Cole",role:"DEF",nation:"England",club:"Chelsea",rating:95,era:"classic"},
+{name:"Javier Zanetti",role:"DEF",nation:"Argentina",club:"Inter Milan",rating:96,era:"classic"},
+{name:"John Terry",role:"DEF",nation:"England",club:"Chelsea",rating:96,era:"classic"},
+{name:"Lilian Thuram",role:"DEF",nation:"France",club:"Juventus",rating:96,era:"classic"},
+{name:"Zinedine Zidane",role:"MID",nation:"France",club:"Real Madrid",rating:100,era:"classic"},
+{name:"Xavi",role:"MID",nation:"Spain",club:"Barcelona",rating:99,era:"classic"},
+{name:"Andrés Iniesta",role:"MID",nation:"Spain",club:"Barcelona",rating:99,era:"classic"},
+{name:"Luka Modrić",role:"MID",nation:"Croatia",club:"Real Madrid",rating:98,era:"modern"},
+{name:"Andrea Pirlo",role:"MID",nation:"Italy",club:"AC Milan",rating:98,era:"classic"},
+{name:"Steven Gerrard",role:"MID",nation:"England",club:"Liverpool",rating:98,era:"classic"},
+{name:"Frank Lampard",role:"MID",nation:"England",club:"Chelsea",rating:97,era:"classic"},
+{name:"Paul Scholes",role:"MID",nation:"England",club:"Manchester United",rating:97,era:"classic"},
+{name:"Lothar Matthäus",role:"MID",nation:"Germany",club:"Inter Milan",rating:98,era:"classic"},
+{name:"Patrick Vieira",role:"MID",nation:"France",club:"Arsenal",rating:96,era:"classic"},
+{name:"Sergio Busquets",role:"MID",nation:"Spain",club:"Barcelona",rating:97,era:"modern"},
+{name:"Kevin De Bruyne",role:"MID",nation:"Belgium",club:"Manchester City",rating:98,era:"modern"},
+{name:"Kaká",role:"MID",nation:"Brazil",club:"AC Milan",rating:97,era:"classic"},
+{name:"Ronaldinho",role:"MID",nation:"Brazil",club:"Barcelona",rating:99,era:"classic"},
+{name:"Johan Cruyff",role:"MID",nation:"Netherlands",club:"Ajax",rating:100,era:"classic"},
+{name:"Diego Maradona",role:"MID",nation:"Argentina",club:"Napoli",rating:100,era:"classic"},
+{name:"Bastian Schweinsteiger",role:"MID",nation:"Germany",club:"Bayern Munich",rating:96,era:"classic"},
+{name:"Jude Bellingham",role:"MID",nation:"England",club:"Real Madrid",rating:96,era:"modern"},
+{name:"Lionel Messi",role:"ATT",nation:"Argentina",club:"Barcelona",rating:100,era:"modern"},
+{name:"Cristiano Ronaldo",role:"ATT",nation:"Portugal",club:"Real Madrid",rating:100,era:"modern"},
+{name:"Pelé",role:"ATT",nation:"Brazil",club:"Santos",rating:100,era:"classic"},
+{name:"Ronaldo Nazário",role:"ATT",nation:"Brazil",club:"Real Madrid",rating:99,era:"classic"},
+{name:"Thierry Henry",role:"ATT",nation:"France",club:"Arsenal",rating:98,era:"classic"},
+{name:"Kylian Mbappé",role:"ATT",nation:"France",club:"Real Madrid",rating:97,era:"modern"},
+{name:"Neymar",role:"ATT",nation:"Brazil",club:"Barcelona",rating:98,era:"modern"},
+{name:"Mohamed Salah",role:"ATT",nation:"Egypt",club:"Liverpool",rating:97,era:"modern"},
+{name:"Sadio Mané",role:"ATT",nation:"Senegal",club:"Liverpool",rating:95,era:"modern"},
+{name:"George Best",role:"ATT",nation:"Northern Ireland",club:"Manchester United",rating:98,era:"classic"},
+{name:"Garrincha",role:"ATT",nation:"Brazil",club:"Botafogo",rating:98,era:"classic"},
+{name:"Eusébio",role:"ATT",nation:"Portugal",club:"Benfica",rating:98,era:"classic"},
+{name:"Ferenc Puskás",role:"ATT",nation:"Hungary",club:"Real Madrid",rating:99,era:"classic"},
+{name:"Gerd Müller",role:"ATT",nation:"Germany",club:"Bayern Munich",rating:98,era:"classic"},
+{name:"Erling Haaland",role:"ATT",nation:"Norway",club:"Manchester City",rating:96,era:"modern"},
+{name:"Wayne Rooney",role:"ATT",nation:"England",club:"Manchester United",rating:97,era:"classic"},
+{name:"Luis Suárez",role:"ATT",nation:"Uruguay",club:"Barcelona",rating:97,era:"modern"},
+{name:"David Villa",role:"ATT",nation:"Spain",club:"Barcelona",rating:96,era:"classic"}
+];
+const formations={
+ "433":[["GK",1],["DEF",4],["MID",3],["ATT",3]],
+ "442":[["GK",1],["DEF",4],["MID",4],["ATT",2]],
+ "352":[["GK",1],["DEF",3],["MID",5],["ATT",2]],
+ "4231":[["GK",1],["DEF",4],["MID",2],["ATT",4]]
+};
+const roleNames={GK:"Goalkeeper",DEF:"Defender",MID:"Midfielder",ATT:"Forward"};
+let formation="433",selection={},slotIds=[];
+const $=id=>document.getElementById(id);
+function getSlots(){let out=[];let index=0;for(const [role,count] of formations[formation])for(let i=0;i<count;i++)out.push({id:"slot"+(++index),role,number:index});return out;}
+function getAvailable(role,slotId){
+ const used=new Set(Object.entries(selection).filter(([id])=>id!==slotId).map(([,name])=>name));
+ const era=$("filterEra").value;
+ return players.filter(p=>p.role===role&&!used.has(p.name)&&(era==="all"||p.era===era))
+ .sort((a,b)=>a.name.localeCompare(b.name));
+}
+function renderPitch(){
+ const slots=getSlots();slotIds=slots.map(s=>s.id);
+ $("pitchContent").innerHTML=formations[formation].map(([role,count])=>{
+  const row=slots.filter(s=>s.role===role);
+  return '<div class="band">'+row.map(s=>{
+   const current=selection[s.id]||"";
+   const selectedPlayer=players.find(p=>p.name===current);
+   let options=getAvailable(role,s.id);
+   if(selectedPlayer&&!options.some(p=>p.name===selectedPlayer.name))options=[selectedPlayer,...options];
+   return '<div class="slot '+(role==="GK"?"gk":"")+'"><div class="slot-number">'+(selectedPlayer?selectedPlayer.rating:"?")+'</div><div class="slot-label">'+roleNames[role]+'</div><select data-slot="'+s.id+'" aria-label="Choose '+roleNames[role]+'"><option value="">Choose player</option>'+options.map(p=>'<option value="'+p.name.replace(/&/g,"&amp;").replace(/"/g,"&quot;")+'" '+(p.name===current?"selected":"")+'>'+p.name+'</option>').join("")+'</select><div class="empty-hint">'+(selectedPlayer?selectedPlayer.nation:"Pick your player")+'</div></div>';
+  }).join("")+'</div>';
+ }).join("");
+ $("pitchContent").querySelectorAll("select[data-slot]").forEach(select=>select.addEventListener("change",()=>{
+  if(select.value)selection[select.dataset.slot]=select.value;else delete selection[select.dataset.slot];
+  renderPitch();updateSummary();save();
+ }));
+}
+function chosenPlayers(){return Object.values(selection).map(n=>players.find(p=>p.name===n)).filter(Boolean);}
+function updateSummary(){
+ const chosen=chosenPlayers(),count=chosen.length,avg=count?Math.round(chosen.reduce((sum,p)=>sum+p.rating,0)/count):0;
+ $("picked").textContent=count+"/11";$("teamRating").textContent=count===11?avg:"—";$("ratingBig").textContent=count===11?avg:"—";$("ratingLabel").textContent=count===11?(avg>=98?"All-time great!":avg>=96?"World class XI":"Strong Dream XI"):"Complete your XI";
+ $("ratingMeter").style.width=(count===11?avg:count/11*100)+"%";
+ $("countries").textContent=new Set(chosen.map(p=>p.nation)).size;
+ const breakdown=formations[formation].map(([role,total])=>({role,total,count:chosen.filter(p=>p.role===role).length}));
+ $("teamBreakdown").innerHTML=breakdown.map(x=>'<div class="team-row"><span>'+roleNames[x.role]+'s</span><b class="'+(x.count<x.total?"missing":"")+'">'+x.count+'/'+x.total+'</b></div>').join("");
+ $("statusMessage").textContent=count===11?"Your all-time Dream XI is complete!":(11-count)+" more player"+(11-count===1?"":"s")+" to go.";
+ if(count===11){
+  $("resultCard").classList.add("show");$("resultTitle").textContent=avg>=98?"LEGENDARY DREAM XI!":avg>=96?"WORLD-CLASS DREAM XI!":"YOUR DREAM XI IS READY!";
+  $("resultText").textContent="Your team rating is "+avg+"/100 across 11 legends from "+new Set(chosen.map(p=>p.nation)).size+" different nationalities.";
+ }else{$("resultCard").classList.remove("show");}
+}
+function save(){try{localStorage.setItem("alltime-dream-xi",JSON.stringify({formation,selection}));}catch(e){}}
+function load(){try{const saved=JSON.parse(localStorage.getItem("alltime-dream-xi")||"null");if(saved&&formations[saved.formation]&&saved.selection){formation=saved.formation;selection=saved.selection;}}catch(e){}}
+$("formation").addEventListener("change",()=>{
+ formation=$("formation").value;selection={};renderPitch();updateSummary();save();
+});
+$("filterEra").addEventListener("change",()=>{
+ for(const [id,name] of Object.entries(selection)){const p=players.find(x=>x.name===name);if($("filterEra").value!=="all"&&p&&p.era!==$("filterEra").value)delete selection[id];}
+ renderPitch();updateSummary();save();
+});
+$("randomBtn").addEventListener("click",()=>{
+ selection={};const slots=getSlots();
+ for(const s of slots){const used=new Set(Object.values(selection));const options=players.filter(p=>p.role===s.role&&!used.has(p.name));const p=options[Math.floor(Math.random()*options.length)];if(p)selection[s.id]=p.name;}
+ renderPitch();updateSummary();save();$("actionMessage").textContent="Your random Dream XI is ready. Swap any players you want!";
+});
+$("clearBtn").addEventListener("click",()=>{
+ selection={};renderPitch();updateSummary();save();$("actionMessage").textContent="Your team has been cleared. Start building again!";
+});
+$("shareBtn").addEventListener("click",async()=>{
+ const chosen=chosenPlayers();
+ if(chosen.length!==11){$("actionMessage").textContent="Choose all 11 players before copying your team.";return;}
+ const lines=formations[formation].map(([role])=>roleNames[role]+": "+chosen.filter(p=>p.role===role).map(p=>p.name).join(", ")).join("\n");
+ const text="MY ALL-TIME DREAM XI ("+formation.replace("433","4-3-3").replace("442","4-4-2").replace("352","3-5-2").replace("4231","4-2-3-1")+")\n"+lines+"\nTeam rating: "+$("teamRating").textContent+"/100";
+ try{await navigator.clipboard.writeText(text);$("actionMessage").textContent="Copied! Share your Dream XI with friends.";}catch(e){$("actionMessage").textContent=text;}
+});
+load();$("formation").value=formation;renderPitch();updateSummary();
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
+</script>
+</body>
+</html>
