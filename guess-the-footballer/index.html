@@ -49,7 +49,7 @@ h2{font-size:clamp(35px,7vw,58px);line-height:1;letter-spacing:-2.4px;margin:7px
 .answer.correct{border-color:var(--green);background:#173e31;color:var(--green);opacity:1}
 .answer.wrong{border-color:#995454;background:#42252a;color:#ffc5c5;opacity:1}
 .feedback{min-height:46px;border-radius:12px;padding:11px 13px;color:var(--muted);font-size:14px}
-.feedback.good{background:#163529;color:#b8f8d0}.answer-details{margin-top:10px;padding:15px;border-radius:15px;border:2px solid var(--green);background:#0b2a24;box-shadow:0 8px 22px #0004}.answer-details[hidden]{display:none!important}.answer-details-title{font-size:12px;font-weight:1000;letter-spacing:1.4px;color:var(--green);margin-bottom:10px}.answer-details-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.answer-details-grid>div{background:#102d28;border:1px solid #356552;border-radius:11px;padding:10px}.answer-details-grid span{display:block;color:#b6cebf;text-transform:uppercase;letter-spacing:.8px;font-size:10px;font-weight:900}.answer-details-grid b{display:block;color:#fff;font-size:16px;margin-top:5px;overflow-wrap:anywhere}@media(max-width:540px){.answer-details-grid{grid-template-columns:1fr}.answer-details-grid>div{display:flex;justify-content:space-between;align-items:center;gap:10px}.answer-details-grid b{margin-top:0;text-align:right}}.profile-facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:12px}.profile-fact{background:#0b1a29;border:1px solid #2a4157;border-radius:10px;padding:9px 10px;color:var(--muted);font-size:12px}.profile-fact b{display:block;color:var(--text);font-size:11px;text-transform:uppercase;letter-spacing:.7px;margin-bottom:2px}@media(max-width:480px){.profile-facts{grid-template-columns:1fr}}
+.feedback.good{background:#163529;color:#b8f8d0}.profile-facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:12px}.profile-fact{background:#0b1a29;border:1px solid #2a4157;border-radius:10px;padding:9px 10px;color:var(--muted);font-size:12px}.profile-fact b{display:block;color:var(--text);font-size:11px;text-transform:uppercase;letter-spacing:.7px;margin-bottom:2px}@media(max-width:480px){.profile-facts{grid-template-columns:1fr}}
 .feedback.bad{background:#3d2529;color:#ffd0d0}
 .actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:8px}
 .btn{border:0;border-radius:12px;padding:12px 17px;font:inherit;font-weight:900;cursor:pointer}
@@ -63,6 +63,7 @@ h2{font-size:clamp(35px,7vw,58px);line-height:1;letter-spacing:-2.4px;margin:7px
 .end-score{font-size:56px;font-weight:1000;color:var(--green);line-height:1.2}
 footer{text-align:center;color:var(--muted);font-size:12px;padding:22px}
 @media(max-width:560px){.answers{grid-template-columns:1fr}.stats{gap:7px}.stat{padding:11px}.stat strong{font-size:21px}.hero{align-items:flex-start}}
+.player-info{margin-top:15px;border:1px solid #31546b;border-radius:13px;background:#10283a;padding:13px}.player-info-heading{font-size:11px;letter-spacing:1.3px;font-weight:950;color:var(--green);margin-bottom:9px}.player-info-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.player-detail{border-radius:10px;background:#091a2a;border:1px solid #2b4359;padding:9px 10px;min-width:0}.player-detail span{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);font-weight:850}.player-detail b{display:block;font-size:14px;color:var(--text);margin-top:4px;overflow-wrap:anywhere}@media(max-width:560px){.player-info-grid{grid-template-columns:1fr}.player-detail{display:flex;justify-content:space-between;gap:12px;align-items:center}.player-detail b{margin-top:0;text-align:right}}
 </style>
 </head>
 <body>
@@ -80,11 +81,12 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:22px}
   <div class="progress"><div id="progressFill"></div></div>
   <div class="cluebox">
    <div class="clue-icon">🕵️</div><div class="clue-title">Can you work out who I am?</div><p class="clue-sub">Each answer gets you 10 points. Use a hint if you need one.</p>
+   <div class="player-info" id="playerInfo"><div class="player-info-heading">PLAYER DETAILS</div><div class="player-info-grid"><div class="player-detail"><span>Current club</span><b id="infoClub">—</b></div><div class="player-detail"><span>Shirt number</span><b id="infoShirt">—</b></div><div class="player-detail"><span>Nationality</span><b id="infoNation">—</b></div></div></div>
    <div class="clues" id="clues"></div>
      </div>
   <div class="answers" id="answers"></div>
   <div class="feedback" id="feedback" aria-live="polite">Choose one of the four footballers.</div>
-  <section class="answer-details" id="answerDetails" hidden aria-live="polite"><div class="answer-details-title">PLAYER DETAILS</div><div class="answer-details-grid"><div><span>Current club</span><b id="answerClub"></b></div><div><span>Shirt number</span><b id="answerShirt"></b></div><div><span>Nationality</span><b id="answerNation"></b></div></div></section>
+  
   <div class="actions"><button class="btn secondary" id="hintBtn" type="button">💡 Show another hint</button><button class="btn primary" id="nextBtn" type="button" disabled>Next question →</button></div>
  </div>
  <div class="end" id="endScreen">
@@ -122,7 +124,7 @@ const shuffle=arr=>arr.map(v=>({v,r:Math.random()})).sort((a,b)=>a.r-b.r).map(x=
 function makeRound(){round=shuffle(players).slice(0,10);index=0;score=0;streak=0;revealed=1;answered=false;usedHint=false;$("score").textContent=score;$("streak").textContent=streak+" 🔥";$("playArea").style.display="block";$("endScreen").classList.remove("show");showQuestion();}
 function showQuestion(){
  const p=round[index];revealed=1;answered=false;usedHint=false;
- $("answerDetails").hidden=true;$("answerDetails").innerHTML="";
+ $("infoClub").textContent=p.club;$("infoShirt").textContent="#"+p.shirt;$("infoNation").textContent=p.nation;
  $("questionCount").textContent="Question "+(index+1)+" of "+round.length;
  $("difficulty").textContent=p.level;
  $("progressFill").style.width=(index/round.length*100)+"%";
@@ -140,7 +142,6 @@ $("answers").addEventListener("click",e=>{
  $("answers").querySelectorAll(".answer").forEach(b=>{b.disabled=true;if(b.dataset.answer===p.name)b.classList.add("correct");else if(b===btn)b.classList.add("wrong");});
  if(correct){const points=usedHint?5:10;score+=points;streak++;best=Math.max(best,streak);$("feedback").className="feedback good";$("feedback").innerHTML="✅ Correct! It's <b>"+p.name+"</b>. You earned "+points+" points.";}
  else{streak=0;$("feedback").className="feedback bad";$("feedback").innerHTML="❌ It was <b>"+p.name+"</b>. Keep going!";}
- $("answerClub").textContent=p.club;$("answerShirt").textContent="#"+p.shirt;$("answerNation").textContent=p.nation;$("answerDetails").hidden=false;
  $("score").textContent=score;$("streak").textContent=streak+" 🔥";$("best").textContent=best;
  $("nextBtn").disabled=false;$("hintBtn").disabled=true;
 });
