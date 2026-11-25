@@ -69,6 +69,7 @@ select:focus{outline:2px solid var(--green);outline-offset:1px}
 .btn.primary{background:var(--green);color:#07151d}
 .btn.secondary{background:#1b3146;color:var(--text);border:1px solid var(--line)}
 .btn:disabled{opacity:.45;cursor:not-allowed}
+.captain-box{margin-top:12px}.captain-box label{display:block;color:var(--muted);font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}.captain-box select:disabled{opacity:.55;cursor:not-allowed}
 .btn.full{grid-column:1/-1}
 .message{min-height:40px;color:var(--muted);font-size:12px;margin-top:8px}
 .result{display:none;border:1px solid #417258;background:#102f24;border-radius:15px;padding:15px;margin-top:13px}
@@ -98,7 +99,8 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:20px}
  <aside class="summary">
   <section class="summary-card"><h4>⭐ Team rating</h4><div class="rating"><strong id="ratingBig">—</strong><span id="ratingLabel">Complete your XI</span></div><div class="meter"><div id="ratingMeter"></div></div><div class="message" id="statusMessage">Select your first player to get started.</div></section>
   <section class="summary-card"><h4>📋 Squad breakdown</h4><div class="team-list" id="teamBreakdown"><div class="team-row"><span>Goalkeepers</span><b>0/1</b></div><div class="team-row"><span>Defenders</span><b>0/4</b></div><div class="team-row"><span>Midfielders</span><b>0/3</b></div><div class="team-row"><span>Forwards</span><b>0/3</b></div></div></section>
-  <section class="summary-card"><h4>🎮 Team actions</h4><div class="btns"><button class="btn primary" id="randomBtn" type="button">🎲 Random XI</button><button class="btn secondary" id="clearBtn" type="button">Clear team</button><button class="btn secondary full" id="shareBtn" type="button">Copy my Dream XI</button></div><div class="message" id="actionMessage" aria-live="polite"></div></section>
+  <section class="summary-card"><h4>🎮 Team actions</h4><div class="btns"><button class="btn primary" id="randomBtn" type="button">🎲 Random XI</button><button class="btn secondary" id="clearBtn" type="button">Clear team</button><button class="btn secondary full" id="shareBtn" type="button">Copy my Dream XI</button></div>
+<div class="captain-box"><label for="captain">👑 Choose your captain</label><select id="captain" disabled><option value="">Choose all 11 players first</option></select></div><div class="message" id="actionMessage" aria-live="polite"></div></section>
   <section class="summary-card"><h4>🏆 Your team result</h4><div class="result" id="resultCard"><h4 id="resultTitle">Dream XI complete!</h4><p id="resultText"></p></div><div class="message">Choose all 11 players to reveal your final team rating.</div></section>
  </aside>
 </div>
@@ -176,8 +178,8 @@ const formations={
  "352":[["GK",1],["DEF",3],["MID",5],["ATT",2]],
  "4231":[["GK",1],["DEF",4],["MID",2],["ATT",4]]
 };
-const roleNames={GK:"Goalkeeper",DEF:"Defender",MID:"Midfielder",ATT:"Forward"};
-let formation="433",selection={},slotIds=[];
+const roleNames={GK:"Goalkeeper",DEF:"Defender",MID:"Midfielder",ATT:"Attacker"};
+let formation="433",selection={},slotIds=[],captain="";
 const $=id=>document.getElementById(id);
 function getSlots(){let out=[];let index=0;for(const [role,count] of formations[formation])for(let i=0;i<count;i++)out.push({id:"slot"+(++index),role,number:index});return out;}
 function getAvailable(role,slotId){
@@ -195,7 +197,7 @@ function renderPitch(){
    const selectedPlayer=players.find(p=>p.name===current);
    let options=getAvailable(role,s.id);
    if(selectedPlayer&&!options.some(p=>p.name===selectedPlayer.name))options=[selectedPlayer,...options];
-   return '<div class="slot '+(role==="GK"?"gk":"")+'"><div class="slot-number">'+(selectedPlayer?selectedPlayer.rating:"?")+'</div><div class="slot-label">'+roleNames[role]+'</div><select data-slot="'+s.id+'" aria-label="Choose '+roleNames[role]+'"><option value="">Choose player</option>'+options.map(p=>'<option value="'+p.name.replace(/&/g,"&amp;").replace(/"/g,"&quot;")+'" '+(p.name===current?"selected":"")+'>'+p.name+'</option>').join("")+'</select><div class="empty-hint">'+(selectedPlayer?selectedPlayer.nation:"Pick your player")+'</div></div>';
+   return '<div class="slot '+(role==="GK"?"gk":"")+'"><div class="slot-number">'+(selectedPlayer?selectedPlayer.rating:"?")+'</div><div class="slot-label">'+roleNames[role]+'</div><select data-slot="'+s.id+'" aria-label="Choose '+roleNames[role]+'"><option value="">Choose player</option>'+options.map(p=>'<option value="'+p.name.replace(/&/g,"&amp;").replace(/"/g,"&quot;")+'" '+(p.name===current?"selected":"")+'>'+p.name+'</option>').join("")+'</select><div class="empty-hint">'+(selectedPlayer?selectedPlayer.nation+" • "+selectedPlayer.club:"Pick your player")+'</div></div>';
   }).join("")+'</div>';
  }).join("");
  $("pitchContent").querySelectorAll("select[data-slot]").forEach(select=>select.addEventListener("change",()=>{
@@ -209,16 +211,24 @@ function updateSummary(){
  $("picked").textContent=count+"/11";$("teamRating").textContent=count===11?avg:"—";$("ratingBig").textContent=count===11?avg:"—";$("ratingLabel").textContent=count===11?(avg>=98?"All-time great!":avg>=96?"World class XI":"Strong Dream XI"):"Complete your XI";
  $("ratingMeter").style.width=(count===11?avg:count/11*100)+"%";
  $("countries").textContent=new Set(chosen.map(p=>p.nation)).size;
+ const captainSelect=$("captain");
+ const previousCaptain=captain;
+ captainSelect.innerHTML='<option value="">Choose your captain</option>'+chosen.map(p=>'<option value="'+p.name.replace(/&/g,"&amp;").replace(/"/g,"&quot;")+'">'+p.name+'</option>').join("");
+ captainSelect.disabled=count!==11;
+ if(previousCaptain&&chosen.some(p=>p.name===previousCaptain)){captainSelect.value=previousCaptain;captain=previousCaptain;}
+ else{captain="";captainSelect.value="";}
+
  const breakdown=formations[formation].map(([role,total])=>({role,total,count:chosen.filter(p=>p.role===role).length}));
  $("teamBreakdown").innerHTML=breakdown.map(x=>'<div class="team-row"><span>'+roleNames[x.role]+'s</span><b class="'+(x.count<x.total?"missing":"")+'">'+x.count+'/'+x.total+'</b></div>').join("");
  $("statusMessage").textContent=count===11?"Your all-time Dream XI is complete!":(11-count)+" more player"+(11-count===1?"":"s")+" to go.";
  if(count===11){
   $("resultCard").classList.add("show");$("resultTitle").textContent=avg>=98?"LEGENDARY DREAM XI!":avg>=96?"WORLD-CLASS DREAM XI!":"YOUR DREAM XI IS READY!";
-  $("resultText").textContent="Your team rating is "+avg+"/100 across 11 legends from "+new Set(chosen.map(p=>p.nation)).size+" different nationalities.";
+  $("resultText").textContent="Your captain is "+(captain||"not selected yet")+". Your team rating is "+avg+"/100 across 11 legends from "+new Set(chosen.map(p=>p.nation)).size+" different nationalities.";
  }else{$("resultCard").classList.remove("show");}
 }
-function save(){try{localStorage.setItem("alltime-dream-xi",JSON.stringify({formation,selection}));}catch(e){}}
-function load(){try{const saved=JSON.parse(localStorage.getItem("alltime-dream-xi")||"null");if(saved&&formations[saved.formation]&&saved.selection){formation=saved.formation;selection=saved.selection;}}catch(e){}}
+function save(){try{localStorage.setItem("alltime-dream-xi",JSON.stringify({formation,selection,captain}));}catch(e){}}
+function load(){try{const saved=JSON.parse(localStorage.getItem("alltime-dream-xi")||"null");if(saved&&formations[saved.formation]&&saved.selection){formation=saved.formation;selection=saved.selection;captain=saved.captain||"";}}catch(e){}}
+$("captain").addEventListener("change",()=>{captain=$("captain").value;save();$("actionMessage").textContent=captain?captain+" is your captain.":"Choose a captain for your XI.";});
 $("formation").addEventListener("change",()=>{
  formation=$("formation").value;selection={};renderPitch();updateSummary();save();
 });
@@ -237,8 +247,9 @@ $("clearBtn").addEventListener("click",()=>{
 $("shareBtn").addEventListener("click",async()=>{
  const chosen=chosenPlayers();
  if(chosen.length!==11){$("actionMessage").textContent="Choose all 11 players before copying your team.";return;}
+ if(!captain){$("actionMessage").textContent="Choose your captain before copying your team.";return;}
  const lines=formations[formation].map(([role])=>roleNames[role]+": "+chosen.filter(p=>p.role===role).map(p=>p.name).join(", ")).join("\n");
- const text="MY ALL-TIME DREAM XI ("+formation.replace("433","4-3-3").replace("442","4-4-2").replace("352","3-5-2").replace("4231","4-2-3-1")+")\n"+lines+"\nTeam rating: "+$("teamRating").textContent+"/100";
+ const text="MY ALL-TIME DREAM XI ("+formation.replace("433","4-3-3").replace("442","4-4-2").replace("352","3-5-2").replace("4231","4-2-3-1")+")\n"+lines+"\nCaptain: "+captain+"\nTeam rating: "+$("teamRating").textContent+"/100";
  try{await navigator.clipboard.writeText(text);$("actionMessage").textContent="Copied! Share your Dream XI with friends.";}catch(e){$("actionMessage").textContent=text;}
 });
 load();$("formation").value=formation;renderPitch();updateSummary();
