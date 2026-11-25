@@ -26,6 +26,7 @@ h2{font-size:clamp(35px,7vw,58px);line-height:1;letter-spacing:-2.4px;margin:7px
 .toolbar{display:flex;align-items:end;gap:10px;flex-wrap:wrap;background:#0e2031;border:1px solid var(--line);border-radius:16px;padding:13px;margin:19px 0}
 .control{min-width:160px;flex:1}
 .control label{display:block;font-size:11px;color:var(--muted);font-weight:900;text-transform:uppercase;letter-spacing:1px;margin:0 0 6px}
+.custom-control{flex-basis:100%;min-width:100%}.custom-counts{display:flex;align-items:end;gap:9px;flex-wrap:wrap}.custom-counts label{margin:0;display:flex;align-items:center;gap:6px;color:var(--text);font-size:11px}.custom-counts input{width:70px;background:#091827;border:1px solid #304a61;color:var(--text);border-radius:10px;padding:9px;font:inherit}.custom-help{color:var(--muted);font-size:11px;margin-top:7px}
 select{width:100%;background:#091827;border:1px solid #304a61;color:var(--text);border-radius:11px;padding:11px 12px;font:inherit;min-width:0}
 select:focus{outline:2px solid var(--green);outline-offset:1px}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:17px 0}
@@ -87,7 +88,19 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:20px}
 <main>
 <section class="hero"><div><div class="eyebrow">The ultimate football challenge</div><h2>Build your Dream XI.</h2><p>Choose 11 players from football history. Who makes your all-time team?</p></div><div class="pill">LEGENDS ONLY</div></section>
 <div class="toolbar">
- <div class="control"><label for="formation">Choose formation</label><select id="formation"><option value="433">4-3-3</option><option value="442">4-4-2</option><option value="352">3-5-2</option><option value="4231">4-2-3-1</option></select></div>
+ <div class="control"><label for="formation">Choose formation</label><select id="formation">
+ <option value="433">4-3-3</option><option value="442">4-4-2</option><option value="352">3-5-2</option><option value="4231">4-2-3-1</option><option value="343">3-4-3</option><option value="4141">4-1-4-1</option><option value="451">4-5-1</option><option value="532">5-3-2</option><option value="541">5-4-1</option><option value="352">3-5-2</option><option value="custom">Custom formation…</option>
+</select></div>
+<div class="control custom-control" id="customFormationBox" hidden>
+ <label>Build your own shape — outfield players must total 10</label>
+ <div class="custom-counts">
+  <label>DEF <input id="customDef" type="number" min="1" max="8" value="4"></label>
+  <label>MID <input id="customMid" type="number" min="1" max="8" value="3"></label>
+  <label>ATT <input id="customAtt" type="number" min="1" max="8" value="3"></label>
+  <button class="btn primary" id="applyCustom" type="button">Apply</button>
+ </div>
+ <div class="custom-help" id="customHelp">Example: 4 defenders, 3 midfielders and 3 attackers.</div>
+</div>
  <div class="control"><label for="filterEra">Player pool</label><select id="filterEra"><option value="all">All-time legends</option><option value="classic">Classic legends</option><option value="modern">Modern era</option></select></div>
 </div>
 <section class="stats"><div class="stat"><strong id="picked">0/11</strong><span>Players selected</span></div><div class="stat"><strong id="teamRating">—</strong><span>Dream XI rating</span></div><div class="stat"><strong id="countries">0</strong><span>Nationalities</span></div></section>
@@ -176,12 +189,33 @@ const formations={
  "433":[["GK",1],["DEF",4],["MID",3],["ATT",3]],
  "442":[["GK",1],["DEF",4],["MID",4],["ATT",2]],
  "352":[["GK",1],["DEF",3],["MID",5],["ATT",2]],
- "4231":[["GK",1],["DEF",4],["MID",2],["ATT",4]]
+ "4231":[["GK",1],["DEF",4],["MID",5],["ATT",1]],
+ "343":[["GK",1],["DEF",3],["MID",4],["ATT",3]],
+ "4141":[["GK",1],["DEF",4],["MID",5],["ATT",1]],
+ "451":[["GK",1],["DEF",4],["MID",5],["ATT",1]],
+ "532":[["GK",1],["DEF",5],["MID",3],["ATT",2]],
+ "541":[["GK",1],["DEF",5],["MID",4],["ATT",1]]
 };
 const roleNames={GK:"Goalkeeper",DEF:"Defender",MID:"Midfielder",ATT:"Attacker"};
-let formation="433",selection={},slotIds=[],captain="";
+let formation="433",selection={},slotIds=[],captain="",customCounts={DEF:4,MID:3,ATT:3};
 const $=id=>document.getElementById(id);
-function getSlots(){let out=[];let index=0;for(const [role,count] of formations[formation])for(let i=0;i<count;i++)out.push({id:"slot"+(++index),role,number:index});return out;}
+function getFormationRows(){
+ if(formation==="custom")return [["GK",1],["DEF",customCounts.DEF],["MID",customCounts.MID],["ATT",customCounts.ATT]];
+ return formations[formation]||formations["433"];
+}
+function formationLabel(){
+ if(formation==="custom")return customCounts.DEF+"-"+customCounts.MID+"-"+customCounts.ATT+" (Custom)";
+ const labels={"433":"4-3-3","442":"4-4-2","352":"3-5-2","4231":"4-2-3-1","343":"3-4-3","4141":"4-1-4-1","451":"4-5-1","532":"5-3-2","541":"5-4-1"};
+ return labels[formation]||formation;
+}
+function updateCustomBox(){
+ const show=formation==="custom";
+ $("customFormationBox").hidden=!show;
+ $("customDef").value=customCounts.DEF;
+ $("customMid").value=customCounts.MID;
+ $("customAtt").value=customCounts.ATT;
+}
+function getSlots(){let out=[];let index=0;for(const [role,count] of getFormationRows())for(let i=0;i<count;i++)out.push({id:"slot"+(++index),role,number:index});return out;}
 function getAvailable(role,slotId){
  const used=new Set(Object.entries(selection).filter(([id])=>id!==slotId).map(([,name])=>name));
  const era=$("filterEra").value;
@@ -218,7 +252,7 @@ function updateSummary(){
  if(previousCaptain&&chosen.some(p=>p.name===previousCaptain)){captainSelect.value=previousCaptain;captain=previousCaptain;}
  else{captain="";captainSelect.value="";}
 
- const breakdown=formations[formation].map(([role,total])=>({role,total,count:chosen.filter(p=>p.role===role).length}));
+ const breakdown=getFormationRows().map(([role,total])=>({role,total,count:chosen.filter(p=>p.role===role).length}));
  $("teamBreakdown").innerHTML=breakdown.map(x=>'<div class="team-row"><span>'+roleNames[x.role]+'s</span><b class="'+(x.count<x.total?"missing":"")+'">'+x.count+'/'+x.total+'</b></div>').join("");
  $("statusMessage").textContent=count===11?"Your all-time Dream XI is complete!":(11-count)+" more player"+(11-count===1?"":"s")+" to go.";
  if(count===11){
@@ -226,11 +260,29 @@ function updateSummary(){
   $("resultText").textContent="Your captain is "+(captain||"not selected yet")+". Your team rating is "+avg+"/100 across 11 legends from "+new Set(chosen.map(p=>p.nation)).size+" different nationalities.";
  }else{$("resultCard").classList.remove("show");}
 }
-function save(){try{localStorage.setItem("alltime-dream-xi",JSON.stringify({formation,selection,captain}));}catch(e){}}
-function load(){try{const saved=JSON.parse(localStorage.getItem("alltime-dream-xi")||"null");if(saved&&formations[saved.formation]&&saved.selection){formation=saved.formation;selection=saved.selection;captain=saved.captain||"";}}catch(e){}}
+function save(){try{localStorage.setItem("alltime-dream-xi",JSON.stringify({formation,selection,captain,customCounts}));}catch(e){}}
+function load(){try{const saved=JSON.parse(localStorage.getItem("alltime-dream-xi")||"null");if(saved&&formations[saved.formation]&&saved.selection){formation=saved.formation;selection=saved.selection;captain=saved.captain||"";customCounts=saved.customCounts||customCounts;}}catch(e){}}
 $("captain").addEventListener("change",()=>{captain=$("captain").value;save();$("actionMessage").textContent=captain?captain+" is your captain.":"Choose a captain for your XI.";});
 $("formation").addEventListener("change",()=>{
- formation=$("formation").value;selection={};renderPitch();updateSummary();save();
+ formation=$("formation").value;
+ selection={};captain="";
+ updateCustomBox();renderPitch();updateSummary();save();
+});
+$("applyCustom").addEventListener("click",()=>{
+ const def=Number($("customDef").value),mid=Number($("customMid").value),att=Number($("customAtt").value);
+ const values=[def,mid,att];
+ if(values.some(n=>!Number.isInteger(n)||n<1||n>8)){
+  $("customHelp").textContent="Each line must have between 1 and 8 players.";
+  return;
+ }
+ if(def+mid+att!==10){
+  $("customHelp").textContent="Your defenders, midfielders and attackers must add up to exactly 10. You currently have "+(def+mid+att)+".";
+  return;
+ }
+ customCounts={DEF:def,MID:mid,ATT:att};
+ selection={};captain="";
+ $("customHelp").textContent="Custom formation applied: "+def+"-"+mid+"-"+att+".";
+ renderPitch();updateSummary();save();
 });
 $("filterEra").addEventListener("change",()=>{
  for(const [id,name] of Object.entries(selection)){const p=players.find(x=>x.name===name);if($("filterEra").value!=="all"&&p&&p.era!==$("filterEra").value)delete selection[id];}
@@ -249,10 +301,10 @@ $("shareBtn").addEventListener("click",async()=>{
  if(chosen.length!==11){$("actionMessage").textContent="Choose all 11 players before copying your team.";return;}
  if(!captain){$("actionMessage").textContent="Choose your captain before copying your team.";return;}
  const lines=formations[formation].map(([role])=>roleNames[role]+": "+chosen.filter(p=>p.role===role).map(p=>p.name).join(", ")).join("\n");
- const text="MY ALL-TIME DREAM XI ("+formation.replace("433","4-3-3").replace("442","4-4-2").replace("352","3-5-2").replace("4231","4-2-3-1")+")\n"+lines+"\nCaptain: "+captain+"\nTeam rating: "+$("teamRating").textContent+"/100";
+ const text="MY ALL-TIME DREAM XI ("+formationLabel()+")\n"+lines+"\nCaptain: "+captain+"\nTeam rating: "+$("teamRating").textContent+"/100";
  try{await navigator.clipboard.writeText(text);$("actionMessage").textContent="Copied! Share your Dream XI with friends.";}catch(e){$("actionMessage").textContent=text;}
 });
-load();$("formation").value=formation;renderPitch();updateSummary();
+load();$("formation").value=formation;updateCustomBox();renderPitch();updateSummary();
 if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
 </script>
 </body>
