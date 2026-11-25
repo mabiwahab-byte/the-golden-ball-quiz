@@ -30,7 +30,33 @@ main{max-width:1120px;margin:auto;padding:26px 18px 60px}.hero{display:flex;just
 .create-btn{border:0;border-radius:11px;background:var(--green);color:#07111f;font-weight:900;font-size:14px;padding:12px 18px;cursor:pointer;margin-top:14px}
 .create-btn:hover{filter:brightness(1.06)}.form-msg{display:inline-block;margin-left:10px;color:var(--green);font-size:12px}
 @media(max-width:520px){.form-grid{grid-template-columns:1fr}.fee-row{grid-template-columns:1fr 100px}}
-\n@media(max-width:650px){.cards{grid-template-columns:1fr}.stats{gap:8px}.stat{padding:12px}.stat b{font-size:21px}.hero{align-items:start}}
+\n
+.quiz-panel{background:linear-gradient(145deg,#132b3d,#0c1929);border:1px solid #31506a;border-radius:20px;padding:20px;margin:25px 0}
+.quiz-top{display:flex;justify-content:space-between;align-items:flex-start;gap:15px;flex-wrap:wrap}
+.quiz-top h3{font-size:25px;margin:5px 0}
+.quiz-top p{color:var(--muted);margin:5px 0 12px}
+.quiz-score{background:#173d31;color:var(--green);border-radius:999px;padding:9px 14px;font-weight:900;white-space:nowrap}
+.quiz-question{background:#091727;border:1px solid var(--line);border-radius:16px;padding:18px;margin-top:14px}
+.quiz-progress{color:var(--green);font-size:12px;text-transform:uppercase;letter-spacing:1px;font-weight:900}
+.quiz-player{font-size:clamp(23px,4vw,32px);font-weight:900;margin-top:8px}
+.quiz-from{color:var(--muted);margin-top:2px}
+.quiz-prompt{font-weight:800;font-size:17px;margin:18px 0 12px}
+.quiz-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.answer-option{background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:12px;padding:13px;text-align:left;font:inherit;font-weight:750;cursor:pointer}
+.answer-option:hover:not(:disabled){border-color:var(--green);background:#1b3448}
+.answer-option:disabled{cursor:default;opacity:.85}
+.answer-option.correct{border-color:var(--green);background:#173d31;color:var(--green);opacity:1}
+.answer-option.incorrect{border-color:#c96a6a;background:#3b2026;color:#ffd0d0;opacity:1}
+.quiz-feedback{min-height:28px;margin-top:14px;font-weight:800}
+.answer-detail{font-size:12px;font-weight:650;color:var(--muted)}
+.quiz-next{margin-top:10px}
+.quiz-next:disabled{opacity:.55;cursor:not-allowed}
+.quiz-footnote{font-size:12px;color:var(--muted);margin-top:13px}
+.tracker-details{margin:24px 0;border:1px solid var(--line);border-radius:15px;background:#0b1827;padding:14px 16px}
+.tracker-details summary{cursor:pointer;font-weight:850}
+.tracker-details[open] summary{margin-bottom:18px;color:var(--green)}
+
+@media(max-width:650px){.cards{grid-template-columns:1fr}.stats{gap:8px}.stat{padding:12px}.stat b{font-size:21px}.hero{align-items:start}}
 </style></head>
 <body>
 <header><div class="brand"><div class="logo">⚽</div><div><h1>FOOTBALL TRANSFER CENTRE</h1><div class="sub">The home of the transfer window</div></div></div></header>
@@ -38,34 +64,28 @@ main{max-width:1120px;margin:auto;padding:26px 18px 60px}.hero{display:flex;just
 <section class="hero"><div><div class="eyebrow">Window watch • 2026/27</div><h2>Every move.<br>One place.</h2><p>Track player moves, fees and transfer rumours.</p></div><div class="demo">SAMPLE DATA — NOT LIVE NEWS</div></section>
 <div class="stats"><div class="stat"><b id="total">8</b><span>Deals tracked</span></div><div class="stat"><b id="confirmed">4</b><span>Confirmed</span></div><div class="stat"><b id="rumours">4</b><span>Rumours</span></div></div>
 
-<section class="creator">
-  <div class="creator-head"><h3>📝 Create a transfer</h3><span class="demo">YOUR TRANSFER BUILDER</span></div>
-  <p>Choose a player, pick their new club and set the fee. Your transfers are saved on this device.</p>
-  <form id="transferForm">
-    <div class="form-grid">
-      <div class="field"><label for="playerChoice">Player</label><select id="playerChoice" required>
-        <option value="">Select a player…</option>
-        <option>Kylian Mbappé</option><option>Mohamed Salah</option><option>Lionel Messi</option><option>Erling Haaland</option><option>Jude Bellingham</option><option>Vinícius Júnior</option><option>Sadio Mané</option><option>Harry Kane</option><option>Lamine Yamal</option><option>Son Heung-min</option><option>Other</option>
-      </select></div>
-      <div class="field" id="customPlayerWrap" hidden><label for="customPlayer">Enter player name</label><input id="customPlayer" maxlength="40" placeholder="Player name"></div>
-      <div class="field"><label for="fromClub">Current club</label><select id="fromClub" required><option value="">Select current club…</option>
-        <option>Arsenal</option><option>Aston Villa</option><option>Barcelona</option><option>Bayern Munich</option><option>Borussia Dortmund</option><option>Chelsea</option><option>Inter Milan</option><option>Juventus</option><option>Liverpool</option><option>Manchester City</option><option>Manchester United</option><option>AC Milan</option><option>Napoli</option><option>Newcastle United</option><option>Paris Saint-Germain</option><option>Real Madrid</option><option>Tottenham Hotspur</option><option>Al Hilal</option><option>Al Nassr</option><option>Other</option>
-      </select></div>
-      <div class="field"><label for="toClub">New club</label><select id="toClub" required><option value="">Choose destination…</option>
-        <option>Arsenal</option><option>Aston Villa</option><option>Barcelona</option><option>Bayern Munich</option><option>Borussia Dortmund</option><option>Chelsea</option><option>Inter Milan</option><option>Juventus</option><option>Liverpool</option><option>Manchester City</option><option>Manchester United</option><option>AC Milan</option><option>Napoli</option><option>Newcastle United</option><option>Paris Saint-Germain</option><option>Real Madrid</option><option>Tottenham Hotspur</option><option>Al Hilal</option><option>Al Nassr</option><option>Other</option>
-      </select></div>
-      <div class="field"><label for="feeAmount">Transfer fee (millions)</label><div class="fee-row"><input id="feeAmount" type="number" min="0" max="9999" step="0.5" value="50" required><select id="feeCurrency" aria-label="Currency"><option value="£">GBP (£)</option><option value="€">EUR (€)</option><option value="$">USD ($)</option></select></div></div>
-      <div class="field"><label for="dealLeague">League</label><select id="dealLeague"><option>Premier League</option><option>La Liga</option><option>Serie A</option><option>Bundesliga</option><option>Ligue 1</option><option>Other</option></select></div>
-      <div class="field"><label for="dealStatus">Deal status</label><select id="dealStatus"><option value="confirmed">Confirmed</option><option value="rumour">Rumour</option></select></div>
-    </div>
-    <button class="create-btn" type="submit">＋ Add transfer</button><span class="form-msg" id="formMsg" aria-live="polite"></span>
-  </form>
+<section class="quiz-panel" aria-labelledby="quizTitle">
+  <div class="quiz-top"><div><div class="eyebrow">Play the transfer quiz</div><h3 id="quizTitle">🤔 Guess the Transfer</h3><p>We'll show you the player and the club they left. Can you guess where they went?</p></div><div class="quiz-score" id="quizScore">Score: 0</div></div>
+  <div class="quiz-question">
+    <div class="quiz-progress" id="quizProgress">Question 1</div>
+    <div class="quiz-player" id="quizPlayer">Loading transfer…</div>
+    <div class="quiz-from" id="quizFrom"></div>
+    <div class="quiz-prompt">Which club did they move to?</div>
+    <div class="quiz-options" id="quizOptions"></div>
+    <div class="quiz-feedback" id="quizFeedback" aria-live="polite"></div>
+    <button class="create-btn quiz-next" id="quizNext" type="button" disabled>Choose an answer</button>
+  </div>
+  <div class="quiz-footnote">Questions use the transfers already listed in this app. After each guess, you'll see the destination, transfer fee and whether the entry is marked confirmed or rumour.</div>
 </section>
-\n<div class="section-title"><h3>Transfer tracker</h3><small id="count">8 results</small></div>
-<div class="toolbar"><div class="search"><input id="search" type="search" placeholder="Search player or club…" aria-label="Search player or club"></div><select id="playerFilter" aria-label="Select a player"><option value="all">All players</option></select><select id="league" aria-label="Filter by league"><option value="all">All leagues</option><option>Premier League</option><option>La Liga</option><option>Serie A</option><option>Bundesliga</option><option>Ligue 1</option></select></div>
+
+<details class="tracker-details">
+  <summary>Browse the transfer list</summary>
+<div class="section-title"><h3>Transfer tracker</h3><small id="count">8 results</small></div>
+<div class="toolbar"><div class="search"><input id="search" type="search" placeholder="Search player or club…" aria-label="Search player or club"></div><select id="league" aria-label="Filter by league"><option value="all">All leagues</option><option>Premier League</option><option>La Liga</option><option>Serie A</option><option>Bundesliga</option><option>Ligue 1</option></select></div>
 <div class="filters"><button class="chip active" data-status="all">All moves</button><button class="chip" data-status="confirmed">Confirmed</button><button class="chip" data-status="rumour">Rumours</button></div>
 <div class="cards" id="cards" aria-live="polite"></div>
-<div class="note">⚠️ This is a demo tracker with example entries so you can test the app. It does not currently receive live transfer updates. Rumours are not confirmed deals.</div>
+<div class="note">⚠️ This is a demo tracker with example entries. It does not currently receive live transfer updates. Rumours are not confirmed deals.</div>
+</details>
 </main><footer>Made for football fans • Football Transfer Centre</footer>
 <script>
 const starterDeals=[
@@ -84,16 +104,9 @@ let deals=starterDeals.concat(customDeals);
 let active="all";
 const cards=document.getElementById("cards");
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-function populatePlayerFilter(){
- const select=document.getElementById("playerFilter");
- const previous=select.value;
- const names=[...new Set(deals.map(d=>d.player).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
- select.innerHTML='<option value="all">All players</option>'+names.map(name=>'<option value="'+esc(name)+'">'+esc(name)+'</option>').join("");
- select.value=names.includes(previous)?previous:"all";
-}
 function render(){
- const q=document.getElementById("search").value.toLowerCase(),l=document.getElementById("league").value,p=document.getElementById("playerFilter").value;
- const filtered=deals.filter(d=>(active==="all"||d.status===active)&&(p==="all"||d.player===p)&&(l==="all"||l==="Other"||d.league===l)&&(d.player+" "+d.from+" "+d.to).toLowerCase().includes(q));
+ const q=document.getElementById("search").value.toLowerCase(),l=document.getElementById("league").value;
+ const filtered=deals.filter(d=>(active==="all"||d.status===active)&&(l==="all"||l==="Other"||d.league===l)&&(d.player+" "+d.from+" "+d.to).toLowerCase().includes(q));
  document.getElementById("count").textContent=filtered.length+" results";
  document.getElementById("total").textContent=deals.length;
  document.getElementById("confirmed").textContent=deals.filter(d=>d.status==="confirmed").length;
@@ -102,28 +115,79 @@ function render(){
 }
 document.getElementById("search").addEventListener("input",render);
 document.getElementById("league").addEventListener("change",render);
-document.getElementById("playerFilter").addEventListener("change",render);
 document.querySelectorAll(".chip").forEach(b=>b.addEventListener("click",()=>{active=b.dataset.status;document.querySelectorAll(".chip").forEach(x=>x.classList.toggle("active",x===b));render();}));
-const playerChoice=document.getElementById("playerChoice");
-playerChoice.addEventListener("change",()=>{document.getElementById("customPlayerWrap").hidden=playerChoice.value!=="Other";document.getElementById("customPlayer").required=playerChoice.value==="Other";});
-document.getElementById("transferForm").addEventListener("submit",e=>{
- e.preventDefault();
- const chosen=playerChoice.value;
- const player=chosen==="Other"?document.getElementById("customPlayer").value.trim():chosen;
- const from=document.getElementById("fromClub").value,to=document.getElementById("toClub").value;
- const amount=Number(document.getElementById("feeAmount").value);
- if(!player||!from||!to){document.getElementById("formMsg").textContent="Please fill in all the selections.";return;}
- if(from===to){document.getElementById("formMsg").textContent="Choose two different clubs.";return;}
- if(!Number.isFinite(amount)||amount<0){document.getElementById("formMsg").textContent="Enter a valid fee.";return;}
- const fee=document.getElementById("feeCurrency").value+amount.toLocaleString("en-AU",{maximumFractionDigits:1})+"m";
- const deal={player,role:"Transfer created by you",from,to,fee,status:document.getElementById("dealStatus").value,league:document.getElementById("dealLeague").value};
- customDeals.unshift(deal);deals=starterDeals.concat(customDeals);populatePlayerFilter();
- try{localStorage.setItem("ftc-custom-transfers",JSON.stringify(customDeals));}catch(err){}
- document.getElementById("formMsg").textContent="Transfer added to the tracker!";
- e.target.reset();document.getElementById("feeAmount").value="50";document.getElementById("customPlayerWrap").hidden=true;document.getElementById("customPlayer").required=false;
- document.getElementById("search").value="";document.getElementById("league").value="all";active="all";document.querySelectorAll(".chip").forEach(x=>x.classList.toggle("active",x.dataset.status==="all"));render();
+
+const quizOptions=document.getElementById("quizOptions");
+const quizFeedback=document.getElementById("quizFeedback");
+const quizNext=document.getElementById("quizNext");
+let quizDeck=[];
+let quizIndex=0;
+let quizScore=0;
+let quizAnswered=false;
+let currentQuizDeal=null;
+const shuffle=list=>list.map(value=>({value,sort:Math.random()})).sort((a,b)=>a.sort-b.sort).map(item=>item.value);
+
+function startQuiz(){
+ quizDeck=shuffle(deals.slice());
+ quizIndex=0;
+ quizScore=0;
+ quizAnswered=false;
+ document.getElementById("quizScore").textContent="Score: 0";
+ showQuizQuestion();
+}
+function showQuizQuestion(){
+ quizAnswered=false;
+ if(quizIndex>=quizDeck.length){
+  document.getElementById("quizProgress").textContent="Quiz complete!";
+  document.getElementById("quizPlayer").textContent="🏆 You finished the quiz!";
+  document.getElementById("quizFrom").textContent="Final score: "+quizScore+" out of "+quizDeck.length;
+  document.querySelector(".quiz-prompt").textContent="Great work!";
+  quizOptions.innerHTML="";
+  quizFeedback.textContent="Play again to try to beat your score.";
+  quizNext.disabled=false;
+  quizNext.textContent="Play again";
+  return;
+ }
+ currentQuizDeal=quizDeck[quizIndex];
+ document.getElementById("quizProgress").textContent="Question "+(quizIndex+1)+" of "+quizDeck.length;
+ document.getElementById("quizPlayer").textContent=currentQuizDeal.player;
+ document.getElementById("quizFrom").textContent="Moved from: "+currentQuizDeal.from;
+ document.querySelector(".quiz-prompt").textContent="Which club did they move to?";
+ quizFeedback.textContent="";
+ quizNext.disabled=true;
+ quizNext.textContent="Choose an answer";
+ const clubs=[...new Set(deals.flatMap(deal=>[deal.to,deal.from]).filter(club=>club&&club!==currentQuizDeal.to))];
+ const options=shuffle([currentQuizDeal.to,...shuffle(clubs).slice(0,3)]);
+ quizOptions.innerHTML=options.map(club=>'<button type="button" class="answer-option" data-club="'+esc(club)+'">'+esc(club)+'</button>').join("");
+}
+quizOptions.addEventListener("click",event=>{
+ const button=event.target.closest(".answer-option");
+ if(!button||quizAnswered||!currentQuizDeal)return;
+ quizAnswered=true;
+ const guessed=button.dataset.club;
+ const correct=guessed===currentQuizDeal.to;
+ if(correct)quizScore++;
+ document.getElementById("quizScore").textContent="Score: "+quizScore;
+ quizOptions.querySelectorAll(".answer-option").forEach(option=>{
+  option.disabled=true;
+  if(option.dataset.club===currentQuizDeal.to)option.classList.add("correct");
+  else if(option===button)option.classList.add("incorrect");
+ });
+ const status=currentQuizDeal.status==="rumour"?"Rumour":"Confirmed";
+ quizFeedback.innerHTML=(correct?"✅ Correct! ":"❌ Not quite. ")+
+  "The answer is <b>"+esc(currentQuizDeal.to)+"</b>."+
+  "<br><span class='answer-detail'>"+status+" • Transfer fee: "+esc(currentQuizDeal.fee)+"</span>";
+ quizNext.disabled=false;
+ quizNext.textContent=quizIndex===quizDeck.length-1?"See my score":"Next question";
 });
-populatePlayerFilter();
+quizNext.addEventListener("click",()=>{
+ if(quizIndex>=quizDeck.length){startQuiz();return;}
+ if(!quizAnswered)return;
+ quizIndex++;
+ showQuizQuestion();
+});
+startQuiz();
+
 render();
 if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
 </script></body></html>
