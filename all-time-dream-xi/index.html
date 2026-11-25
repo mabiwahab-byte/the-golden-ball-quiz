@@ -89,7 +89,7 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:20px}
 <section class="hero"><div><div class="eyebrow">The ultimate football challenge</div><h2>Build your Dream XI.</h2><p>Choose 11 players from football history. Who makes your all-time team?</p></div><div class="pill">LEGENDS ONLY</div></section>
 <div class="toolbar">
  <div class="control"><label for="formation">Choose formation</label><select id="formation">
- <option value="433">4-3-3</option><option value="442">4-4-2</option><option value="352">3-5-2</option><option value="4231">4-2-3-1</option><option value="343">3-4-3</option><option value="4141">4-1-4-1</option><option value="451">4-5-1</option><option value="532">5-3-2</option><option value="541">5-4-1</option><option value="352">3-5-2</option><option value="custom">Custom formation…</option>
+ <option value="433">4-3-3</option><option value="442">4-4-2</option><option value="352">3-5-2</option><option value="4231">4-2-3-1</option><option value="343">3-4-3</option><option value="3421">3-4-2-1</option><option value="3412">3-4-1-2</option><option value="4141">4-1-4-1</option><option value="451">4-5-1</option><option value="4321">4-3-2-1</option><option value="4312">4-3-1-2</option><option value="4222">4-2-2-2</option><option value="532">5-3-2</option><option value="541">5-4-1</option><option value="523">5-2-3</option><option value="5212">5-2-1-2</option><option value="custom">Custom formation…</option>
 </select></div>
 <div class="control custom-control" id="customFormationBox" hidden>
  <label>Build your own shape — outfield players must total 10</label>
@@ -194,7 +194,14 @@ const formations={
  "4141":[["GK",1],["DEF",4],["MID",5],["ATT",1]],
  "451":[["GK",1],["DEF",4],["MID",5],["ATT",1]],
  "532":[["GK",1],["DEF",5],["MID",3],["ATT",2]],
- "541":[["GK",1],["DEF",5],["MID",4],["ATT",1]]
+ "541":[["GK",1],["DEF",5],["MID",4],["ATT",1]],
+ "3421":[["GK",1],["DEF",3],["MID",6],["ATT",1]],
+ "3412":[["GK",1],["DEF",3],["MID",5],["ATT",2]],
+ "4321":[["GK",1],["DEF",4],["MID",5],["ATT",1]],
+ "4312":[["GK",1],["DEF",4],["MID",4],["ATT",2]],
+ "4222":[["GK",1],["DEF",4],["MID",4],["ATT",2]],
+ "523":[["GK",1],["DEF",5],["MID",2],["ATT",3]],
+ "5212":[["GK",1],["DEF",5],["MID",3],["ATT",2]]
 };
 const roleNames={GK:"Goalkeeper",DEF:"Defender",MID:"Midfielder",ATT:"Attacker"};
 let formation="433",selection={},slotIds=[],captain="",customCounts={DEF:4,MID:3,ATT:3};
@@ -205,7 +212,7 @@ function getFormationRows(){
 }
 function formationLabel(){
  if(formation==="custom")return customCounts.DEF+"-"+customCounts.MID+"-"+customCounts.ATT+" (Custom)";
- const labels={"433":"4-3-3","442":"4-4-2","352":"3-5-2","4231":"4-2-3-1","343":"3-4-3","4141":"4-1-4-1","451":"4-5-1","532":"5-3-2","541":"5-4-1"};
+ const labels={"433":"4-3-3","442":"4-4-2","352":"3-5-2","4231":"4-2-3-1","343":"3-4-3","3421":"3-4-2-1","3412":"3-4-1-2","4141":"4-1-4-1","451":"4-5-1","4321":"4-3-2-1","4312":"4-3-1-2","4222":"4-2-2-2","532":"5-3-2","541":"5-4-1","523":"5-2-3","5212":"5-2-1-2"};
  return labels[formation]||formation;
 }
 function updateCustomBox(){
