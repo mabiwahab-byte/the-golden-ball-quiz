@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#080d1b"><title>Neon Rivals — Arena Showdown</title>
+<meta name="theme-color" content="#080d1b"><title>Neon Dash Arena</title>
 <style>
-:root{--bg:#080d1b;--panel:#111b33;--line:#304265;--cyan:#65f4e4;--pink:#ff70b8;--text:#f5f7ff;--muted:#aab8d4}
-*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--text);font:15px/1.4 system-ui,Arial}button{font:inherit;cursor:pointer;border:0;border-radius:11px;padding:11px 16px;font-weight:900}
-#stage{position:fixed;inset:0;background:#080d1b}canvas{width:100%;height:100%;display:block;outline:0}
+:root{--cyan:#65f4e4;--pink:#ff70b8;--text:#f5f7ff;--muted:#aab8d4;--line:#304265}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#080d1b;color:var(--text);font:15px/1.4 system-ui,Arial}button{font:inherit;cursor:pointer;border:0;border-radius:11px;padding:11px 16px;font-weight:900}
+#stage{position:fixed;inset:0}canvas{width:100%;height:100%;display:block}
 #menu{position:absolute;inset:0;z-index:5;display:grid;place-items:center;padding:16px;background:radial-gradient(ellipse at 50% 10%,#284273bb,#080d1bf5 68%)}
 .card{width:min(820px,100%);max-height:96vh;overflow:auto;background:linear-gradient(145deg,#182646f5,#0e172cf7);border:1px solid #435a83;border-radius:23px;padding:clamp(20px,4vw,36px);box-shadow:0 25px 90px #000a}
 .brand{display:flex;align-items:center;gap:10px;color:var(--cyan);font-weight:1000;letter-spacing:2px;font-size:12px}.logo{width:39px;height:39px;border-radius:12px;background:linear-gradient(135deg,var(--cyan),#6489ff);display:grid;place-items:center;color:#071425;font-size:23px}
@@ -34,10 +34,7 @@ kbd{font:700 10px system-ui;color:#f7fbff;background:#253658;border:1px solid #4
 .score{min-width:48px;text-align:center;font-weight:1000;font-size:17px}.score small{display:block;font-size:8px;color:var(--muted);letter-spacing:1px}
 .timer{font-size:20px;font-weight:1000;text-align:center;font-variant-numeric:tabular-nums}
 .bottom{position:absolute;bottom:15px;left:15px;right:15px;display:flex;justify-content:space-between;align-items:end;gap:10px}
-.healthwrap{width:min(260px,45vw)}.tiny{font-size:10px;color:#c5d1e7;font-weight:900;letter-spacing:1.2px;margin-bottom:5px}
-.bar{height:9px;border-radius:10px;background:#111c34;border:1px solid #5e7093;overflow:hidden}.bar span{height:100%;display:block;width:100%;background:linear-gradient(90deg,#59e9d9,#b2ffb0);transition:width .12s}
-.substat{font-size:10px;color:var(--cyan);margin-top:5px}
-.weapon{font-size:11px;text-align:right;color:#e9f6ff;text-shadow:0 2px 5px #000}.weapon b{font-size:16px;color:var(--cyan)}
+.stat{font-size:10px;color:#c5d1e7;font-weight:900;letter-spacing:1.2px}.stat strong{font-size:18px;color:var(--cyan);display:block}
 #crosshair{position:absolute;left:50%;top:50%;width:17px;height:17px;transform:translate(-50%,-50%);opacity:.95}
 #crosshair:before,#crosshair:after{content:"";position:absolute;background:#eaffff;box-shadow:0 0 7px var(--cyan)}
 #crosshair:before{width:2px;height:17px;left:7px;top:0}#crosshair:after{height:2px;width:17px;left:0;top:7px}
@@ -54,32 +51,32 @@ kbd{font:700 10px system-ui;color:#f7fbff;background:#253658;border:1px solid #4
 <div id="stage"><canvas id="screen"></canvas>
 <div id="hud">
  <div class="topbar">
-  <div class="hudbox"><div class="brandmini">NEON RIVALS</div><div style="font-size:9px;color:#a7b4d2">ARENA SHOWDOWN</div></div>
-  <div class="hudbox"><div class="scores" id="scores"></div><div class="timer" id="timer">2:00</div></div>
-  <div class="hudbox" style="text-align:right"><div id="mapName" style="font-weight:900;font-size:11px">NEON CITY</div><div style="font-size:9px;color:#a7b4d2">FIRST TO 10</div></div>
+  <div class="hudbox"><div class="brandmini">NEON DASH ARENA</div><div style="font-size:9px;color:#a7b4d2">ENERGY CORE RUSH</div></div>
+  <div class="hudbox"><div class="scores" id="scores"></div><div class="timer" id="timer">1:30</div></div>
+  <div class="hudbox" style="text-align:right"><div id="mapName" style="font-weight:900;font-size:11px">NEON CITY</div><div style="font-size:9px;color:#a7b4d2">FIRST TO 10 CORES</div></div>
  </div>
- <div id="crosshair"></div><div id="toast">TAGGED!</div>
+ <div id="crosshair"></div><div id="toast">CORE COLLECTED!</div>
  <div class="bottom">
-  <div class="hudbox healthwrap"><div class="tiny">SHIELD <span id="healthText">100</span>%</div><div class="bar"><span id="healthBar"></span></div><div class="substat">SHIELD RECHARGES AFTER A SHORT BREAK</div></div>
-  <div class="hudbox weapon"><b id="weaponName">⚡ PULSE BLASTER</b><br><span id="weaponInfo">1 · SEMI-AUTO</span></div>
+  <div class="hudbox"><div class="stat">ENERGY CORES</div><strong id="coreCount">0 / 10</strong><div style="font-size:9px;color:#aab8d4;margin-top:3px">Find glowing cores around the arena</div></div>
+  <div class="hudbox stat" style="text-align:right">DASH CHARGE<strong id="dashStatus">READY</strong></div>
  </div>
 </div>
 <div id="menu"><div class="card">
- <div class="brand"><div class="logo">⚡</div> FAST-PACED FIRST-PERSON ARENA</div>
- <h1>NEON <span>RIVALS</span></h1>
- <p class="lead">Jump into a quick arena showdown. Aim with your mouse, dash between cover and outscore three training bots. Pick a map, pick your blaster and race to ten tags.</p>
+ <div class="brand"><div class="logo">✦</div> FIRST-PERSON ARENA RACE</div>
+ <h1>NEON <span>DASH</span></h1>
+ <p class="lead">Race three rival bots through a glowing arena. Collect energy cores, sprint across open lanes and dash around obstacles. First to ten cores wins!</p>
  <div class="label">Choose your arena</div>
  <div class="maps">
   <button class="map selected" data-map="city"><div class="map-art city"></div><div><b>Neon City</b><small>Bright lanes · Tight corners</small></div></button>
   <button class="map" data-map="docks"><div class="map-art docks"></div><div><b>Sunset Docks</b><small>Open lanes · Cargo cover</small></div></button>
-  <button class="map" data-map="dome"><div class="map-art dome"></div><div><b>Pulse Dome</b><small>Symmetrical · Central cover</small></div></button>
+  <button class="map" data-map="dome"><div class="map-art dome"></div><div><b>Pulse Dome</b><small>Symmetrical · Central lanes</small></div></button>
  </div>
- <div class="row"><button class="primary" id="start">START MATCH ⚡</button><span style="font-size:11px;color:#a7b4d2">Free-for-all · You vs 3 bots</span></div>
- <div class="controls"><span><kbd>W A S D</kbd> Move</span><span><kbd>MOUSE</kbd> Aim</span><span><kbd>CLICK</kbd> Fire</span><span><kbd>SHIFT</kbd> Sprint</span><span><kbd>Q</kbd> Dash</span><span><kbd>1 2 3</kbd> Change blaster</span><span><kbd>ESC</kbd> Pause</span></div>
- <div style="font-size:10px;color:#8292b4;margin-top:13px">Desktop browser recommended. Single-player practice match against computer-controlled bots.</div>
+ <div class="row"><button class="primary" id="start">START RACE ✦</button><span style="font-size:11px;color:#a7b4d2">4-player free-for-all · 3 rival bots</span></div>
+ <div class="controls"><span><kbd>W A S D</kbd> Move</span><span><kbd>MOUSE</kbd> Look around</span><span><kbd>SHIFT</kbd> Sprint</span><span><kbd>Q</kbd> Dash</span><span><kbd>ESC</kbd> Pause</span></div>
+ <div style="font-size:10px;color:#8292b4;margin-top:13px">Desktop browser recommended. Single-player race against computer-controlled rivals.</div>
 </div></div>
-<div id="pause"><div>PAUSED</div><button class="primary" id="resume">RESUME MATCH</button><button class="secondary" id="quit">MAIN MENU</button></div>
-<div id="result"><div class="result-card"><div class="brand" style="justify-content:center">MATCH COMPLETE</div><h2 id="resultTitle">YOU WIN!</h2><p id="resultText">Final score</p><button class="primary" id="again">PLAY AGAIN ⚡</button><button class="secondary" id="back">MAIN MENU</button></div></div>
+<div id="pause"><div>PAUSED</div><button class="primary" id="resume">RESUME RACE</button><button class="secondary" id="quit">MAIN MENU</button></div>
+<div id="result"><div class="result-card"><div class="brand" style="justify-content:center">RACE COMPLETE</div><h2 id="resultTitle">YOU WIN!</h2><p id="resultText">Final score</p><button class="primary" id="again">RACE AGAIN ✦</button><button class="secondary" id="back">MAIN MENU</button></div></div>
 </div>
 <script>
 (function(){
@@ -87,37 +84,40 @@ kbd{font:700 10px system-ui;color:#f7fbff;background:#253658;border:1px solid #4
 const canvas=document.getElementById("screen"),ctx=canvas.getContext("2d"),$=id=>document.getElementById(id);
 const maps={
  city:["################","#..............#","#..##..........#","#..............#","#....###.......#","#..............#","#..............#","#......##......#","#..............#","#..............#","#.......###....#","#..............#","#..........##..#","#..............#","#..............#","################"],
- docks:["################","#..............#","#..###.........#","#..#...........#","#..#..####.....#","#..............#","#.....##.......#","#..............#","#.####.........#","#..............#","#.......####...#","#...........#..#","#...........#..#","#..............#","#..............#","################"],
+ docks:["################","#..............#","#..###.........#","#..#...........#","#..#..####.....#","#..............#","#.....##.......#","#..............#","#.####.........#","#..............#","#.......####...#","#..............#","#..............#","#..............#","#..............#","################"],
  dome:["################","#..............#","#..##......##..#","#..............#","#....#....#....#","#..............#","#...##....##...#","#..............#","#..............#","#...##....##...#","#..............#","#....#....#....#","#..............#","#..##......##..#","#..............#","################"]
 };
 const mapNames={city:"NEON CITY",docks:"SUNSET DOCKS",dome:"PULSE DOME"};
-const botStarts={city:[{x:12.4,y:2.4},{x:12.3,y:11.3},{x:2.5,y:12.4}],docks:[{x:12.4,y:2.4},{x:12.4,y:13.2},{x:2.5,y:11.5}],dome:[{x:12.4,y:2.5},{x:12.4,y:12.4},{x:2.5,y:12.4}]};
-const playerStarts={city:{x:2.5,y:2.5,a:0},docks:{x:2.5,y:2.5,a:0},dome:{x:7.5,y:12.4,a:-Math.PI/2}};
-const weapons=[
- {name:"PULSE BLASTER",info:"1 · SEMI-AUTO",damage:48,range:10,delay:.34,pellets:1,spread:.012,color:"#65f4e4"},
- {name:"TRI-BURST",info:"2 · THREE-PULSE",damage:25,range:9,delay:.62,pellets:3,spread:.045,color:"#79a5ff"},
- {name:"NOVA SPREAD",info:"3 · SHORT-RANGE",damage:17,range:5,delay:.82,pellets:6,spread:.19,color:"#ff80bb"}
-];
-let selectedMap="city",map=maps.city,player=null,bots=[],scores=[0,0,0,0],gameOn=false,paused=false,ended=false,timeLeft=120,last=0,lastShot=0,toastTimer=0,keys={},zBuffer=[],muzzle=0,weaponIndex=0,dashCooldown=0,regenWait=0;
+const playerStarts={city:{x:2.5,y:2.5,a:0},docks:{x:2.5,y:2.5,a:0},dome:{x:7.5,y:12.5,a:-Math.PI/2}};
+const botStarts={city:[{x:12.4,y:2.4},{x:12.3,y:11.3},{x:2.5,y:13.3}],docks:[{x:12.4,y:2.4},{x:12.4,y:13.2},{x:2.5,y:12.5}],dome:[{x:12.4,y:2.5},{x:12.4,y:12.5},{x:2.5,y:12.5}]};
+const coreSpawns={
+ city:[[3.5,3.5],[12.5,3.5],[3.5,12.5],[12.5,8.5],[8.5,12.5],[6.5,6.5],[11.5,5.5],[5.5,8.5]],
+ docks:[[8.5,2.5],[12.5,8.5],[5.5,10.5],[9.5,12.5],[3.5,13.5],[8.5,7.5],[12.5,5.5],[4.5,6.5]],
+ dome:[[7.5,2.5],[12.5,6.5],[3.5,6.5],[7.5,8.5],[12.5,12.5],[3.5,12.5],[5.5,3.5],[10.5,10.5]]
+};
+let selectedMap="city",map=maps.city,player=null,bots=[],cores=[],scores=[0,0,0,0],gameOn=false,paused=false,ended=false,timeLeft=90,last=0,toastTimer=0,keys={},zBuffer=[],dashCooldown=0;
 const fov=Math.PI/3,botColors=["#ff6eaa","#ffc85e","#a48aff"];
 function resize(){canvas.width=innerWidth;canvas.height=innerHeight}
 window.addEventListener("resize",resize);resize();
 function toast(text){$("toast").textContent=text;$("toast").style.opacity=1;toastTimer=1}
 function showMenu(){gameOn=false;paused=false;ended=false;$("menu").style.display="grid";$("hud").style.display="none";$("pause").style.display="none";$("result").style.display="none";if(document.pointerLockElement)document.exitPointerLock()}
-function beginMatch(){
- map=maps[selectedMap];const p=playerStarts[selectedMap];player={x:p.x,y:p.y,a:p.a,health:100,dead:0};
- bots=botStarts[selectedMap].map((s,i)=>({x:s.x,y:s.y,a:Math.PI,health:100,alive:true,respawn:0,fire:1+i*.35,strafe:i%2?1:-1,color:botColors[i],name:["BOT ALPHA","BOT BETA","BOT GAMMA"][i]}));
- scores=[0,0,0,0];timeLeft=120;weaponIndex=0;lastShot=0;dashCooldown=0;gameOn=true;paused=false;ended=false;
+function newCore(){
+ const pool=coreSpawns[selectedMap];let p=pool[Math.floor(Math.random()*pool.length)];
+ return {x:p[0],y:p[1],phase:Math.random()*6.28};
+}
+function beginRace(){
+ map=maps[selectedMap];const p=playerStarts[selectedMap];player={x:p.x,y:p.y,a:p.a};
+ bots=botStarts[selectedMap].map((s,i)=>({x:s.x,y:s.y,a:Math.PI,respawn:0,color:botColors[i],name:["BOT ALPHA","BOT BETA","BOT GAMMA"][i],think:Math.random()}));
+ scores=[0,0,0,0];timeLeft=90;dashCooldown=0;cores=[];for(let i=0;i<5;i++)cores.push(newCore());
+ gameOn=true;paused=false;ended=false;
  $("menu").style.display="none";$("result").style.display="none";$("pause").style.display="none";$("hud").style.display="block";$("mapName").textContent=mapNames[selectedMap];updateHUD();canvas.requestPointerLock?.();last=performance.now();requestAnimationFrame(loop)
 }
 function updateHUD(){
  $("scores").innerHTML='<div class="score"><small>YOU</small>'+scores[0]+'</div>'+bots.map((b,i)=>'<div class="score"><small>BOT '+(i+1)+'</small>'+scores[i+1]+'</div>').join("");
- $("healthText").textContent=Math.max(0,Math.ceil(player.health));$("healthBar").style.width=Math.max(0,player.health)+"%";
- $("weaponName").textContent="⚡ "+weapons[weaponIndex].name;$("weaponInfo").textContent=weapons[weaponIndex].info;
+ $("coreCount").textContent=scores[0]+" / 10";$("dashStatus").textContent=dashCooldown>0?dashCooldown.toFixed(1)+"s":"READY";
  $("timer").textContent=Math.floor(timeLeft/60)+":"+String(Math.max(0,Math.ceil(timeLeft%60))).padStart(2,"0");
 }
 function wallAt(x,y){const gx=Math.floor(x),gy=Math.floor(y);return !map[gy]||map[gy][gx]!=="."}
-function clearLine(x1,y1,x2,y2){const d=Math.hypot(x2-x1,y2-y1),steps=Math.ceil(d*12);for(let i=1;i<steps;i++){const t=i/steps;if(wallAt(x1+(x2-x1)*t,y1+(y2-y1)*t))return false}return true}
 function moveEntity(e,dx,dy,r){
  const nx=e.x+dx,ny=e.y+dy;
  if(!wallAt(nx+Math.sign(dx||1)*r,e.y)&&!wallAt(nx,e.y+r)&&!wallAt(nx,e.y-r))e.x=nx;
@@ -127,55 +127,40 @@ function wrapAngle(a){while(a>Math.PI)a-=Math.PI*2;while(a< -Math.PI)a+=Math.PI*
 function visibleDistance(x,y,angle,max){
  let d=0;while(d<max){d+=.035;if(wallAt(x+Math.cos(angle)*d,y+Math.sin(angle)*d))return d}return max;
 }
-function fire(){
- if(!gameOn||paused||ended||player.dead>0)return;
- const now=performance.now()/1000,w=weapons[weaponIndex];if(now-lastShot<w.delay)return;lastShot=now;muzzle=.1;
- for(let p=0;p<w.pellets;p++){
-  const aim=player.a+(Math.random()-.5)*w.spread,wallDist=visibleDistance(player.x,player.y,aim,w.range);
-  let target=null,best=wallDist;
-  bots.forEach(b=>{if(!b.alive)return;const dx=b.x-player.x,dy=b.y-player.y,dist=Math.hypot(dx,dy),diff=Math.abs(wrapAngle(Math.atan2(dy,dx)-aim)),tol=Math.atan2(.34,Math.max(.1,dist));if(diff<tol&&dist<best&&dist<=w.range){best=dist;target=b}});
-  if(target){target.health-=w.damage;if(target.health<=0){target.alive=false;target.respawn=2;scores[0]++;toast("BOT TAGGED! +1")}else toast("HIT!")}
- }
- updateHUD();checkEnd();
-}
-function botFire(b,i){
- if(player.dead>0)return;const d=Math.hypot(player.x-b.x,player.y-b.y),a=Math.atan2(player.y-b.y,player.x-b.x);
- if(d<7&&Math.abs(wrapAngle(a-b.a))<.22&&clearLine(b.x,b.y,player.x,player.y)){
-  player.health=Math.max(0,player.health-(7+Math.random()*7));regenWait=2.2;
-  if(player.health<=0){player.dead=1.8;scores[i+1]++;toast("TAGGED — RESPAWNING")}
-  updateHUD();checkEnd();
- }
+function collectCore(index,scorer){
+ scores[scorer]++;cores[index]=newCore();
+ if(scorer===0)toast("ENERGY CORE +1!");
+ checkEnd();updateHUD();
 }
 function updateBots(dt){
  bots.forEach((b,i)=>{
-  if(!b.alive){b.respawn-=dt;if(b.respawn<=0){const s=botStarts[selectedMap][i];b.x=s.x;b.y=s.y;b.health=100;b.alive=true;b.fire=.8+i*.2}return}
-  if(player.dead>0)return;
-  const dx=player.x-b.x,dy=player.y-b.y,d=Math.hypot(dx,dy);b.a=Math.atan2(dy,dx);
-  const speed=d>5?1.3:d<3.1?-.65:0;
-  const vx=Math.cos(b.a)*speed+Math.cos(b.a+Math.PI/2)*b.strafe*.48;
-  const vy=Math.sin(b.a)*speed+Math.sin(b.a+Math.PI/2)*b.strafe*.48;
-  moveEntity(b,vx*dt,vy*dt,.2);
-  if(Math.random()<.008)b.strafe*=-1;
-  b.fire-=dt;if(b.fire<=0){botFire(b,i);b.fire=1.05+Math.random()*.55}
+  let best=null,bestD=1e9;
+  cores.forEach((c,j)=>{let d=Math.hypot(c.x-b.x,c.y-b.y);if(d<bestD){bestD=d;best={core:c,index:j}}});
+  if(!best)return;
+  const target=best.core,angle=Math.atan2(target.y-b.y,target.x-b.x);
+  b.a=angle;
+  const speed=1.9,dx=Math.cos(angle)*speed*dt,dy=Math.sin(angle)*speed*dt;
+  moveEntity(b,dx,dy,.2);
+  if(wallAt(b.x+Math.cos(angle)*.35,b.y+Math.sin(angle)*.35)){b.think-=dt;if(b.think<=0){b.a+=Math.PI/2;b.think=.65+Math.random()*.5;moveEntity(b,Math.cos(b.a)*.45*dt,Math.sin(b.a)*.45*dt,.2)}}
+  if(Math.hypot(target.x-b.x,target.y-b.y)<.48)collectCore(best.index,i+1);
  });
 }
+function collectPlayerCores(){
+ cores.forEach((c,i)=>{if(Math.hypot(c.x-player.x,c.y-player.y)<.52)collectCore(i,0)});
+}
 function dash(){
- if(!gameOn||paused||dashCooldown>0||player.dead>0)return;
+ if(!gameOn||paused||dashCooldown>0)return;
  let f=(keys.KeyW?1:0)-(keys.KeyS?1:0),s=(keys.KeyD?1:0)-(keys.KeyA?1:0);if(!f&&!s)f=1;const l=Math.hypot(f,s);f/=l;s/=l;
- const dx=(Math.cos(player.a)*f+Math.cos(player.a+Math.PI/2)*s)*1.15,dy=(Math.sin(player.a)*f+Math.sin(player.a+Math.PI/2)*s)*1.15;
- moveEntity(player,dx,dy,.2);dashCooldown=2.5;toast("DASH!");
+ const dx=(Math.cos(player.a)*f+Math.cos(player.a+Math.PI/2)*s)*1.18,dy=(Math.sin(player.a)*f+Math.sin(player.a+Math.PI/2)*s)*1.18;
+ moveEntity(player,dx,dy,.2);dashCooldown=2.4;toast("DASH!");
 }
 function update(dt){
  if(!gameOn||paused||ended)return;
- timeLeft=Math.max(0,timeLeft-dt);dashCooldown=Math.max(0,dashCooldown-dt);muzzle=Math.max(0,muzzle-dt);toastTimer-=dt;if(toastTimer<=0)$("toast").style.opacity=0;
- if(player.dead>0){player.dead-=dt;if(player.dead<=0){const s=playerStarts[selectedMap];player.x=s.x;player.y=s.y;player.health=100;player.a=s.a;toast("BACK IN THE ARENA")}}
- else{
-  let f=(keys.KeyW?1:0)-(keys.KeyS?1:0),s=(keys.KeyD?1:0)-(keys.KeyA?1:0),len=Math.hypot(f,s)||1,speed=keys.ShiftLeft||keys.ShiftRight?4.2:2.7;
-  f=f/len*speed*dt;s=s/len*speed*dt;
-  moveEntity(player,Math.cos(player.a)*f+Math.cos(player.a+Math.PI/2)*s,Math.sin(player.a)*f+Math.sin(player.a+Math.PI/2)*s,.2);
-  if(regenWait>0)regenWait-=dt;else if(player.health<100){player.health=Math.min(100,player.health+22*dt);updateHUD()}
- }
- updateBots(dt);if(timeLeft<=0)finish();updateHUD();
+ timeLeft=Math.max(0,timeLeft-dt);dashCooldown=Math.max(0,dashCooldown-dt);toastTimer-=dt;if(toastTimer<=0)$("toast").style.opacity=0;
+ let f=(keys.KeyW?1:0)-(keys.KeyS?1:0),s=(keys.KeyD?1:0)-(keys.KeyA?1:0),len=Math.hypot(f,s)||1,speed=keys.ShiftLeft||keys.ShiftRight?4.5:2.9;
+ f=f/len*speed*dt;s=s/len*speed*dt;
+ moveEntity(player,Math.cos(player.a)*f+Math.cos(player.a+Math.PI/2)*s,Math.sin(player.a)*f+Math.sin(player.a+Math.PI/2)*s,.2);
+ collectPlayerCores();updateBots(dt);if(timeLeft<=0)finish();updateHUD();
 }
 function castRay(angle){
  const rx=Math.cos(angle),ry=Math.sin(angle);let mx=Math.floor(player.x),my=Math.floor(player.y);
@@ -184,9 +169,9 @@ function castRay(angle){
  if(rx<0){sx=-1;sdx=(player.x-mx)*dx}else{sx=1;sdx=(mx+1-player.x)*dx}
  if(ry<0){sy=-1;sdy=(player.y-my)*dy}else{sy=1;sdy=(my+1-player.y)*dy}
  let side=0,hit=false;
- for(let n=0;n<50&&!hit;n++){if(sdx<sdy){sdx+=dx;mx+=sx;side=0}else{sdy+=dy;my+=sy;side=1}if(!map[my]||map[my][mx]!=="." )hit=true}
+ for(let n=0;n<50&&!hit;n++){if(sdx<sdy){sdx+=dx;mx+=sx;side=0}else{sdy+=dy;my+=sy;side=1}if(!map[my]||map[my][mx]!==".")hit=true}
  const dist=side===0?(mx-player.x+(1-sx)/2)/(rx||.00001):(my-player.y+(1-sy)/2)/(ry||.00001);
- return {dist:Math.max(.05,Math.abs(dist)),side,mx,my,wallX:side===0?player.y+dist*ry:player.x+dist*rx};
+ return {dist:Math.max(.05,Math.abs(dist)),side,wallX:side===0?player.y+dist*ry:player.x+dist*rx};
 }
 function drawWorld(){
  const w=innerWidth,h=innerHeight,horizon=h*.49,step=3,cols=Math.ceil(w/step);
@@ -195,43 +180,40 @@ function drawWorld(){
  zBuffer=new Array(cols);
  for(let x=0;x<w;x+=step){
   const cam=(x/w-.5)*fov,hit=castRay(player.a+cam),dist=hit.dist*Math.cos(cam),col=Math.floor(x/step);zBuffer[col]=dist;
-  const wallH=Math.min(h*1.9,h*.92/dist),top=horizon-wallH/2;
-  const shade=Math.max(.2,1-dist/14)*(hit.side?.76:1),base=selectedMap==="docks"?[185,143,88]:selectedMap==="dome"?[75,157,174]:[67,119,165];
-  const stripe=Math.floor(hit.wallX*6)%2===0?.9:1;
+  const wallH=Math.min(h*1.9,h*.92/dist),top=horizon-wallH/2,shade=Math.max(.2,1-dist/14)*(hit.side?.76:1);
+  const base=selectedMap==="docks"?[185,143,88]:selectedMap==="dome"?[75,157,174]:[67,119,165],stripe=Math.floor(hit.wallX*6)%2===0?.9:1;
   ctx.fillStyle="rgb("+Math.floor(base[0]*shade*stripe)+","+Math.floor(base[1]*shade*stripe)+","+Math.floor(base[2]*shade*stripe)+")";ctx.fillRect(x,top,step+1,wallH);
-  if(wallH>24){ctx.fillStyle="rgba(120,245,235,"+Math.max(0,Math.min(.18,.12/dist)) +")";ctx.fillRect(x,top,step+1,2)}
+  ctx.fillStyle="rgba(120,245,235,"+Math.max(0,Math.min(.18,.12/dist))+")";ctx.fillRect(x,top,step+1,2);
  }
- const visible=bots.filter(b=>b.alive).map(b=>({b,d:Math.hypot(b.x-player.x,b.y-player.y),a:wrapAngle(Math.atan2(b.y-player.y,b.x-player.x)-player.a)})).sort((a,b)=>b.d-a.d);
- visible.forEach(o=>{
-  const b=o.b;if(Math.abs(o.a)>fov*.72||!clearLine(player.x,player.y,b.x,b.y))return;
-  const sx=(.5+o.a/fov)*w,depth=o.d*Math.cos(o.a),size=Math.min(h*.9,h*.72/Math.max(.2,depth)),col=Math.floor(sx/step);
-  if(col>=0&&col<zBuffer.length&&zBuffer[col]<depth-.15)return;
-  const top=horizon-size*.52,bodyW=size*.34,bodyH=size*.48;
-  ctx.save();ctx.shadowColor=b.color;ctx.shadowBlur=18;
-  ctx.fillStyle=b.color;ctx.beginPath();ctx.arc(sx,top+size*.16,size*.105,0,Math.PI*2);ctx.fill();
-  ctx.fillRect(sx-bodyW/2,top+size*.28,bodyW,bodyH);
-  ctx.fillStyle="#16213c";ctx.fillRect(sx-bodyW*.7,top+size*.69,bodyW*.38,size*.26);ctx.fillRect(sx+bodyW*.32,top+size*.69,bodyW*.38,size*.26);
-  ctx.fillStyle="#eefcff";ctx.fillRect(sx-bodyW*.27,top+size*.13,size*.055,size*.035);ctx.fillRect(sx+bodyW*.13,top+size*.13,size*.055,size*.035);
-  ctx.restore();
-  const barW=bodyW*1.5;ctx.fillStyle="#171b2e";ctx.fillRect(sx-barW/2,top-10,barW,4);ctx.fillStyle="#65f4e4";ctx.fillRect(sx-barW/2,top-10,barW*b.health/100,4);
+ const sprites=[];
+ bots.forEach((b,i)=>sprites.push({type:"bot",obj:b,index:i,d:Math.hypot(b.x-player.x,b.y-player.y),a:wrapAngle(Math.atan2(b.y-player.y,b.x-player.x)-player.a)}));
+ cores.forEach((c,i)=>sprites.push({type:"core",obj:c,index:i,d:Math.hypot(c.x-player.x,c.y-player.y),a:wrapAngle(Math.atan2(c.y-player.y,c.x-player.x)-player.a)}));
+ sprites.sort((a,b)=>b.d-a.d);
+ sprites.forEach(o=>{
+  if(Math.abs(o.a)>fov*.72)return;
+  const sx=(.5+o.a/fov)*w,depth=o.d*Math.cos(o.a),col=Math.floor(sx/step);
+  if(col>=0&&col<zBuffer.length&&zBuffer[col]<depth-.12)return;
+  if(o.type==="core"){
+   const size=Math.min(h*.26,h*.18/Math.max(.2,depth)),cy=horizon-size*.35;
+   ctx.save();ctx.shadowColor="#65f4e4";ctx.shadowBlur=24;ctx.fillStyle="#65f4e4";
+   ctx.beginPath();ctx.moveTo(sx,cy-size*.5);ctx.lineTo(sx+size*.32,cy);ctx.lineTo(sx,cy+size*.5);ctx.lineTo(sx-size*.32,cy);ctx.closePath();ctx.fill();
+   ctx.fillStyle="#eaffff";ctx.beginPath();ctx.arc(sx,cy,size*.09,0,Math.PI*2);ctx.fill();ctx.restore();
+  }else{
+   const b=o.obj,size=Math.min(h*.9,h*.72/Math.max(.2,depth)),top=horizon-size*.52,bodyW=size*.34,bodyH=size*.48;
+   ctx.save();ctx.shadowColor=b.color;ctx.shadowBlur=18;ctx.fillStyle=b.color;
+   ctx.beginPath();ctx.arc(sx,top+size*.16,size*.105,0,Math.PI*2);ctx.fill();ctx.fillRect(sx-bodyW/2,top+size*.28,bodyW,bodyH);
+   ctx.fillStyle="#16213c";ctx.fillRect(sx-bodyW*.7,top+size*.69,bodyW*.38,size*.26);ctx.fillRect(sx+bodyW*.32,top+size*.69,bodyW*.38,size*.26);
+   ctx.fillStyle="#eefcff";ctx.fillRect(sx-bodyW*.27,top+size*.13,size*.055,size*.035);ctx.fillRect(sx+bodyW*.13,top+size*.13,size*.055,size*.035);ctx.restore();
+   ctx.fillStyle="#151b30";ctx.fillRect(sx-size*.22,top-10,size*.44,4);ctx.fillStyle=b.color;ctx.fillRect(sx-size*.22,top-10,size*.44,4);
+  }
  });
- drawWeapon();
 }
-function drawWeapon(){
- const w=innerWidth,h=innerHeight,x=w*.78,y=h*.89;
- ctx.save();ctx.translate(x,y);
- ctx.fillStyle="#0b1328";ctx.strokeStyle="#79fff1";ctx.lineWidth=2;
- ctx.beginPath();ctx.moveTo(-52,24);ctx.lineTo(-38,-35);ctx.lineTo(5,-50);ctx.lineTo(45,-17);ctx.lineTo(48,35);ctx.closePath();ctx.fill();ctx.stroke();
- ctx.fillStyle=weapons[weaponIndex].color;ctx.fillRect(-18,-46,35,8);ctx.fillRect(-9,18,20,24);
- if(muzzle>0){ctx.fillStyle="#f8fff3";ctx.shadowColor=weapons[weaponIndex].color;ctx.shadowBlur=25;ctx.beginPath();ctx.moveTo(0,-65);ctx.lineTo(-19,-99);ctx.lineTo(4,-88);ctx.lineTo(18,-108);ctx.lineTo(13,-65);ctx.fill()}
- ctx.restore();
-}
-function render(){if(!player)return;drawWorld();if(damageFlash>0){ctx.fillStyle="rgba(255,60,100,"+(damageFlash*.35)+")";ctx.fillRect(0,0,innerWidth,innerHeight)}if(player.dead>0){ctx.fillStyle="#080d1b99";ctx.fillRect(0,0,innerWidth,innerHeight);ctx.fillStyle="#fff";ctx.font="bold 22px system-ui";ctx.textAlign="center";ctx.fillText("TAGGED — RESPAWNING",innerWidth/2,innerHeight*.43)}}
+function render(){drawWorld();if(dashCooldown>0){ctx.fillStyle="rgba(101,244,228,.035)";ctx.fillRect(0,0,innerWidth,innerHeight)}}
 function checkEnd(){if(scores.some(s=>s>=10))finish()}
 function finish(){
  if(ended)return;ended=true;gameOn=false;if(document.pointerLockElement)document.exitPointerLock();
  const best=Math.max(...scores),winner=scores.indexOf(best);
- $("resultTitle").textContent=winner===0?"VICTORY!":winner===scores.length-1?"BOT GAMMA WINS":"MATCH OVER";
+ $("resultTitle").textContent=winner===0?"VICTORY!":"BOT "+winner+" WINS";
  $("resultText").textContent="Final score — You "+scores[0]+" · Alpha "+scores[1]+" · Beta "+scores[2]+" · Gamma "+scores[3];
  $("result").style.display="grid";
 }
@@ -241,17 +223,16 @@ document.addEventListener("keydown",e=>{
  keys[e.code]=true;
  if(e.code==="Escape"){if(gameOn&&!paused)pauseGame();else if(paused){paused=false;$("pause").style.display="none";canvas.requestPointerLock?.();last=performance.now();requestAnimationFrame(loop)}}
  if(e.code==="KeyQ")dash();
- if(e.code==="Digit1"||e.code==="Digit2"||e.code==="Digit3"){weaponIndex=Number(e.code.slice(-1))-1;updateHUD()}
 });
 document.addEventListener("keyup",e=>{keys[e.code]=false});
 document.addEventListener("mousemove",e=>{if(gameOn&&!paused&&document.pointerLockElement===canvas)player.a+=e.movementX*.0024});
-canvas.addEventListener("click",()=>{if(gameOn&&!paused&&document.pointerLockElement===canvas)fire();else if(gameOn&&!paused)canvas.requestPointerLock?.()});
+canvas.addEventListener("click",()=>{if(gameOn&&!paused&&document.pointerLockElement!==canvas)canvas.requestPointerLock?.()});
 document.addEventListener("pointerlockchange",()=>{if(gameOn&&!paused&&document.pointerLockElement!==canvas){paused=true;$("pause").style.display="flex"}});
 document.querySelectorAll("[data-map]").forEach(b=>b.addEventListener("click",()=>{selectedMap=b.dataset.map;document.querySelectorAll("[data-map]").forEach(x=>x.classList.toggle("selected",x===b))}));
-$("start").addEventListener("click",beginMatch);
+$("start").addEventListener("click",beginRace);
 $("resume").addEventListener("click",()=>{paused=false;$("pause").style.display="none";canvas.requestPointerLock?.();last=performance.now();requestAnimationFrame(loop)});
 $("quit").addEventListener("click",showMenu);
-$("again").addEventListener("click",beginMatch);
+$("again").addEventListener("click",beginRace);
 $("back").addEventListener("click",showMenu);
 })();
 </script>
