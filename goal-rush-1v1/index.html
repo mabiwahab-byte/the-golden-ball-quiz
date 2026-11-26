@@ -177,7 +177,13 @@ function kick(from,tx,ty,power,kind){
  if(kind==="shot")toast("SHOT!");
 }
 function shoot(){
- if(!gameOn||paused||goalPause>0||ball.owner!=="you")return;
+ if(!gameOn||paused||goalPause>0)return;
+ // Let a nearby loose ball be shot directly; this makes the on-screen button forgiving.
+ if(ball.owner!== "you"){
+  const d=Math.hypot(ball.x-user.x,ball.y-user.y);
+  if(ball.owner===null&&d<72){ball.owner="you";user.fx=(ball.x-user.x)/(d||1);user.fy=(ball.y-user.y)/(d||1);placeBall()}
+  else {toast("GET CLOSER TO THE BALL!");return}
+ }
  const target=aim.x>user.x+15?aim:{x:970,y:300};
  let tx=target.x,ty=target.y;
  if(tx<user.x+50){tx=970;ty=clamp(300+(user.y-300)*.55,230,370)}
