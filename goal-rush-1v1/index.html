@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#071827"><title>Goal Rush — 1v1 Football Battle</title>
+<style>
+:root{--lime:#baff63;--cyan:#71e9ff;--ink:#071827;--panel:#10283c;--line:#31516a;--muted:#a8bfd0;--white:#f6fbff}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#061522;color:var(--white);font:15px/1.4 system-ui,Arial}
+button{font:inherit;cursor:pointer;border:0;border-radius:12px;font-weight:900}
+#game{position:fixed;inset:0;background:radial-gradient(ellipse at 50% 0%,#17435a,#061522 70%)}
+canvas{width:100%;height:100%;display:block;outline:0}
+#hud{position:absolute;inset:0;pointer-events:none;display:none}
+.hudtop{position:absolute;top:12px;left:14px;right:14px;display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.hudbox{background:#071827dc;border:1px solid #5a7a8d77;border-radius:13px;padding:9px 13px;box-shadow:0 8px 24px #0005;backdrop-filter:blur(8px)}
+.brand{color:var(--lime);font-weight:1000;letter-spacing:1.8px;font-size:12px}
+.teamname{font-size:10px;color:#c1d6e3;margin-top:2px}
+.scoreboard{display:flex;align-items:center;gap:14px;text-align:center;min-width:240px;justify-content:center}
+.scoreteam{font-size:25px;font-weight:1000;min-width:30px;font-variant-numeric:tabular-nums}
+.scoreteam small{font-size:9px;color:#b7cad8;display:block;letter-spacing:1px}
+.clock{font-size:19px;font-weight:1000;min-width:50px;color:var(--lime);font-variant-numeric:tabular-nums}
+.hudbottom{position:absolute;bottom:14px;left:14px;right:14px;display:flex;align-items:end;justify-content:space-between;gap:12px}
+.hint{font-size:11px;color:#e5f3fa;line-height:1.5}
+.hint b{color:var(--lime)}
+#toast{position:absolute;top:25%;left:50%;transform:translateX(-50%);font-size:clamp(21px,4vw,39px);font-weight:1000;letter-spacing:2px;color:var(--lime);text-shadow:0 4px 22px #000;opacity:0;transition:opacity .15s}
+#menu,#result,#pause{position:absolute;inset:0;display:grid;place-items:center;padding:16px;background:radial-gradient(ellipse at 50% 10%,#1e5067df,#061522f5 72%)}
+#menu{z-index:5}
+.panel{width:min(900px,100%);max-height:95vh;overflow:auto;background:linear-gradient(145deg,#17364cfa,#0b1f31fa);border:1px solid #42677e;border-radius:23px;padding:clamp(19px,4vw,34px);box-shadow:0 25px 90px #000b}
+.eyebrow{color:var(--lime);letter-spacing:2.4px;font-size:11px;font-weight:1000}
+h1{margin:13px 0 10px;font-size:clamp(43px,7vw,76px);line-height:.92;letter-spacing:-3px}
+h1 span{color:var(--lime);text-shadow:0 0 25px #baff6344}
+.lead{color:#bfd1dc;max-width:670px;line-height:1.6;margin:0 0 18px}
+.sectionlabel{font-size:11px;letter-spacing:1.8px;color:var(--muted);font-weight:1000;margin:19px 0 9px;text-transform:uppercase}
+.teams{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
+.teamcard{padding:12px;background:#0a1c2c;border:1px solid #34546b;color:white;text-align:left;border-radius:13px;display:flex;gap:10px;align-items:center;min-height:65px}
+.teamcard.selected{border:2px solid var(--lime);background:#17354a}
+.crest{width:39px;height:39px;display:grid;place-items:center;border-radius:12px;color:#071827;font-size:11px;font-weight:1000;flex:none}
+.teamcard b{font-size:12px;display:block}.teamcard small{font-size:10px;color:#adc1d0}
+.stadiums{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.stadium{padding:11px;background:#0a1c2c;border:1px solid #34546b;color:white;text-align:left;border-radius:13px}
+.stadium.selected{border:2px solid var(--cyan);background:#17354a}
+.stadium b{display:block;font-size:12px}.stadium small{font-size:10px;color:#adc1d0}
+.stadiumart{height:35px;border-radius:7px;margin-bottom:8px;background:linear-gradient(0deg,#176b46,#237b51);position:relative;overflow:hidden}
+.stadiumart:after{content:"";position:absolute;inset:5px 30%;border:1px solid #c3f9d0;border-radius:3px}
+.stadiumart.night{background:linear-gradient(0deg,#125b51,#1b3f71)}
+.stadiumart.roof{background:linear-gradient(0deg,#36614d,#455c7b)}
+.actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:20px}
+.primary{padding:14px 21px;color:#092011;background:var(--lime);box-shadow:0 0 24px #baff6333}
+.primary:hover{filter:brightness(1.08);transform:translateY(-1px)}
+.muted{color:#9bb2c4;font-size:11px}
+.controls{display:flex;gap:8px 17px;flex-wrap:wrap;margin-top:16px;color:#acc1d0;font-size:10px}
+kbd{padding:3px 6px;background:#263f55;border:1px solid #4c6b82;border-radius:5px;color:white;font-weight:900}
+#result,#pause{z-index:7;display:none;background:#061522d9;backdrop-filter:blur(8px)}
+.resultcard{text-align:center;width:min(420px,100%);padding:30px;background:#112a40;border:1px solid #42677e;border-radius:20px;box-shadow:0 20px 80px #0009}
+.resultcard h2{font-size:42px;margin:7px 0}.resultcard p{color:#b5c9d8;line-height:1.55}
+.secondary{background:#29445a;color:white;padding:13px 18px;margin-left:7px}
+#pause{font-size:28px;font-weight:1000;letter-spacing:2px;gap:14px;align-content:center;justify-items:center}
+@media(max-width:680px){.teams{grid-template-columns:repeat(2,1fr)}.scoreboard{min-width:150px;gap:8px}.scoreteam{font-size:20px}.hudtop{left:5px;right:5px;top:5px}.hudbottom{left:5px;right:5px;bottom:5px}.teamname{display:none}.panel{padding:18px}.stadiums{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div id="game">
+<canvas id="pitch"></canvas>
+<div id="hud">
+ <div class="hudtop">
+  <div class="hudbox"><div class="brand">GOAL RUSH</div><div class="teamname" id="myTeamHud">YOUR TEAM</div></div>
+  <div class="hudbox scoreboard">
+   <div class="scoreteam" id="myScore"><small>YOU</small>0</div>
+   <div class="clock" id="clock">2:30</div>
+   <div class="scoreteam" id="cpuScore"><small>RIVAL</small>0</div>
+  </div>
+  <div class="hudbox" style="text-align:right"><div class="brand" style="color:var(--cyan)">FIRST TO 5</div><div class="teamname" id="stadiumHud">CLASSIC PARK</div></div>
+ </div>
+ <div id="toast">GOOOOOAL!</div>
+ <div class="hudbottom">
+  <div class="hudbox hint"><b>WASD</b> Move &nbsp; <b>SHIFT</b> Sprint<br><b>SPACE / CLICK</b> Shoot &nbsp; <b>E</b> Pass<br><b>ESC</b> Pause</div>
+  <div class="hudbox hint" style="text-align:right">BALL: <b id="possession">LOOSE</b><br>YOU VS CPU • ARCADE MATCH</div>
+ </div>
+</div>
+<div id="menu"><div class="panel">
+ <div class="eyebrow">⚽ ARCADE FOOTBALL • ONE PLAYER VS AI</div>
+ <h1>GOAL <span>RUSH</span></h1>
+ <p class="lead">Pick your team, step onto the pitch and take on an AI rival. Dribble into space, pass to your teammate or shoot past the keeper. First to five goals wins!</p>
+ <div class="sectionlabel">Choose your team</div>
+ <div class="teams" id="teams"></div>
+ <div class="sectionlabel">Choose your stadium</div>
+ <div class="stadiums">
+  <button class="stadium selected" data-stadium="park"><div class="stadiumart"></div><b>Classic Park</b><small>Daylight • Grass pitch</small></button>
+  <button class="stadium" data-stadium="night"><div class="stadiumart night"></div><b>Night Lights</b><small>Floodlights • Big match</small></button>
+  <button class="stadium" data-stadium="roof"><div class="stadiumart roof"></div><b>Rooftop Arena</b><small>City view • Compact feel</small></button>
+ </div>
+ <div class="actions"><button class="primary" id="start">KICK OFF ⚽</button><span class="muted">2:30 match • First to 5 goals • Keyboard recommended</span></div>
+ <div class="controls"><span><kbd>W A S D</kbd> Move</span><span><kbd>SHIFT</kbd> Sprint</span><span><kbd>SPACE</kbd> Shoot</span><span><kbd>E</kbd> Pass</span><span><kbd>MOUSE</kbd> Aim</span><span><kbd>ESC</kbd> Pause</span></div>
+</div></div>
+<div id="pause"><div>PAUSED</div><button class="primary" id="resume">RESUME MATCH</button><button class="secondary" id="quit">MAIN MENU</button></div>
+<div id="result"><div class="resultcard"><div class="eyebrow">FULL TIME</div><h2 id="resultTitle">YOU WIN!</h2><p id="resultText"></p><button class="primary" id="again">REMATCH ⚽</button><button class="secondary" id="back">MAIN MENU</button></div></div>
+</div>
+<script>
+(function(){
+"use strict";
+const canvas=document.getElementById("pitch"),ctx=canvas.getContext("2d"),$=id=>document.getElementById(id);
+const W=1000,H=600;
+const teams=[
+ {name:"Liverpool",short:"LIV",color:"#c8102e",trim:"#f6dfb5"},
+ {name:"Arsenal",short:"ARS",color:"#e32636",trim:"#f1cf7a"},
+ {name:"Manchester City",short:"MCI",color:"#6cabdd",trim:"#102c54"},
+ {name:"Real Madrid",short:"RMA",color:"#eeeeef",trim:"#e4c45e"},
+ {name:"Barcelona",short:"BAR",color:"#a50044",trim:"#17408b"},
+ {name:"Bayern Munich",short:"BAY",color:"#dc052d",trim:"#ffffff"},
+ {name:"Paris SG",short:"PSG",color:"#004170",trim:"#ed1c24"},
+ {name:"Australia",short:"AUS",color:"#ffcc00",trim:"#087a43"}
+];
+const arenas={park:{top:"#20804d",bottom:"#176b42",line:"#d9f4df",crowd:"#173e50"},night:{top:"#185d4f",bottom:"#104a43",line:"#d4f7ed",crowd:"#101d3d"},roof:{top:"#47745a",bottom:"#37614b",line:"#e0f4d9",crowd:"#314b63"}};
+let selectedTeam=0,selectedStadium="park",gameOn=false,paused=false,ended=false;
+let user,rival,mate,keeperUser,keeperRival,ball,scores=[0,0],timeLeft=150,goalPause=0,last=0,aim={x:850,y:300},keys={},toastLife=0,scale=1,offsetX=0,offsetY=0;
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+function fit(){const dpr=Math.min(2,window.devicePixelRatio||1);canvas.width=Math.round(innerWidth*dpr);canvas.height=Math.round(innerHeight*dpr);scale=Math.min(canvas.width/W,canvas.height/H);offsetX=(canvas.width-W*scale)/2;offsetY=(canvas.height-H*scale)/2}
+window.addEventListener("resize",fit);fit();
+function screenToWorld(x,y){const r=canvas.getBoundingClientRect(),dpr=canvas.width/r.width;return {x:(x-r.left)*dpr/scale-offsetX/scale,y:(y-r.top)*dpr/scale-offsetY/scale}}
+function fieldPos(x,y){return {x:clamp(x,70,930),y:clamp(y,80,520)}}
+function toast(t){$("toast").textContent=t;$("toast").style.opacity=1;toastLife=1.3}
+function selected(){return teams[selectedTeam]}
+function rivalTeam(){return teams[(selectedTeam+3)%teams.length]}
+function renderTeamCards(){
+ $("teams").innerHTML=teams.map((t,i)=>'<button class="teamcard '+(i===selectedTeam?"selected":"")+'" data-team="'+i+'"><span class="crest" style="background:'+t.color+';border:2px solid '+t.trim+'">'+t.short+'</span><span><b>'+t.name+'</b><small>Arcade club</small></span></button>').join("");
+ document.querySelectorAll("[data-team]").forEach(b=>b.onclick=()=>{selectedTeam=Number(b.dataset.team);renderTeamCards()});
+}
+function updateHUD(){
+ $("myScore").innerHTML='<small>'+selected().short+'</small>'+scores[0];
+ $("cpuScore").innerHTML='<small>'+rivalTeam().short+'</small>'+scores[1];
+ $("clock").textContent=Math.floor(timeLeft/60)+":"+String(Math.max(0,Math.ceil(timeLeft%60))).padStart(2,"0");
+ $("myTeamHud").textContent=selected().name.toUpperCase();$("stadiumHud").textContent=selectedStadium==="park"?"CLASSIC PARK":selectedStadium==="night"?"NIGHT LIGHTS":"ROOFTOP ARENA";
+ $("possession").textContent=ball.owner==="you"?"YOU":ball.owner==="mate"?"TEAMMATE":ball.owner==="cpu"?"RIVAL":ball.owner==="keeper-you"?"YOUR KEEPER":ball.owner==="keeper-cpu"?"RIVAL KEEPER":"LOOSE";
+}
+function resetPositions(){
+ user={x:300,y:300,vx:0,vy:0,fx:1,fy:0};
+ mate={x:235,y:390,fx:1,fy:0,passTimer:0};
+ rival={x:700,y:300,fx:-1,fy:0,shootTimer:1};
+ keeperUser={x:82,y:300,tx:82,side:"left"};
+ keeperRival={x:918,y:300,tx:918,side:"right"};
+ ball={x:500,y:300,vx:0,vy:0,owner:null,lastTouch:null};
+ goalPause=0;keys={};
+}
+function kickoff(scoringSide){
+ resetPositions();
+ if(scoringSide===0){user.x=350;mate.x=280;rival.x=650;ball.owner=null}
+ else{user.x=350;mate.x=280;rival.x=650;ball.owner="cpu"}
+}
+function startMatch(){
+ scores=[0,0];timeLeft=150;resetPositions();gameOn=true;paused=false;ended=false;
+ $("menu").style.display="none";$("result").style.display="none";$("pause").style.display="none";$("hud").style.display="block";
+ updateHUD();last=performance.now();requestAnimationFrame(loop);
+}
+function movePlayer(p,dx,dy,speed){
+ const n=Math.hypot(dx,dy)||1;dx=dx/n*speed;dy=dy/n*speed;
+ p.x=clamp(p.x+dx,65,935);p.y=clamp(p.y+dy,75,525);
+ if(Math.hypot(dx,dy)>.01){p.fx=dx/Math.hypot(dx,dy);p.fy=dy/Math.hypot(dx,dy)}
+}
+function nearestOwner(){
+ const dUser=Math.hypot(ball.x-user.x,ball.y-user.y),dMate=Math.hypot(ball.x-mate.x,ball.y-mate.y),dCPU=Math.hypot(ball.x-rival.x,ball.y-rival.y);
+ if(dUser<28&&dUser<=dCPU+8)return "you";
+ if(dMate<27&&dMate<dCPU+7)return "mate";
+ if(dCPU<29)return "cpu";
+ return null;
+}
+function placeBall(){
+ if(ball.owner==="you"){ball.x=user.x+user.fx*24;ball.y=user.y+user.fy*24;ball.vx=0;ball.vy=0}
+ else if(ball.owner==="mate"){ball.x=mate.x+mate.fx*22;ball.y=mate.y+mate.fy*22;ball.vx=0;ball.vy=0}
+ else if(ball.owner==="cpu"){ball.x=rival.x+rival.fx*24;ball.y=rival.y+rival.fy*24;ball.vx=0;ball.vy=0}
+ else if(ball.owner==="keeper-you"){ball.x=keeperUser.x+20;ball.y=keeperUser.y;ball.vx=0;ball.vy=0}
+ else if(ball.owner==="keeper-cpu"){ball.x=keeperRival.x-20;ball.y=keeperRival.y;ball.vx=0;ball.vy=0}
+}
+function kick(from,tx,ty,power,kind){
+ const dx=tx-ball.x,dy=ty-ball.y,n=Math.hypot(dx,dy)||1;
+ ball.owner=null;ball.lastTouch=from;ball.vx=dx/n*power;ball.vy=dy/n*power;
+ if(kind==="shot")toast("SHOT!");
+}
+function shoot(){
+ if(!gameOn||paused||goalPause>0||ball.owner!=="you")return;
+ const target=aim.x>user.x+15?aim:{x:970,y:300};
+ let tx=target.x,ty=target.y;
+ if(tx<user.x+50){tx=970;ty=clamp(300+(user.y-300)*.55,230,370)}
+ kick("you",tx,ty,770,"shot");
+}
+function pass(){
+ if(!gameOn||paused||goalPause>0||ball.owner!=="you")return;
+ const tx=clamp(mate.x+65,160,820),ty=clamp(mate.y+(user.y<mate.y?-45:45),95,505);
+ kick("you",tx,ty,480,"pass");toast("NICE PASS!");
+ mate.passTimer=1.2;
+}
+function cpuShoot(){
+ const tx=40,ty=clamp(300+(rival.y-300)*.2,240,360);
+ kick("cpu",tx,ty,670,"shot");
+}
+function updateAI(dt){
+ // Teammate moves into a passing lane or supports the attack.
+ if(ball.owner==="mate"){
+  movePlayer(mate,1,0,135*dt);
+  mate.passTimer-=dt;
+  if(mate.passTimer<=0){
+   if(Math.hypot(user.x-mate.x,user.y-mate.y)<260)kick("mate",user.x,user.y,430,"pass");
+   else kick("mate",960,300,650,"shot");
+  }
+ }else{
+  let tx=clamp(user.x+115,140,830),ty=clamp(user.y+(user.y<300?95:-95),100,500);
+  if(ball.owner==="cpu"){tx=clamp(rival.x+80,120,870);ty=clamp(rival.y+100,90,510)}
+  const dx=tx-mate.x,dy=ty-mate.y,d=Math.hypot(dx,dy);
+  if(d>18)movePlayer(mate,dx,dy,125*dt);
+ }
+ // Rival chases the ball, then drives toward the player's goal.
+ if(ball.owner==="cpu"){
+  const tx=105,ty=300,dx=tx-rival.x,dy=ty-rival.y,d=Math.hypot(dx,dy);
+  if(d>28)movePlayer(rival,dx,dy,145*dt);
+  rival.shootTimer-=dt;if(rival.x<255||rival.shootTimer<=0){cpuShoot();rival.shootTimer=1.2}
+ }else{
+  const dx=ball.x-rival.x,dy=ball.y-rival.y,d=Math.hypot(dx,dy);
+  if(d>20)movePlayer(rival,dx,dy,ball.owner==="you"?158*dt:142*dt);
+ }
+ // Goalkeepers track the ball, keeping within the goal mouth.
+ keeperUser.y+=(clamp(ball.y,230,370)-keeperUser.y)*Math.min(1,dt*4);
+ keeperRival.y+=(clamp(ball.y,230,370)-keeperRival.y)*Math.min(1,dt*4);
+}
+function updateBall(dt){
+ if(ball.owner){placeBall();return}
+ ball.x+=ball.vx*dt;ball.y+=ball.vy*dt;
+ const damp=Math.pow(.985,dt*60);ball.vx*=damp;ball.vy*=damp;
+ if(ball.y<65){ball.y=65;ball.vy=Math.abs(ball.vy)*.72}
+ if(ball.y>535){ball.y=535;ball.vy=-Math.abs(ball.vy)*.72}
+ // Keepers block shots and collect the ball.
+ if(ball.x<105&&Math.abs(ball.y-keeperUser.y)<57&&ball.vx<0){ball.x=110;ball.vx=Math.abs(ball.vx)*.42;ball.vy+=(ball.y-keeperUser.y)*2.2;toast("GREAT SAVE!")}
+ if(ball.x>895&&Math.abs(ball.y-keeperRival.y)<57&&ball.vx>0){ball.x=890;ball.vx=-Math.abs(ball.vx)*.42;ball.vy+=(ball.y-keeperRival.y)*2.2;toast("KEEPER SAVE!")}
+ // Ball pickup when it slows close to a field player.
+ const nearest=nearestOwner();
+ if(nearest&&Math.hypot(ball.vx,ball.vy)<410){ball.owner=nearest;ball.lastTouch=nearest;placeBall()}
+}
+function scoreGoal(side){
+ scores[side]++;updateHUD();toast(side===0?"GOOOOOAL!":"RIVAL SCORES!");
+ ball.owner=null;ball.vx=0;ball.vy=0;goalPause=1.35;
+ if(scores[side]>=5){finish();return}
+}
+function checkGoals(){
+ if(ball.x>978&&ball.y>225&&ball.y<375){scoreGoal(0);return}
+ if(ball.x<22&&ball.y>225&&ball.y<375){scoreGoal(1);return}
+ if(ball.x>985||ball.x<15){ball.vx*=-.55;ball.x=clamp(ball.x,25,975)}
+}
+function update(dt){
+ if(!gameOn||paused||ended)return;
+ if(goalPause>0){goalPause-=dt;if(goalPause<=0)kickoff(scores[0]>scores[1]?0:1);return}
+ timeLeft=Math.max(0,timeLeft-dt);
+ let dx=(keys.KeyD?1:0)-(keys.KeyA?1:0),dy=(keys.KeyS?1:0)-(keys.KeyW?1:0);
+ const speed=(keys.ShiftLeft||keys.ShiftRight)?310:225;
+ movePlayer(user,dx,dy,speed*dt);
+ if(ball.owner==="you")placeBall();
+ else if(!ball.owner&&Math.hypot(ball.x-user.x,ball.y-user.y)<28){ball.owner="you";placeBall()}
+ updateAI(dt);updateBall(dt);checkGoals();updateHUD();
+ if(timeLeft<=0)finish();
+}
+function roundRect(x,y,w,h,r,fill,stroke){ctx.beginPath();ctx.roundRect(x,y,w,h,r);if(fill){ctx.fillStyle=fill;ctx.fill()}if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=2;ctx.stroke()}}
+function drawField(){
+ const arena=arenas[selectedStadium];
+ ctx.fillStyle=arena.crowd;ctx.fillRect(0,0,W,H);
+ // Floodlight glow / surrounding track.
+ for(let i=0;i<20;i++){ctx.fillStyle=i%2?"#ffffff09":"#00000012";ctx.fillRect(i*50,0,25,600)}
+ roundRect(37,39,926,522,15,"#176c43","#d7eee0");
+ const grad=ctx.createLinearGradient(0,40,0,560);grad.addColorStop(0,arena.top);grad.addColorStop(1,arena.bottom);roundRect(40,42,920,516,12,grad);
+ for(let i=0;i<10;i++){ctx.fillStyle=i%2?"#ffffff08":"#00000008";ctx.fillRect(43+i*91,44,91,512)}
+ ctx.strokeStyle=arena.line;ctx.lineWidth=3;ctx.strokeRect(70,72,860,456);ctx.beginPath();ctx.moveTo(500,72);ctx.lineTo(500,528);ctx.stroke();
+ ctx.beginPath();ctx.arc(500,300,78,0,Math.PI*2);ctx.stroke();
+ ctx.fillStyle=arena.line;ctx.beginPath();ctx.arc(500,300,4,0,Math.PI*2);ctx.fill();
+ // Boxes and goal areas.
+ ctx.strokeRect(70,190,135,220);ctx.strokeRect(70,235,55,130);ctx.strokeRect(795,190,135,220);ctx.strokeRect(875,235,55,130);
+ ctx.beginPath();ctx.arc(185,300,5,0,Math.PI*2);ctx.arc(815,300,5,0,Math.PI*2);ctx.fill();
+ // Goals behind end line.
+ ctx.fillStyle="#d9f1e8";ctx.fillRect(26,239,43,122);ctx.fillRect(930,239,43,122);
+ ctx.fillStyle="#15384b";ctx.fillRect(30,244,37,112);ctx.fillRect(933,244,37,112);
+ ctx.strokeStyle="#e7fff0";ctx.lineWidth=4;ctx.strokeRect(27,239,42,122);ctx.strokeRect(931,239,42,122);
+ // Stadium lights.
+ if(selectedStadium==="night"){ctx.fillStyle="#e8ffff33";[[90,45],[910,45],[90,555],[910,555]].forEach(p=>{ctx.beginPath();ctx.arc(p[0],p[1],45,0,Math.PI*2);ctx.fill()})}
+}
+function drawPlayer(p,color,trim,label,isUser){
+ ctx.save();ctx.translate(p.x,p.y);
+ ctx.fillStyle="#00130d55";ctx.beginPath();ctx.ellipse(1,14,18,9,0,0,Math.PI*2);ctx.fill();
+ ctx.fillStyle=color;ctx.beginPath();ctx.arc(0,0,17,0,Math.PI*2);ctx.fill();
+ ctx.strokeStyle=trim;ctx.lineWidth=4;ctx.stroke();
+ ctx.fillStyle="#ffffff";ctx.font="900 10px system-ui";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(label,0,1);
+ ctx.strokeStyle="#ffffff";ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(p.fx*10,p.fy*10);ctx.lineTo(p.fx*22,p.fy*22);ctx.stroke();
+ if(isUser){ctx.strokeStyle="#baff63";ctx.lineWidth=2;ctx.beginPath();ctx.arc(0,0,23,0,Math.PI*2);ctx.stroke()}
+ ctx.restore();
+}
+function drawKeeper(k,color){
+ ctx.save();ctx.translate(k.x,k.y);roundRect(-13,-30,26,60,8,color,"#efffff");ctx.fillStyle="#fff";ctx.fillRect(-8,-5,16,10);ctx.restore();
+}
+function drawBall(){
+ ctx.save();ctx.translate(ball.x,ball.y);ctx.fillStyle="#00130d66";ctx.beginPath();ctx.ellipse(2,9,12,6,0,0,Math.PI*2);ctx.fill();
+ ctx.fillStyle="#fbffff";ctx.beginPath();ctx.arc(0,0,10,0,Math.PI*2);ctx.fill();ctx.strokeStyle="#152b34";ctx.lineWidth=1.5;ctx.stroke();
+ ctx.fillStyle="#243b43";ctx.beginPath();for(let i=0;i<5;i++){let a=i*Math.PI*2/5;let x=Math.cos(a)*4.5,y=Math.sin(a)*4.5;if(!i)ctx.moveTo(x,y);else ctx.lineTo(x,y)}ctx.closePath();ctx.fill();ctx.restore();
+}
+function render(){
+ const dpr=Math.min(2,window.devicePixelRatio||1);
+ ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,canvas.width,canvas.height);
+ ctx.setTransform(scale,0,0,scale,offsetX,offsetY);
+ drawField();
+ drawKeeper(keeperUser,"#58c7ff");drawKeeper(keeperRival,"#ff8a6b");
+ drawPlayer(mate,selected().trim,selected().color,"10",false);
+ drawPlayer(rival,rivalTeam().color,rivalTeam().trim,"9",false);
+ drawPlayer(user,selected().color,selected().trim,"7",true);
+ drawBall();
+ if(goalPause>0){ctx.fillStyle="#06152255";ctx.fillRect(0,0,W,H);ctx.fillStyle="#fff";ctx.font="1000 38px system-ui";ctx.textAlign="center";ctx.fillText("GOAL!",500,130)}
+}
+function loop(now){if(!gameOn||paused)return;const dt=Math.min(.04,(now-last)/1000||0);last=now;update(dt);render();if(gameOn&&!paused)requestAnimationFrame(loop)}
+function finish(){
+ if(ended)return;ended=true;gameOn=false;
+ const win=scores[0]>scores[1];$("resultTitle").textContent=win?"YOU WIN!":"FULL TIME";
+ $("resultText").textContent=selected().name+" "+scores[0]+" — "+scores[1]+" "+rivalTeam().name+". "+(win?"What a performance!":"Ready for a rematch?");
+ $("result").style.display="grid";
+}
+function showMenu(){gameOn=false;paused=false;ended=false;$("hud").style.display="none";$("menu").style.display="grid";$("pause").style.display="none";$("result").style.display="none";render()}
+function pauseGame(){if(!gameOn||ended)return;paused=true;$("pause").style.display="grid"}
+function worldMouse(e){aim=screenToWorld(e.clientX,e.clientY)}
+canvas.addEventListener("mousemove",worldMouse);
+canvas.addEventListener("click",()=>{if(gameOn&&!paused)shoot()});
+document.addEventListener("keydown",e=>{
+ if(["Space","ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].includes(e.code))e.preventDefault();
+ keys[e.code]=true;
+ if(e.code==="Space")shoot();
+ if(e.code==="KeyE")pass();
+ if(e.code==="Escape"&&gameOn&&!paused)pauseGame();
+ else if(e.code==="Escape"&&paused){paused=false;$("pause").style.display="none";last=performance.now();requestAnimationFrame(loop)}
+});
+document.addEventListener("keyup",e=>{keys[e.code]=false});
+document.querySelectorAll("[data-stadium]").forEach(b=>b.onclick=()=>{selectedStadium=b.dataset.stadium;document.querySelectorAll("[data-stadium]").forEach(x=>x.classList.toggle("selected",x===b))});
+$("start").onclick=startMatch;$("resume").onclick=()=>{paused=false;$("pause").style.display="none";last=performance.now();requestAnimationFrame(loop)};
+$("quit").onclick=showMenu;$("again").onclick=startMatch;$("back").onclick=showMenu;
+renderTeamCards();render();
+})();
+</script>
+</body>
+</html>
