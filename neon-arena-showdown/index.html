@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#080d1b"><title>Neon Dash Arena</title>
+<meta name="theme-color" content="#080d1b"><title>Neon Rivals — Laser Tag Arena</title>
 <style>
 :root{--cyan:#65f4e4;--pink:#ff70b8;--text:#f5f7ff;--muted:#aab8d4;--line:#304265}
 *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#080d1b;color:var(--text);font:15px/1.4 system-ui,Arial}button{font:inherit;cursor:pointer;border:0;border-radius:11px;padding:11px 16px;font-weight:900}
@@ -34,7 +34,7 @@ kbd{font:700 10px system-ui;color:#f7fbff;background:#253658;border:1px solid #4
 .score{min-width:48px;text-align:center;font-weight:1000;font-size:17px}.score small{display:block;font-size:8px;color:var(--muted);letter-spacing:1px}
 .timer{font-size:20px;font-weight:1000;text-align:center;font-variant-numeric:tabular-nums}
 .bottom{position:absolute;bottom:15px;left:15px;right:15px;display:flex;justify-content:space-between;align-items:end;gap:10px}
-.stat{font-size:10px;color:#c5d1e7;font-weight:900;letter-spacing:1.2px}.stat strong{font-size:18px;color:var(--cyan);display:block}
+.stat{font-size:10px;color:#c5d1e7;font-weight:900;letter-spacing:1.2px}.stat strong{font-size:18px;color:var(--cyan);display:block}.healthbar{width:min(230px,35vw);height:8px;border-radius:8px;background:#18233f;overflow:hidden;margin-top:5px}.healthbar span{display:block;height:100%;width:100%;background:linear-gradient(90deg,#63f1dc,#c7ff91)}
 #crosshair{position:absolute;left:50%;top:50%;width:17px;height:17px;transform:translate(-50%,-50%);opacity:.95}
 #crosshair:before,#crosshair:after{content:"";position:absolute;background:#eaffff;box-shadow:0 0 7px var(--cyan)}
 #crosshair:before{width:2px;height:17px;left:7px;top:0}#crosshair:after{height:2px;width:17px;left:0;top:7px}
@@ -51,32 +51,32 @@ kbd{font:700 10px system-ui;color:#f7fbff;background:#253658;border:1px solid #4
 <div id="stage"><canvas id="screen"></canvas>
 <div id="hud">
  <div class="topbar">
-  <div class="hudbox"><div class="brandmini">NEON DASH ARENA</div><div style="font-size:9px;color:#a7b4d2">ENERGY CORE RUSH</div></div>
+  <div class="hudbox"><div class="brandmini">NEON RIVALS</div><div style="font-size:9px;color:#a7b4d2">LASER TAG ARENA</div></div>
   <div class="hudbox"><div class="scores" id="scores"></div><div class="timer" id="timer">1:30</div></div>
-  <div class="hudbox" style="text-align:right"><div id="mapName" style="font-weight:900;font-size:11px">NEON CITY</div><div style="font-size:9px;color:#a7b4d2">FIRST TO 10 CORES</div></div>
+  <div class="hudbox" style="text-align:right"><div id="mapName" style="font-weight:900;font-size:11px">NEON CITY</div><div style="font-size:9px;color:#a7b4d2">FIRST TO 10 TAGS</div></div>
  </div>
- <div id="crosshair"></div><div id="toast">CORE COLLECTED!</div>
+ <div id="crosshair"></div><div id="toast">BOT TAGGED!</div>
  <div class="bottom">
-  <div class="hudbox"><div class="stat">ENERGY CORES</div><strong id="coreCount">0 / 10</strong><div style="font-size:9px;color:#aab8d4;margin-top:3px">Find glowing cores around the arena</div></div>
-  <div class="hudbox stat" style="text-align:right">DASH CHARGE<strong id="dashStatus">READY</strong></div>
+  <div class="hudbox"><div class="stat">SHIELD <strong id="healthText">100%</strong></div><div class="healthbar"><span id="healthBar"></span></div><div style="font-size:9px;color:#aab8d4;margin-top:4px">RESPAWN AFTER A TAG</div></div>
+  <div class="hudbox stat" style="text-align:right">DASH CHARGE<strong id="dashStatus">READY</strong><div style="font-size:9px;color:#aab8d4">BLASTER: <span id="ammoText">ENERGY PULSE</span></div></div>
  </div>
 </div>
 <div id="menu"><div class="card">
- <div class="brand"><div class="logo">✦</div> FIRST-PERSON ARENA RACE</div>
- <h1>NEON <span>DASH</span></h1>
- <p class="lead">Race three rival bots through a glowing arena. Collect energy cores, sprint across open lanes and dash around obstacles. First to ten cores wins!</p>
+ <div class="brand"><div class="logo">✦</div> FIRST-PERSON LASER TAG ARENA</div>
+ <h1>NEON <span>RIVALS</span></h1>
+ <p class="lead">Take on three rival bots in a fast arcade laser-tag showdown. Aim with your mouse, fire glowing energy pulses, dodge incoming tags and dash around cover. First to ten eliminations wins!</p>
  <div class="label">Choose your arena</div>
  <div class="maps">
   <button class="map selected" data-map="city"><div class="map-art city"></div><div><b>Neon City</b><small>Bright lanes · Tight corners</small></div></button>
   <button class="map" data-map="docks"><div class="map-art docks"></div><div><b>Sunset Docks</b><small>Open lanes · Cargo cover</small></div></button>
   <button class="map" data-map="dome"><div class="map-art dome"></div><div><b>Pulse Dome</b><small>Symmetrical · Central lanes</small></div></button>
  </div>
- <div class="row"><button class="primary" id="start">START RACE ✦</button><span style="font-size:11px;color:#a7b4d2">4-player free-for-all · 3 rival bots</span></div>
- <div class="controls"><span><kbd>W A S D</kbd> Move</span><span><kbd>MOUSE</kbd> Look around</span><span><kbd>SHIFT</kbd> Sprint</span><span><kbd>Q</kbd> Dash</span><span><kbd>ESC</kbd> Pause</span></div>
- <div style="font-size:10px;color:#8292b4;margin-top:13px">Desktop browser recommended. Single-player race against computer-controlled rivals.</div>
+ <div class="row"><button class="primary" id="start">START MATCH ⚡</button><span style="font-size:11px;color:#a7b4d2">You vs 3 rival bots · First to 10</span></div>
+ <div class="controls"><span><kbd>W A S D</kbd> Move</span><span><kbd>MOUSE</kbd> Aim</span><span><kbd>CLICK</kbd> Fire energy pulse</span><span><kbd>SHIFT</kbd> Sprint</span><span><kbd>Q</kbd> Dash</span><span><kbd>ESC</kbd> Pause</span></div>
+ <div style="font-size:10px;color:#8292b4;margin-top:13px">Desktop browser recommended. Arcade laser-tag action against computer-controlled rivals. No real-world weapons.</div>
 </div></div>
-<div id="pause"><div>PAUSED</div><button class="primary" id="resume">RESUME RACE</button><button class="secondary" id="quit">MAIN MENU</button></div>
-<div id="result"><div class="result-card"><div class="brand" style="justify-content:center">RACE COMPLETE</div><h2 id="resultTitle">YOU WIN!</h2><p id="resultText">Final score</p><button class="primary" id="again">RACE AGAIN ✦</button><button class="secondary" id="back">MAIN MENU</button></div></div>
+<div id="pause"><div>PAUSED</div><button class="primary" id="resume">RESUME MATCH</button><button class="secondary" id="quit">MAIN MENU</button></div>
+<div id="result"><div class="result-card"><div class="brand" style="justify-content:center">MATCH COMPLETE</div><h2 id="resultTitle">YOU WIN!</h2><p id="resultText">Final score</p><button class="primary" id="again">PLAY AGAIN ⚡</button><button class="secondary" id="back">MAIN MENU</button></div></div>
 </div>
 <script>
 (function(){
@@ -95,8 +95,9 @@ const coreSpawns={
  docks:[[8.5,2.5],[12.5,8.5],[5.5,10.5],[9.5,12.5],[3.5,13.5],[8.5,7.5],[12.5,5.5],[4.5,6.5]],
  dome:[[7.5,2.5],[12.5,6.5],[3.5,6.5],[7.5,8.5],[12.5,12.5],[3.5,12.5],[5.5,3.5],[10.5,10.5]]
 };
-let selectedMap="city",map=maps.city,player=null,bots=[],cores=[],scores=[0,0,0,0],gameOn=false,paused=false,ended=false,timeLeft=90,last=0,toastTimer=0,keys={},zBuffer=[],dashCooldown=0;
+let selectedMap="city",map=maps.city,player=null,bots=[],shots=[],scores=[0,0,0,0],gameOn=false,paused=false,ended=false,timeLeft=120,last=0,toastTimer=0,keys={},zBuffer=[],dashCooldown=0,shotCooldown=0,hitFlash=0;
 const fov=Math.PI/3,botColors=["#ff6eaa","#ffc85e","#a48aff"];
+
 function resize(){canvas.width=innerWidth;canvas.height=innerHeight}
 window.addEventListener("resize",resize);resize();
 function toast(text){$("toast").textContent=text;$("toast").style.opacity=1;toastTimer=1}
@@ -106,17 +107,18 @@ function newCore(){
  return {x:p[0],y:p[1],phase:Math.random()*6.28};
 }
 function beginRace(){
- map=maps[selectedMap];const p=playerStarts[selectedMap];player={x:p.x,y:p.y,a:p.a};
- bots=botStarts[selectedMap].map((s,i)=>({x:s.x,y:s.y,a:Math.PI,respawn:0,color:botColors[i],name:["BOT ALPHA","BOT BETA","BOT GAMMA"][i],think:Math.random()}));
- scores=[0,0,0,0];timeLeft=90;dashCooldown=0;cores=[];for(let i=0;i<5;i++)cores.push(newCore());
- gameOn=true;paused=false;ended=false;
+ map=maps[selectedMap];const p=playerStarts[selectedMap];player={x:p.x,y:p.y,a:p.a,health:100,dead:0,invuln:0};
+ bots=botStarts[selectedMap].map((s,i)=>({x:s.x,y:s.y,a:Math.PI,health:100,alive:true,respawn:0,color:botColors[i],name:["BOT ALPHA","BOT BETA","BOT GAMMA"][i],fire:1+i*.35,strafe:i%2?1:-1}));
+ scores=[0,0,0,0];shots=[];timeLeft=120;dashCooldown=0;shotCooldown=0;gameOn=true;paused=false;ended=false;
  $("menu").style.display="none";$("result").style.display="none";$("pause").style.display="none";$("hud").style.display="block";$("mapName").textContent=mapNames[selectedMap];updateHUD();canvas.requestPointerLock?.();last=performance.now();requestAnimationFrame(loop)
 }
 function updateHUD(){
  $("scores").innerHTML='<div class="score"><small>YOU</small>'+scores[0]+'</div>'+bots.map((b,i)=>'<div class="score"><small>BOT '+(i+1)+'</small>'+scores[i+1]+'</div>').join("");
- $("coreCount").textContent=scores[0]+" / 10";$("dashStatus").textContent=dashCooldown>0?dashCooldown.toFixed(1)+"s":"READY";
+ $("healthText").textContent=Math.ceil(player.health)+"%";$("healthBar").style.width=Math.max(0,player.health)+"%";
+ $("dashStatus").textContent=dashCooldown>0?dashCooldown.toFixed(1)+"s":"READY";$("ammoText").textContent="ENERGY PULSE";
  $("timer").textContent=Math.floor(timeLeft/60)+":"+String(Math.max(0,Math.ceil(timeLeft%60))).padStart(2,"0");
 }
+
 function wallAt(x,y){const gx=Math.floor(x),gy=Math.floor(y);return !map[gy]||map[gy][gx]!=="."}
 function moveEntity(e,dx,dy,r){
  const nx=e.x+dx,ny=e.y+dy;
@@ -127,41 +129,73 @@ function wrapAngle(a){while(a>Math.PI)a-=Math.PI*2;while(a< -Math.PI)a+=Math.PI*
 function visibleDistance(x,y,angle,max){
  let d=0;while(d<max){d+=.035;if(wallAt(x+Math.cos(angle)*d,y+Math.sin(angle)*d))return d}return max;
 }
-function collectCore(index,scorer){
- scores[scorer]++;cores[index]=newCore();
- if(scorer===0)toast("ENERGY CORE +1!");
- checkEnd();updateHUD();
+function lineClear(x1,y1,x2,y2){
+ const d=Math.hypot(x2-x1,y2-y1),steps=Math.ceil(d*12);
+ for(let i=1;i<steps;i++){const t=i/steps;if(wallAt(x1+(x2-x1)*t,y1+(y2-y1)*t))return false}
+ return true;
+}
+function spawnShot(owner,angle){
+ const source=owner===0?player:bots[owner-1];
+ shots.push({x:source.x+Math.cos(angle)*.32,y:source.y+Math.sin(angle)*.32,vx:Math.cos(angle)*(owner===0?9:6.2),vy:Math.sin(angle)*(owner===0?9:6.2),owner,life:1.8});
+}
+function fire(){
+ if(!gameOn||paused||ended||player.dead>0||shotCooldown>0)return;
+ shotCooldown=.28;spawnShot(0,player.a);toast("ENERGY PULSE!");
+}
+function botFire(b,i){
+ if(player.dead>0||!lineClear(b.x,b.y,player.x,player.y))return;
+ const aim=Math.atan2(player.y-b.y,player.x-b.x)+(Math.random()-.5)*.15;
+ spawnShot(i+1,aim);
 }
 function updateBots(dt){
  bots.forEach((b,i)=>{
-  let best=null,bestD=1e9;
-  cores.forEach((c,j)=>{let d=Math.hypot(c.x-b.x,c.y-b.y);if(d<bestD){bestD=d;best={core:c,index:j}}});
-  if(!best)return;
-  const target=best.core,angle=Math.atan2(target.y-b.y,target.x-b.x);
-  b.a=angle;
-  const speed=1.9,dx=Math.cos(angle)*speed*dt,dy=Math.sin(angle)*speed*dt;
-  moveEntity(b,dx,dy,.2);
-  if(wallAt(b.x+Math.cos(angle)*.35,b.y+Math.sin(angle)*.35)){b.think-=dt;if(b.think<=0){b.a+=Math.PI/2;b.think=.65+Math.random()*.5;moveEntity(b,Math.cos(b.a)*.45*dt,Math.sin(b.a)*.45*dt,.2)}}
-  if(Math.hypot(target.x-b.x,target.y-b.y)<.48)collectCore(best.index,i+1);
+  if(!b.alive){b.respawn-=dt;if(b.respawn<=0){const s=botStarts[selectedMap][i];b.x=s.x;b.y=s.y;b.health=100;b.alive=true;b.fire=.9+i*.25}return}
+  if(player.dead>0)return;
+  const dx=player.x-b.x,dy=player.y-b.y,d=Math.hypot(dx,dy),angle=Math.atan2(dy,dx);b.a=angle;
+  const moveAngle=angle+(d<3.1?Math.PI/2*b.strafe:0),speed=d>4?1.3:0.8;
+  moveEntity(b,Math.cos(moveAngle)*speed*dt,Math.sin(moveAngle)*speed*dt,.2);
+  b.fire-=dt;
+  if(d<9&&b.fire<=0){botFire(b,i);b.fire=1.15+Math.random()*.5}
+  if(Math.random()<.006)b.strafe*=-1;
  });
 }
-function collectPlayerCores(){
- cores.forEach((c,i)=>{if(Math.hypot(c.x-player.x,c.y-player.y)<.52)collectCore(i,0)});
+function updateShots(dt){
+ for(let i=shots.length-1;i>=0;i--){
+  const s=shots[i];s.x+=s.vx*dt;s.y+=s.vy*dt;s.life-=dt;
+  if(s.life<=0||wallAt(s.x,s.y)){shots.splice(i,1);continue}
+  if(s.owner===0){
+   let hit=-1;
+   bots.forEach((b,j)=>{if(b.alive&&Math.hypot(b.x-s.x,b.y-s.y)<.34)hit=j});
+   if(hit>=0){const b=bots[hit];b.health-=50;shots.splice(i,1);toast(b.health<=0?"BOT ELIMINATED +1":"BOT HIT!");
+    if(b.health<=0){b.alive=false;b.respawn=2;scores[0]++;checkEnd()}updateHUD();continue}
+  }else if(player.dead<=0&&player.invuln<=0&&Math.hypot(player.x-s.x,player.y-s.y)<.34){
+   shots.splice(i,1);player.health-=22;hitFlash=.35;toast("SHIELD HIT!");
+   if(player.health<=0){player.health=0;player.dead=1.4;scores[s.owner]++;toast("TAGGED — RESPAWNING");checkEnd()}
+   updateHUD();continue;
+  }
+ }
 }
+
 function dash(){
- if(!gameOn||paused||dashCooldown>0)return;
+ if(!gameOn||paused||dashCooldown>0||player.dead>0)return;
  let f=(keys.KeyW?1:0)-(keys.KeyS?1:0),s=(keys.KeyD?1:0)-(keys.KeyA?1:0);if(!f&&!s)f=1;const l=Math.hypot(f,s);f/=l;s/=l;
  const dx=(Math.cos(player.a)*f+Math.cos(player.a+Math.PI/2)*s)*1.18,dy=(Math.sin(player.a)*f+Math.sin(player.a+Math.PI/2)*s)*1.18;
  moveEntity(player,dx,dy,.2);dashCooldown=2.4;toast("DASH!");
 }
 function update(dt){
  if(!gameOn||paused||ended)return;
- timeLeft=Math.max(0,timeLeft-dt);dashCooldown=Math.max(0,dashCooldown-dt);toastTimer-=dt;if(toastTimer<=0)$("toast").style.opacity=0;
- let f=(keys.KeyW?1:0)-(keys.KeyS?1:0),s=(keys.KeyD?1:0)-(keys.KeyA?1:0),len=Math.hypot(f,s)||1,speed=keys.ShiftLeft||keys.ShiftRight?4.5:2.9;
- f=f/len*speed*dt;s=s/len*speed*dt;
- moveEntity(player,Math.cos(player.a)*f+Math.cos(player.a+Math.PI/2)*s,Math.sin(player.a)*f+Math.sin(player.a+Math.PI/2)*s,.2);
- collectPlayerCores();updateBots(dt);if(timeLeft<=0)finish();updateHUD();
+ timeLeft=Math.max(0,timeLeft-dt);dashCooldown=Math.max(0,dashCooldown-dt);shotCooldown=Math.max(0,shotCooldown-dt);toastTimer-=dt;hitFlash=Math.max(0,hitFlash-dt);
+ if(toastTimer<=0)$("toast").style.opacity=0;
+ if(player.dead>0){player.dead-=dt;if(player.dead<=0){const p=playerStarts[selectedMap];player.x=p.x;player.y=p.y;player.a=p.a;player.health=100;player.invuln=1.2;toast("BACK IN THE ARENA")}}
+ else{
+  player.invuln=Math.max(0,player.invuln-dt);
+  let f=(keys.KeyW?1:0)-(keys.KeyS?1:0),s=(keys.KeyD?1:0)-(keys.KeyA?1:0),len=Math.hypot(f,s)||1,speed=keys.ShiftLeft||keys.ShiftRight?4.5:2.9;
+  f=f/len*speed*dt;s=s/len*speed*dt;
+  moveEntity(player,Math.cos(player.a)*f+Math.cos(player.a+Math.PI/2)*s,Math.sin(player.a)*f+Math.sin(player.a+Math.PI/2)*s,.2);
+ }
+ updateBots(dt);updateShots(dt);if(timeLeft<=0)finish();updateHUD();
 }
+
 function castRay(angle){
  const rx=Math.cos(angle),ry=Math.sin(angle);let mx=Math.floor(player.x),my=Math.floor(player.y);
  const dx=Math.abs(1/(rx||.00001)),dy=Math.abs(1/(ry||.00001));
@@ -186,35 +220,43 @@ function drawWorld(){
   ctx.fillStyle="rgba(120,245,235,"+Math.max(0,Math.min(.18,.12/dist))+")";ctx.fillRect(x,top,step+1,2);
  }
  const sprites=[];
- bots.forEach((b,i)=>sprites.push({type:"bot",obj:b,index:i,d:Math.hypot(b.x-player.x,b.y-player.y),a:wrapAngle(Math.atan2(b.y-player.y,b.x-player.x)-player.a)}));
- cores.forEach((c,i)=>sprites.push({type:"core",obj:c,index:i,d:Math.hypot(c.x-player.x,c.y-player.y),a:wrapAngle(Math.atan2(c.y-player.y,c.x-player.x)-player.a)}));
+ bots.forEach((b,i)=>{if(b.alive)sprites.push({type:"bot",obj:b,index:i,d:Math.hypot(b.x-player.x,b.y-player.y),a:wrapAngle(Math.atan2(b.y-player.y,b.x-player.x)-player.a)})});
+ shots.forEach(s=>sprites.push({type:"shot",obj:s,d:Math.hypot(s.x-player.x,s.y-player.y),a:wrapAngle(Math.atan2(s.y-player.y,s.x-player.x)-player.a)}));
  sprites.sort((a,b)=>b.d-a.d);
  sprites.forEach(o=>{
   if(Math.abs(o.a)>fov*.72)return;
   const sx=(.5+o.a/fov)*w,depth=o.d*Math.cos(o.a),col=Math.floor(sx/step);
   if(col>=0&&col<zBuffer.length&&zBuffer[col]<depth-.12)return;
-  if(o.type==="core"){
-   const size=Math.min(h*.26,h*.18/Math.max(.2,depth)),cy=horizon-size*.35;
-   ctx.save();ctx.shadowColor="#65f4e4";ctx.shadowBlur=24;ctx.fillStyle="#65f4e4";
-   ctx.beginPath();ctx.moveTo(sx,cy-size*.5);ctx.lineTo(sx+size*.32,cy);ctx.lineTo(sx,cy+size*.5);ctx.lineTo(sx-size*.32,cy);ctx.closePath();ctx.fill();
-   ctx.fillStyle="#eaffff";ctx.beginPath();ctx.arc(sx,cy,size*.09,0,Math.PI*2);ctx.fill();ctx.restore();
+  if(o.type==="shot"){
+   const s=o.obj,size=Math.max(5,Math.min(24,h*.055/Math.max(.2,depth))),cy=horizon;
+   ctx.save();ctx.shadowColor=s.owner===0?"#65f4e4":"#ff70b8";ctx.shadowBlur=25;ctx.fillStyle=s.owner===0?"#bffff7":"#ffc2e0";ctx.beginPath();ctx.arc(sx,cy,size/2,0,Math.PI*2);ctx.fill();ctx.restore();
   }else{
    const b=o.obj,size=Math.min(h*.9,h*.72/Math.max(.2,depth)),top=horizon-size*.52,bodyW=size*.34,bodyH=size*.48;
    ctx.save();ctx.shadowColor=b.color;ctx.shadowBlur=18;ctx.fillStyle=b.color;
    ctx.beginPath();ctx.arc(sx,top+size*.16,size*.105,0,Math.PI*2);ctx.fill();ctx.fillRect(sx-bodyW/2,top+size*.28,bodyW,bodyH);
    ctx.fillStyle="#16213c";ctx.fillRect(sx-bodyW*.7,top+size*.69,bodyW*.38,size*.26);ctx.fillRect(sx+bodyW*.32,top+size*.69,bodyW*.38,size*.26);
    ctx.fillStyle="#eefcff";ctx.fillRect(sx-bodyW*.27,top+size*.13,size*.055,size*.035);ctx.fillRect(sx+bodyW*.13,top+size*.13,size*.055,size*.035);ctx.restore();
-   ctx.fillStyle="#151b30";ctx.fillRect(sx-size*.22,top-10,size*.44,4);ctx.fillStyle=b.color;ctx.fillRect(sx-size*.22,top-10,size*.44,4);
+   const bw=size*.44;ctx.fillStyle="#151b30";ctx.fillRect(sx-bw/2,top-10,bw,4);ctx.fillStyle="#65f4e4";ctx.fillRect(sx-bw/2,top-10,bw*b.health/100,4);
   }
  });
+ drawBlaster();
 }
-function render(){drawWorld();if(dashCooldown>0){ctx.fillStyle="rgba(101,244,228,.035)";ctx.fillRect(0,0,innerWidth,innerHeight)}}
+function drawBlaster(){
+ const w=innerWidth,h=innerHeight,x=w*.79,y=h*.89;
+ ctx.save();ctx.translate(x,y);ctx.shadowColor="#65f4e4";ctx.shadowBlur=18;
+ ctx.fillStyle="#111d39";ctx.strokeStyle="#65f4e4";ctx.lineWidth=2;
+ ctx.beginPath();ctx.moveTo(-52,25);ctx.lineTo(-40,-23);ctx.lineTo(-11,-38);ctx.lineTo(36,-27);ctx.lineTo(53,9);ctx.lineTo(34,34);ctx.closePath();ctx.fill();ctx.stroke();
+ ctx.fillStyle="#65f4e4";ctx.fillRect(-12,-43,27,9);ctx.fillRect(-5,20,15,27);
+ ctx.fillStyle="#f4ffff";ctx.beginPath();ctx.arc(2,-39,4,0,Math.PI*2);ctx.fill();ctx.restore();
+}
+function render(){drawWorld();if(hitFlash>0){ctx.fillStyle="rgba(255,65,135,"+(hitFlash*.4)+")";ctx.fillRect(0,0,innerWidth,innerHeight)}if(dashCooldown>0){ctx.fillStyle="rgba(101,244,228,.025)";ctx.fillRect(0,0,innerWidth,innerHeight)}}
+
 function checkEnd(){if(scores.some(s=>s>=10))finish()}
 function finish(){
  if(ended)return;ended=true;gameOn=false;if(document.pointerLockElement)document.exitPointerLock();
  const best=Math.max(...scores),winner=scores.indexOf(best);
  $("resultTitle").textContent=winner===0?"VICTORY!":"BOT "+winner+" WINS";
- $("resultText").textContent="Final score — You "+scores[0]+" · Alpha "+scores[1]+" · Beta "+scores[2]+" · Gamma "+scores[3];
+ $("resultText").textContent="Final tags — You "+scores[0]+" · Alpha "+scores[1]+" · Beta "+scores[2]+" · Gamma "+scores[3];
  $("result").style.display="grid";
 }
 function loop(now){if(!gameOn||paused)return;const dt=Math.min(.045,(now-last)/1000||0);last=now;update(dt);render();if(gameOn&&!paused)requestAnimationFrame(loop)}
@@ -226,7 +268,7 @@ document.addEventListener("keydown",e=>{
 });
 document.addEventListener("keyup",e=>{keys[e.code]=false});
 document.addEventListener("mousemove",e=>{if(gameOn&&!paused&&document.pointerLockElement===canvas)player.a+=e.movementX*.0024});
-canvas.addEventListener("click",()=>{if(gameOn&&!paused&&document.pointerLockElement!==canvas)canvas.requestPointerLock?.()});
+canvas.addEventListener("click",()=>{if(gameOn&&!paused){if(document.pointerLockElement!==canvas)canvas.requestPointerLock?.();else fire()}});
 document.addEventListener("pointerlockchange",()=>{if(gameOn&&!paused&&document.pointerLockElement!==canvas){paused=true;$("pause").style.display="flex"}});
 document.querySelectorAll("[data-map]").forEach(b=>b.addEventListener("click",()=>{selectedMap=b.dataset.map;document.querySelectorAll("[data-map]").forEach(x=>x.classList.toggle("selected",x===b))}));
 $("start").addEventListener("click",beginRace);
