@@ -61,7 +61,7 @@ custom:[['Australia','Argentina','Brazil','France'],['England','Spain','Japan','
 };
 let state={type:'euro',groups:[],bracket:[],champion:''};
 function blank(type){const names=teamSets[type]||teamSets.custom;return {type,groups:names.map(group=>group.map(name=>({name,qualified:false}))),bracket:[],champion:''}}
-function load(){try{const x=JSON.parse(localStorage.getItem(storeKey));if(x&&x.groups?.length)state=x;else state=blank('euro')}catch{state=blank('euro')}$('#tournament').value=state.type}
+function load(){try{const current=JSON.parse(localStorage.getItem(storeKey));if(current&&current.groups?.length)state=current;else{const previous=JSON.parse(localStorage.getItem('footballPredictorV2'));const type=previous&&templates[previous.type]?previous.type:'euro';state=blank(type);if(previous?.groups){const picked=new Set(previous.groups.flat().filter(t=>t.qualified).map(t=>t.name));state.groups.flat().forEach(team=>{if(picked.has(team.name))team.qualified=true})}}}catch{state=blank('euro')}$('#tournament').value=state.type;save()}
 function save(){try{localStorage.setItem(storeKey,JSON.stringify(state));$('#saveState').textContent='✓ Saved on this device'}catch{$('#saveState').textContent='Could not save on this device'}}
 function updateTournamentNote(){
 const note=$('#tournamentNote');
